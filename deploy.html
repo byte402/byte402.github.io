@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Deploy the Allot Factory</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="allot.css">
+</head>
+<body>
+<header><div class="wrap"><a class="logo" href="./"><span class="mark"></span>Allot</a><span class="acct" id="acct">not connected</span></div></header>
+<main class="wrap">
+  <h1>Deploy the <em>Allot Factory</em>.</h1>
+  <p class="sub">One time only. The factory lets anyone create their own vault. It keeps no control over the vaults it creates and has no owner, no admin and no upgrade.</p>
+
+  <div class="card">
+    <h2>1 · Connect the Allot wallet <small>A NEW WALLET, ONLY FOR ALLOT</small></h2>
+    <p class="muted">Use the wallet you made for Allot, not one used for any other project. It needs a little ETH on Robinhood Chain for gas.</p>
+    <div class="row"><button class="go" id="connect">Connect wallet</button></div>
+    <div class="kv" id="who" hidden><div><small>WALLET</small><b id="wAddr">–</b></div><div><small>ETH FOR GAS</small><b id="wEth">–</b></div><div><small>USDG DOMAIN SEPARATOR</small><b id="ds" style="font-size:12px">–</b></div></div>
+  </div>
+
+  <div class="card">
+    <h2>2 · Simulate on mainnet <small>NOTHING IS SIGNED</small></h2>
+    <p class="muted">The exact deployment runs on Robinhood Chain mainnet state with eth_simulateV1, then a test vault is created through it, so you see both work before anything is sent.</p>
+    <div class="row"><button id="sim" disabled>Simulate deployment</button></div>
+    <div class="log" id="simLog"></div>
+  </div>
+
+  <div class="card">
+    <h2>3 · Deploy <small>YOU SIGN ONCE</small></h2>
+    <div class="row"><button class="go" id="deploy" disabled>Deploy factory</button></div>
+    <div class="log" id="depLog"></div>
+    <pre id="cfgOut" hidden></pre>
+  </div>
+</main>
+<footer><div class="wrap">Allot · factory deployment · Robinhood Chain mainnet</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+<script src="allot.js"></script>
+<script>
+const $ = (i) => document.getElementById(i), A = ALLOT, E = A.E;
+let me = null, ds = null, deployCall = null, deployGas = 0;
+const say = (el, cls, t) => { $(el).innerHTML += `<span class="${cls}">${t}</span>\n`; };
+$("connect").onclick = async () => { try {
+  await A.load(); me = await A.connect(); $("acct").textContent = A.short(me); $("who").hidden = false; $("wAddr").textContent = A.short(me);
+  $("wEth").textContent = Number(E.formatEther(BigInt(await A.rpc("eth_getBalance", [me, "latest"])))).toFixed(6) + " ETH";
+  ds = (await A.read(A.USDG, "token", "DOMAIN_SEPARATOR"))[0]; $("ds").textContent = ds; $("sim").disabled = false;
+} catch (e) { alertLog("simLog", e); } };
+const alertLog = (el, e) => say(el, "no", "✗ " + (e.message || e));
+$("sim").onclick = async () => { $("simLog").innerHTML = ""; try {
+  const { abi } = await A.load(), fi = new E.Interface(abi.factory);
+  const data = abi.factoryBytecode + E.AbiCoder.defaultAbiCoder().encode(["address", "bytes32"], [A.USDG, ds]).slice(2);
+  deployCall = { data };
+  const nonce = BigInt(await A.rpc("eth_getTransactionCount", [me, "latest"])), factory = E.getCreateAddress({ from: me, nonce });
+  say("simLog", "wait", `· simulating deployment from ${A.short(me)} (nonce ${nonce}) → factory will be ${factory}`);
+  const r = await A.simulate(me, [{ data }, { to: factory, data: fi.encodeFunctionData("create") }, { to: factory, data: fi.encodeFunctionData("vaultsOf", [me]) }]);
+  if (!r[0].ok) throw new Error("deployment would fail: " + r[0].why);
+  say("simLog", "ok", `✓ factory deploys · ${r[0].gas.toLocaleString("en-US")} gas`);
+  say("simLog", r[1].ok ? "ok" : "no", r[1].ok ? `✓ a test vault is created through it · ${r[1].gas.toLocaleString("en-US")} gas` : "✗ create() failed: " + r[1].why);
+  const list = fi.decodeFunctionResult("vaultsOf", r[2].ret)[0]; say("simLog", list.length === 1 ? "ok" : "no", list.length === 1 ? `✓ the factory lists it: ${list[0]}` : "✗ vault not listed");
+  const price = BigInt(await A.rpc("eth_gasPrice", [])); say("simLog", "ok", `· network fee for deployment ≈ ${E.formatEther(BigInt(Math.ceil(r[0].gas * 1.3)) * price)} ETH`);
+  deployGas = r[0].gas; $("deploy").disabled = !(r[1].ok && list.length === 1);
+} catch (e) { alertLog("simLog", e); } };
+$("deploy").onclick = async () => { $("depLog").innerHTML = ""; $("deploy").disabled = true; try {
+  say("depLog", "wait", "· confirm in your wallet…");
+  const { hash, rc } = await A.send(me, deployCall, deployGas);
+  say("depLog", "ok", `✓ deployed at ${rc.contractAddress} · block ${parseInt(rc.blockNumber, 16).toLocaleString("en-US")}`);
+  say("depLog", "ok", `<a href="${A.EXP}/tx/${hash}" target="_blank" rel="noopener">${hash}</a>`);
+  $("cfgOut").hidden = false; $("cfgOut").textContent = JSON.stringify({ factory: rc.contractAddress, factoryBlock: parseInt(rc.blockNumber, 16) }, null, 1);
+  say("depLog", "wait", "· save the block above as config.json and upload it with the site, or send the address to your builder.");
+} catch (e) { alertLog("depLog", e); $("deploy").disabled = false; } };
+</script>
+</body>
+</html>

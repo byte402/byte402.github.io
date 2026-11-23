@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Allot App</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="allot.css">
+</head>
+<body>
+<header><div class="wrap"><a class="logo" href="./"><span class="mark"></span>Allot</a>
+  <nav><a href="./">Home</a><a href="app.html" class="on">App</a></nav>
+  <button class="go" id="connect" style="margin-left:auto">Connect wallet</button><span class="acct" id="acct" hidden></span></div></header>
+<main class="wrap">
+  <h1>Your AI's <em>x402 vault</em>.</h1>
+  <p class="sub">Create a vault, fund it, add an AI with its own rules. The vault contract enforces every rule on Robinhood Chain. Every write is simulated on mainnet first, and only you sign.</p>
+  <div class="card" id="notReady" hidden><h2>Not open yet</h2><p class="muted">The Allot Factory is not deployed yet. This page goes live as soon as it is.</p></div>
+
+  <div class="card" id="createCard" hidden>
+    <h2>Create your vault <small>ONE TRANSACTION</small></h2>
+    <p class="muted">The factory deploys a vault that only your wallet controls. Nobody else, Allot included, can move its funds or change its rules.</p>
+    <div class="row"><button class="go" id="create">Create vault</button></div>
+    <div class="log" id="createLog"></div>
+  </div>
+
+  <div id="vaultUI" hidden>
+    <div class="card">
+      <h2>Vault <small id="vState">ACTIVE</small></h2>
+      <div class="kv"><div><small>ADDRESS</small><b id="vAddr" style="font-size:14px">–</b></div><div><small>USDG IN VAULT</small><b id="vBal">–</b></div><div><small>AIS</small><b id="vAgents">0</b></div></div>
+      <div class="row">
+        <div class="f"><label for="depAmt">DEPOSIT USDG</label><input id="depAmt" inputmode="decimal" placeholder="5.00"></div><button class="go" id="deposit">Deposit</button>
+        <button id="withdraw">Withdraw all</button><button class="danger" id="freeze">Freeze</button>
+      </div>
+      <div class="log" id="vaultLog"></div>
+    </div>
+
+    <div class="card">
+      <h2>Add an AI <small>ITS OWN KEY, ITS OWN RULES</small></h2>
+      <p class="muted">A new key for your AI is made in this browser. Allot never sees it. The AI can only pay inside the rules below, enforced by the vault contract.</p>
+      <div class="row">
+        <div class="f"><label for="perPay">MAX PER PAYMENT (USDG)</label><input id="perPay" inputmode="decimal" value="0.05"></div>
+        <div class="f"><label for="perDay">X402 LIMIT PER DAY (USDG)</label><input id="perDay" inputmode="decimal" value="1.00"></div>
+        <div class="f"><label for="days">KEY EXPIRES IN (DAYS, 0 = NEVER)</label><input id="days" inputmode="numeric" value="30"></div>
+      </div>
+      <div class="row"><div class="f"><label for="payees">APPROVED PAYEES · ONE ADDRESS PER LINE</label><textarea id="payees" placeholder="0x…"></textarea></div></div>
+      <div class="row"><button class="go" id="addAgent">Add AI</button></div>
+      <div class="log" id="agentLog"></div>
+      <div class="secret" id="secret" hidden><b>Your AI's key. Shown once.</b> Put it only in your connector config on your own computer. Anyone with it can pay inside these rules, never more.<code id="secretKey"></code>
+        <div class="row"><button id="copyKey">Copy key</button></div></div>
+      <pre id="cfg" hidden></pre>
+    </div>
+
+    <div class="card">
+      <h2>Your AIs <small>LIVE FROM THE CONTRACT</small></h2>
+      <div class="tw"><table id="agents"><tr><th>AI KEY</th><th>PER PAYMENT</th><th>PER DAY</th><th>LEFT TODAY</th><th></th></tr></table></div>
+    </div>
+  </div>
+
+  <div class="confirm" id="confirm" hidden><div id="cText"></div><div class="btns"><button class="go" id="cYes">Sign</button><button id="cNo">Cancel</button></div></div>
+</main>
+<footer><div class="wrap">Allot · x402 vaults for AI agents · Robinhood Chain mainnet · exact amounts only, no unlimited approvals</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+<script src="allot.js"></script>
+<script>
+const $ = (i) => document.getElementById(i), A = ALLOT, E = A.E;
+let me = null, cfg = null, abi = null, vault = null, agents = [];
+const say = (el, cls, t) => { $(el).innerHTML += `<span class="${cls}">${t}</span>\n`; };
+const fail = (el, e) => say(el, "no", "✗ " + (e.reason || e.message || e));
+const vi = () => new E.Interface(abi.vault), fi = () => new E.Interface(abi.factory), ti = () => A.iface("token");
+
+// one confirm step for every write: simulate → show → sign
+function ask(html) { return new Promise((res) => { $("cText").innerHTML = html; $("confirm").hidden = false; $("confirm").scrollIntoView({ behavior: "smooth", block: "center" });
+  $("cYes").onclick = () => { $("confirm").hidden = true; res(true); }; $("cNo").onclick = () => { $("confirm").hidden = true; res(false); }; }); }
+async function run(el, calls, what) {
+  say(el, "wait", "· simulating on Robinhood Chain mainnet…");
+  const sims = await A.simulate(me, calls); const bad = sims.findIndex((s) => !s.ok);
+  if (bad >= 0) { say(el, "no", `✗ step ${bad + 1} would fail: ${sims[bad].why}. Nothing was signed.`); return false; }
+  const price = BigInt(await A.rpc("eth_gasPrice", [])), gas = sims.reduce((s, x) => s + x.gas, 0);
+  say(el, "ok", `✓ simulated · ${calls.length} transaction${calls.length > 1 ? "s" : ""} · fee ≈ ${E.formatEther(BigInt(Math.ceil(gas * 1.3)) * price)} ETH`);
+  if (!(await ask(`<b>${what}</b><br><span class="muted">Simulated on mainnet: it works. ${calls.length > 1 ? `Your wallet will ask ${calls.length} times.` : "Your wallet will ask once."}</span>`))) { say(el, "wait", "· cancelled, nothing signed"); return false; }
+  for (let i = 0; i < calls.length; i++) { say(el, "wait", `· confirm ${i + 1}/${calls.length} in your wallet…`); const { hash } = await A.send(me, calls[i], sims[i].gas); say(el, "ok", `✓ <a href="${A.EXP}/tx/${hash}" target="_blank" rel="noopener">${A.short(hash)}</a>`); }
+  return true;
+}
+
+async function boot() {
+  ({ abi, cfg } = await A.load());
+  if (!cfg.factory) { $("notReady").hidden = false; $("connect").disabled = true; return; }
+}
+$("connect").onclick = async () => { try { me = await A.connect(); $("connect").hidden = true; $("acct").hidden = false; $("acct").textContent = A.short(me); await refresh(); } catch (e) { fail("createLog", e); } };
+
+async function refresh() {
+  const list = (await A.read(cfg.factory, "factory", "vaultsOf", [me]))[0];
+  if (!list.length) { $("createCard").hidden = false; $("vaultUI").hidden = true; return; }
+  vault = list[0]; $("createCard").hidden = true; $("vaultUI").hidden = false; $("vAddr").textContent = vault;
+  $("vBal").textContent = A.fmt((await A.read(A.USDG, "token", "balanceOf", [vault]))[0]);
+  const frozen = (await A.read(vault, "vault", "frozen"))[0]; $("vState").textContent = frozen ? "FROZEN" : "ACTIVE"; $("freeze").textContent = frozen ? "Unfreeze" : "Freeze";
+  // agents from AgentSet events
+  const topic = vi().getEvent("AgentSet").topicHash, head = parseInt(await A.rpc("eth_blockNumber", []), 16), seen = new Map();
+  for (let b = cfg.factoryBlock; b <= head; b += 100000) { const logs = await A.rpc("eth_getLogs", [{ address: vault, topics: [topic], fromBlock: "0x" + b.toString(16), toBlock: "0x" + Math.min(head, b + 99999).toString(16) }]);
+    for (const l of logs) { const d = vi().parseLog(l); seen.set(d.args.agent, d.args); } }
+  agents = [...seen.entries()].filter(([, a]) => a.active); $("vAgents").textContent = agents.length;
+  const rows = await Promise.all(agents.map(async ([k, a]) => { const left = (await A.read(vault, "vault", "remainingToday", [k]))[0];
+    return `<tr><td>${A.short(k)}</td><td>${A.fmt(a.perPayment)}</td><td>${A.fmt(a.perDay)}</td><td>${A.fmt(left)}</td><td><button class="danger" data-k="${k}">Revoke</button></td></tr>`; }));
+  $("agents").innerHTML = `<tr><th>AI KEY</th><th>PER PAYMENT</th><th>PER DAY</th><th>LEFT TODAY</th><th></th></tr>` + (rows.join("") || `<tr><td colspan="5" class="muted">No AI yet. Add one above.</td></tr>`);
+  $("agents").querySelectorAll("button[data-k]").forEach((b) => b.onclick = async () => { $("vaultLog").innerHTML = ""; try { if (await run("vaultLog", [{ to: vault, data: vi().encodeFunctionData("revoke", [b.dataset.k]) }], `Revoke AI ${A.short(b.dataset.k)}. It can't pay again.`)) await refresh(); } catch (e) { fail("vaultLog", e); } });
+}
+
+$("create").onclick = async () => { $("createLog").innerHTML = ""; try { if (await run("createLog", [{ to: cfg.factory, data: fi().encodeFunctionData("create") }], "Create your Allot vault. Only your wallet will control it.")) await refresh(); } catch (e) { fail("createLog", e); } };
+$("deposit").onclick = async () => { $("vaultLog").innerHTML = ""; try { const amt = A.units($("depAmt").value); if (amt <= 0n) throw new Error("enter an amount");
+  if (await run("vaultLog", [{ to: A.USDG, data: ti().encodeFunctionData("transfer", [vault, amt]) }], `Send ${A.fmt(amt)} USDG from your wallet to your vault. A plain transfer, no approval.`)) await refresh(); } catch (e) { fail("vaultLog", e); } };
+$("withdraw").onclick = async () => { $("vaultLog").innerHTML = ""; try { const bal = (await A.read(A.USDG, "token", "balanceOf", [vault]))[0]; if (bal === 0n) throw new Error("the vault is empty");
+  if (await run("vaultLog", [{ to: vault, data: vi().encodeFunctionData("withdraw", [me, bal]) }], `Withdraw all ${A.fmt(bal)} USDG back to your wallet.`)) await refresh(); } catch (e) { fail("vaultLog", e); } };
+$("freeze").onclick = async () => { $("vaultLog").innerHTML = ""; try { const frozen = (await A.read(vault, "vault", "frozen"))[0];
+  if (await run("vaultLog", [{ to: vault, data: vi().encodeFunctionData("setFrozen", [!frozen]) }], frozen ? "Unfreeze the vault. Your AIs can pay again inside their rules." : "Freeze the vault. Every AI payment stops at once.")) await refresh(); } catch (e) { fail("vaultLog", e); } };
+
+$("addAgent").onclick = async () => { $("agentLog").innerHTML = ""; $("secret").hidden = true; $("cfg").hidden = true; try {
+  const per = A.units($("perPay").value), day = A.units($("perDay").value), d = Number($("days").value) || 0;
+  if (per <= 0n || day < per) throw new Error("the daily x402 limit must be at least the per payment cap");
+  const payees = $("payees").value.split(/[\s,]+/).filter(Boolean).map((p) => { if (!E.isAddress(p)) throw new Error("not an address: " + p); return E.getAddress(p); });
+  if (!payees.length) throw new Error("add at least one approved payee");
+  const key = E.Wallet.createRandom(), ai = key.address, expiry = d ? BigInt(Math.floor(Date.now() / 1000) + d * 86400) : 0n;
+  const calls = [{ to: vault, data: vi().encodeFunctionData("setAgent", [ai, per, day, expiry, true]) }, ...payees.map((p) => ({ to: vault, data: vi().encodeFunctionData("setPayee", [ai, p, true]) }))];
+  if (!(await run("agentLog", calls, `Add AI ${A.short(ai)}: max ${A.fmt(per)} per payment, ${A.fmt(day)} per day, ${payees.length} payee${payees.length > 1 ? "s" : ""}${d ? `, key expires in ${d} days` : ""}.`))) return;
+  $("secret").hidden = false; $("secretKey").textContent = key.privateKey;
+  $("copyKey").onclick = async () => { try { await navigator.clipboard.writeText(key.privateKey); $("copyKey").textContent = "Copied"; } catch { getSelection().selectAllChildren($("secretKey")); } };
+  $("cfg").hidden = false; $("cfg").textContent = JSON.stringify({ mcpServers: { allot: { command: "npx", args: ["-y", "allot-connector"], env: { ALLOT_VAULT: vault, ALLOT_AGENT_KEY: "paste the key above here", ALLOT_RPC: A.RPC } } } }, null, 2);
+  say("agentLog", "wait", "· your AI also needs a little ETH on Robinhood Chain for gas: send about 0.0001 ETH to " + ai);
+  await refresh();
+} catch (e) { fail("agentLog", e); } };
+boot();
+</script>
+</body>
+</html>

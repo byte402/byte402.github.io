@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#04070a">
+<meta name="description" content="Allot: x402 vaults for AI agents on Robinhood Chain. Let your AI pay. Never more than you allow.">
+<meta property="og:title" content="Allot · Let your AI pay. Never more than you allow.">
+<meta property="og:description" content="x402 vaults for AI agents on Robinhood Chain. A contract decides how much.">
+<meta property="og:url" content="https://allot.dev/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>Allot</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
+<style>
+/* layout: paper ledger. Hero left, a live-looking payment request card right; then promises grid, steps, connector code, ledger table, launch strip */
+/* single deliberate look: Reinpay family. Terminal black, mint accent, gold labels, grid paper */
+:root{color-scheme:dark;--bg:#04070a;--paper:rgba(6,14,11,.92);--ink:#e3ebe5;--mute:#9fb5aa;--dim:#6f8a7d;--line:rgba(95,240,168,.22);--blue:#5ff0a8;--gold:#e2b057;--ok:#5ff0a8;--no:#ff6b6b;
+--display:"Familjen Grotesk",system-ui,sans-serif;--body:"Familjen Grotesk",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace}
+body{background-image:linear-gradient(rgba(95,240,168,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(95,240,168,.035) 1px,transparent 1px);background-size:45px 45px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
+.wrap{max-width:1140px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header .wrap{display:flex;align-items:center;gap:26px;padding-block:18px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font:800 23px var(--display);letter-spacing:-.03em}
+.mark{width:28px;height:28px;border-radius:8px;background:#1f4a3a;position:relative}.mark::before{content:"";position:absolute;left:6px;right:6px;bottom:6px;height:4px;border-radius:2px;background:var(--gold)}.mark::after{content:"";position:absolute;left:6px;top:6px;width:9px;height:9px;border-radius:50%;background:var(--bg)}
+nav{display:flex;gap:20px;font-size:14px;flex-wrap:wrap}nav a{color:var(--mute);text-decoration:none}nav a:hover{color:var(--ink)}
+.pv{margin-left:auto;font:600 11px var(--mono);letter-spacing:.1em;color:#ffb36b;border:1px dashed #ffb36b;padding:5px 9px;border-radius:6px}
+.cta{font:700 14px var(--mono);background:var(--blue);color:#03140c;padding:10px 16px;border-radius:10px;text-decoration:none}
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:48px;padding-block:56px 70px;align-items:center}
+.eyebrow{font:600 12px var(--mono);letter-spacing:.14em;color:var(--blue)}
+h1{font:800 56px/1 var(--display);letter-spacing:-.03em;margin:16px 0 0;text-wrap:balance}
+h1 em{font-style:normal;color:var(--blue)}
+.lead{font-size:18px;color:var(--mute);max-width:520px;margin-top:20px}
+.btns{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}.ghost{font:600 14px var(--body);border:1px solid var(--line);color:var(--ink);padding:10px 16px;border-radius:10px;text-decoration:none}
+.works{margin-top:26px;font:500 12px var(--mono);color:var(--dim);display:flex;gap:16px;flex-wrap:wrap}
+.hero{align-items:start}.hero>.req{justify-self:end;max-width:330px;margin-top:430px;padding:18px}
+.req{background:rgba(4,9,7,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 40px 80px -40px rgba(0,0,0,.8),0 0 0 1px rgba(95,240,168,.08)}
+.req .top{display:flex;justify-content:space-between;align-items:center;font:500 12px var(--mono);color:var(--dim)}
+.req .who{display:flex;gap:10px;align-items:center;margin-top:14px}.req .av{display:inline-grid;flex:0 0 34px;width:34px;height:34px;border-radius:10px;background:#1f4a3a;color:#8ccdb0;display:grid;place-items:center;font:700 14px var(--display)}
+.req .who b{font-family:var(--display);font-size:17px}.req .who span{display:block;font-size:12.5px;color:var(--mute)}
+.amt{margin-top:14px;font:800 38px var(--display);letter-spacing:-.03em;color:var(--blue)}.amt small{font:500 15px var(--mono);color:var(--mute);margin-left:6px}
+.to{font:500 13px var(--mono);color:var(--mute)}
+.checks{margin-top:16px;display:grid;gap:8px}.ck{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;padding:9px 12px;border-radius:10px;background:var(--bg)}
+.ck b{font:600 12px var(--mono);color:var(--ok)}.ck.bad b{color:var(--no)}
+.verdict{margin-top:14px;display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:12px;border:1px solid var(--ok);color:var(--ok);font:600 14px var(--body)}
+.ex{margin-top:10px;font:500 11px var(--mono);color:var(--dim)}
+section{padding-block:64px;border-top:1px solid var(--line)}
+h2{font:800 38px/1.05 var(--display);letter-spacing:-.03em;margin:0;text-wrap:balance}h2 em{font-style:normal;color:var(--blue)}
+.sub{color:var(--mute);max-width:620px;margin-top:12px;font-size:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:30px}
+.pr{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px}.pr small{font:600 12px var(--mono);color:var(--dim)}.pr b{display:block;font:700 21px var(--display);letter-spacing:-.02em;margin:10px 0 6px}.pr p{margin:0;color:var(--mute);font-size:14px}
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:30px}.stp b{display:block;font:800 40px var(--display);color:var(--blue)}.stp h3{font:700 19px var(--display);margin:6px 0}.stp p{margin:0;color:var(--mute);font-size:14px}
+.code{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:30px;align-items:start;margin-top:10px}
+pre{margin:0;background:#020403;color:#cfe0d6;border:1px solid var(--line);border-radius:16px;padding:20px;font:500 13px/1.6 var(--mono);overflow-x:auto}pre .k{color:#5ff0a8}pre .s{color:#e2b057}
+.tw{overflow-x:auto;margin-top:26px;border:1px solid var(--line);border-radius:16px;background:var(--paper)}
+table{width:100%;border-collapse:collapse;min-width:640px}th,td{padding:13px 16px;text-align:left;border-bottom:1px solid var(--line);font-size:14px;font-variant-numeric:tabular-nums}th{font:600 11px var(--mono);letter-spacing:.1em;color:var(--dim)}td.ok{color:var(--ok);font-weight:600}td.no{color:var(--no);font-weight:600}tr:last-child td{border-bottom:0}
+.launch{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:30px;align-items:center;background:rgba(6,14,11,.95);border:1px solid var(--line);border-radius:24px;padding:36px}
+.launch h2{color:var(--ink)}.launch .sub{color:var(--mute)}
+.ph{display:grid;gap:10px}.ph div{display:flex;gap:12px;align-items:baseline;padding:12px 14px;border-radius:12px;background:rgba(95,240,168,.05);font-size:14px}.ph b{font:700 13px var(--mono);color:var(--gold);min-width:64px}
+.ph .now{outline:1px solid var(--gold)}
+footer{padding-block:34px;color:var(--dim);font-size:13px}
+a:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+#flow{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+header,main,footer{position:relative;z-index:1}
+header{background:linear-gradient(var(--bg),rgba(4,7,10,.6))}
+.view{display:none}.view.on{display:block}.hero.view.on{display:grid}
+section.view{border-top:0;padding-block:48px 64px;min-height:60vh}
+nav a.on{color:var(--blue);box-shadow:inset 0 -2px 0 var(--blue)}
+.next{margin-top:36px;display:flex;gap:12px;flex-wrap:wrap}.next a{font:600 13px var(--mono);color:var(--blue);text-decoration:none;border:1px solid var(--line);padding:9px 13px;border-radius:10px}.next a:hover{border-color:var(--blue)}
+@media (max-width:900px){.hero>.req{margin-top:30px;justify-self:stretch;max-width:none}.hero{padding-top:42vh}.hero,.code,.launch{grid-template-columns:1fr}h1{font-size:44px}.grid3{grid-template-columns:1fr 1fr}.steps{grid-template-columns:1fr 1fr}.pv{margin-left:0}}
+@media (max-width:640px){header .wrap{gap:10px 18px}.pv,header .cta{display:none}nav{flex-wrap:nowrap;overflow-x:auto;width:100%;gap:16px;scrollbar-width:none}nav a{white-space:nowrap}}
+@media (max-width:520px){h1{font-size:36px}h2{font-size:30px}.grid3,.steps{grid-template-columns:1fr}.launch{padding:24px}}
+</style>
+</head>
+<body>
+<canvas id="flow" aria-hidden="true"></canvas>
+<header><div class="wrap">
+  <a class="logo" href="#home" style="text-decoration:none;color:inherit"><span class="mark" aria-hidden="true"></span>Allot</a>
+  <nav aria-label="Main"><a href="#home">Home</a><a href="app.html">App</a><a href="#promises">Promises</a><a href="#how">How it works</a><a href="#connect">Connect</a><a href="#ledger">Ledger</a><a href="#launch">Launch</a></nav>
+  <span class="pv">BETA</span>
+  <a class="cta" href="app.html">Open the app</a>
+</div></header>
+
+<main class="wrap">
+  <div class="hero view" id="home">
+    <div>
+      <div class="eyebrow">AN ALLOWANCE FOR EVERY AI YOU USE</div>
+      <h1>Let your AI pay.<br><em>Never more than you allow.</em></h1>
+      <p class="lead">AI agents are starting to buy data, APIs and tools on their own. Allot gives each one a small wallet with rules you write in plain words: how much per payment, how much per day, and who it may pay. Every payment is on the record.</p>
+      <div class="btns"><a class="cta" href="app.html">Create your x402 vault</a><a class="ghost" href="#how">How it works</a></div>
+      <div class="works"><span>Claude</span><span>Cursor</span><span>Claude Code</span><span>Any MCP client</span><span>x402 · USDG · Robinhood Chain</span></div>
+    </div>
+    <div class="req" aria-label="Example payment request">
+      <div class="top"><span>PAYMENT REQUEST</span><span>just now</span></div>
+      <div class="who"><span class="av">C</span><div><b>Claude Desktop</b><span>wants to buy market data</span></div></div>
+      <div class="amt">0.01<small>USDG</small></div>
+      <div class="to">to a market data API · x402 · Robinhood Chain</div>
+      <div class="checks">
+        <div class="ck"><span>Payee on your list</span><b>✓ YES</b></div>
+        <div class="ck"><span>Under 0.05 per payment</span><b>✓ 0.01</b></div>
+        <div class="ck"><span>Inside today's 1.00 x402 limit</span><b>✓ 0.23 USED</b></div>
+        <div class="ck"><span>Simulated on mainnet first</span><b>✓ PASSED</b></div>
+      </div>
+      <div class="verdict"><span>Paid · logged · sealed</span><span>↗</span></div>
+      <div class="ex">Example request, for illustration.</div>
+    </div>
+  </div>
+
+  <section id="promises" class="view">
+    <h2>Promises the <em>rules</em> keep.</h2>
+    <p class="sub">Each one is a check that runs before money moves. If any check fails, nothing is signed.</p>
+    <div class="grid3">
+      <div class="pr"><small>01</small><b>A cap per payment</b><p>Your AI can't pay more than the limit you set for a single request, whatever it's told.</p></div>
+      <div class="pr"><small>02</small><b>An x402 limit per day</b><p>When today's x402 limit is used up, payments stop until tomorrow.</p></div>
+      <div class="pr"><small>03</small><b>Only payees you approve</b><p>A new address is refused until you add it yourself.</p></div>
+      <div class="pr"><small>04</small><b>A contract, not a promise</b><p>Every rule lives in your own Allot Vault on Robinhood Chain. A leaked AI key still can't spend more.</p></div>
+      <div class="pr"><small>05</small><b>Revoke in one click</b><p>Pull the allowance back to your wallet and the AI can't pay again.</p></div>
+      <div class="pr"><small>06</small><b>No unlimited approvals</b><p>Each payment is a one-time signed authorization for its exact amount.</p></div>
+    </div>
+  </section>
+
+  <section id="how" class="view">
+    <h2>Four steps, then it <em>just pays</em>.</h2>
+    <div class="steps">
+      <div class="stp"><b>01</b><h3>Create an allowance</h3><p>A fresh wallet for your AI, made in your browser. Its key never touches our server.</p></div>
+      <div class="stp"><b>02</b><h3>Fund it</h3><p>Send a few USDG. That amount is the most it can ever spend.</p></div>
+      <div class="stp"><b>03</b><h3>Write the rules</h3><p>Per payment, per day, approved payees. Plain words, no code.</p></div>
+      <div class="stp"><b>04</b><h3>Connect your AI</h3><p>Add the connector to Claude, Cursor or any MCP client. Done.</p></div>
+    </div>
+  </section>
+
+  <section id="connect" class="view">
+    <div class="code">
+      <div><h2>One connector, <em>a few lines</em>.</h2><p class="sub">A small MCP server that runs on your own machine. It gives your AI one tool to pay an x402 request and one to check what it can still spend. The rules live in the connector and in the allowance wallet, not in the AI.</p></div>
+      <pre aria-label="Example MCP configuration">{
+  <span class="k">"mcpServers"</span>: {
+    <span class="k">"allot"</span>: {
+      <span class="k">"command"</span>: <span class="s">"npx"</span>,
+      <span class="k">"args"</span>: [<span class="s">"-y"</span>, <span class="s">"allot-connector"</span>],
+      <span class="k">"env"</span>: {
+        <span class="k">"ALLOT_PER_PAYMENT"</span>: <span class="s">"0.05"</span>,
+        <span class="k">"ALLOT_PER_DAY"</span>: <span class="s">"1.00"</span>
+      }
+    }
+  }
+}</pre>
+    </div>
+  </section>
+
+  <section id="ledger" class="view">
+    <h2>Every payment, <em>on the record</em>.</h2>
+    <p class="sub">Each payment is a USDG transfer on Robinhood Chain you can open on the explorer. Refused requests are logged too, with the reason.</p>
+    <div class="tw"><table>
+      <tr><th>TIME</th><th>APP</th><th>PAID TO</th><th>AMOUNT</th><th>RESULT</th></tr>
+      <tr><td>09:42</td><td>Claude Desktop</td><td>market data API</td><td>0.01 USDG</td><td class="ok">paid</td></tr>
+      <tr><td>09:40</td><td>Cursor</td><td>docs search API</td><td>0.02 USDG</td><td class="ok">paid</td></tr>
+      <tr><td>09:31</td><td>Claude Desktop</td><td>unknown address</td><td>0.01 USDG</td><td class="no">refused · not on your list</td></tr>
+      <tr><td>09:12</td><td>Claude Code</td><td>image API</td><td>0.40 USDG</td><td class="no">refused · over 0.05 cap</td></tr>
+    </table></div>
+    <p class="ex">Example rows, for illustration.</p>
+  </section>
+
+  <section id="launch" class="view">
+    <div class="launch">
+      <div><h2>Product first. <br>Token after.</h2><p class="sub">Allot opens free. The token comes only once people are using it, and its job is simple: a share of every payment fee buys it back and burns it, on a public schedule.</p></div>
+      <div class="ph">
+        <div class="now"><b>NOW</b><span>Preview of the site</span></div>
+        <div><b>NEXT</b><span>Connector live, free to use</span></div>
+        <div><b>THEN</b><span>Public ledger and first users</span></div>
+        <div><b>LATER</b><span>Token launch with buyback and burn</span></div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap">Allot · preview · built on x402, USDG and Robinhood Chain</div></footer>
+<script>
+const VIEWS = ["home", "promises", "how", "connect", "ledger", "launch"];
+const LABEL = { home: "Home", promises: "Promises", how: "How it works", connect: "Connect", ledger: "Ledger", launch: "Launch" };
+document.querySelectorAll(".view").forEach((v) => { const i = VIEWS.indexOf(v.id), nx = VIEWS[i + 1], pv = VIEWS[i - 1]; if (v.id === "home") return; const d = document.createElement("div"); d.className = "next"; d.innerHTML = (pv ? `<a href="#${pv}">← ${LABEL[pv]}</a>` : "") + (nx ? `<a href="#${nx}">${LABEL[nx]} →</a>` : ""); v.appendChild(d); });
+function show() { const h = location.hash.slice(1), id = VIEWS.includes(h) ? h : "home";
+  document.querySelectorAll(".view").forEach((v) => v.classList.toggle("on", v.id === id));
+  document.querySelectorAll("nav a").forEach((a) => a.classList.toggle("on", a.getAttribute("href") === "#" + id));
+  window.scrollTo(0, 0); }
+addEventListener("hashchange", show); show();
+
+// background: a dotted planet with Jupiter-like bands, inside a tilted 3D ring (the allowance).
+// payment packets orbit the ring; at the gold gate most pass, a few are held, turn red and burst
+(() => {
+  const cv = document.getElementById("flow"), ctx = cv.getContext("2d"), still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let W, H, dpr, cx, cy, S, t0 = performance.now(); let packets = [], sparks = [];
+  const R = 1, r = 0.12, NU = 220, NV = 10, PR = 0.52, GATE = Math.PI * 0.5, ring = [], planet = [];
+  for (let i = 0; i < NU; i++) for (let j = 0; j < NV; j++) ring.push([i / NU * Math.PI * 2, j / NV * Math.PI * 2, 0.75 + Math.random() * 0.5]);
+  const N = 2600, ga = Math.PI * (3 - Math.sqrt(5));
+  for (let i = 0; i < N; i++) { const y = 1 - (i / (N - 1)) * 2, rad = Math.sqrt(1 - y * y), th = ga * i; planet.push([Math.cos(th) * rad, y, Math.sin(th) * rad]); }
+  const stars = Array.from({ length: 180 }, () => [Math.random(), Math.random(), Math.random()]);
+  function size() { dpr = Math.min(devicePixelRatio || 1, 2); W = cv.clientWidth; H = cv.clientHeight; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const wide = W > 900; cx = wide ? W * 0.7 : W * 0.5; cy = wide ? H * 0.38 : H * 0.28; S = Math.min(W, H) * (wide ? 0.34 : 0.4); }
+  function rot(x, y, z, ry, rx) { const x1 = x * Math.cos(ry) + z * Math.sin(ry), z1 = -x * Math.sin(ry) + z * Math.cos(ry); return [x1, y * Math.cos(rx) - z1 * Math.sin(rx), y * Math.sin(rx) + z1 * Math.cos(rx)]; }
+  const pj = ([x, y, z]) => { const f = 3.2 / (3.2 + z); return [cx + x * S * f, cy + y * S * f, z, f]; };
+  const ringPt = (u, v, ry, rx) => pj(rot((R + r * Math.cos(v)) * Math.cos(u), r * Math.sin(v), (R + r * Math.cos(v)) * Math.sin(u), ry, rx));
+  const hidden = (x, y, z) => z > 0 && Math.hypot(x - cx, y - cy) < PR * S * 1.02;
+  function spawn() { packets.push({ u: Math.random() * Math.PI * 2, sp: 0.004 + Math.random() * 0.006, v: Math.random() * Math.PI * 2, held: Math.random() < 0.12, dead: false }); }
+  for (let i = 0; i < 24; i++) spawn();
+  function frame(now) { const t = (now - t0) / 1000, home = (document.querySelector(".view.on") || {}).id === "home", A = home ? 1 : 0.35;
+    ctx.clearRect(0, 0, W, H);
+    const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, S * 1.6); glow.addColorStop(0, `rgba(95,240,168,${0.12 * A})`); glow.addColorStop(1, "rgba(95,240,168,0)"); ctx.fillStyle = glow; ctx.fillRect(0, 0, W, H);
+    for (const [sx, sy, sz] of stars) { ctx.fillStyle = `rgba(159,181,170,${(0.1 + 0.22 * Math.abs(Math.sin(t * 0.6 + sz * 9))) * A})`; ctx.fillRect(sx * W, sy * H, 1.3, 1.3); }
+    const ry = t * 0.12, rx = 0.38 + Math.sin(t * 0.2) * 0.05, tilt = -0.38;
+    const RP = ring.map(([u, v, b]) => { const p = ringPt(u, v, ry, rx); p.push(b); return p; });
+    const dot = (x, y, z, f, b, col, base, span, sz0) => { const d = (1 - z) / 2, a = (base + span * d) * b * A, s = (sz0 + 1.4 * d) * f; ctx.fillStyle = `rgba(${col},${a})`; ctx.fillRect(x - s / 2, y - s / 2, s, s); };
+    // ring, back half
+    for (const [x, y, z, f, b] of RP) if (z > 0 && !hidden(x, y, z)) dot(x, y, z, f, b, "95,240,168", 0.08, 0.5, 0.8);
+    // planet body: dark disc, then banded dots on the front hemisphere
+    const pr = PR * S * 3.2 / 3.2, body = ctx.createRadialGradient(cx - pr * 0.35, cy - pr * 0.35, pr * 0.1, cx, cy, pr); body.addColorStop(0, `rgba(14,40,30,${0.95})`); body.addColorStop(1, "rgba(2,6,4,0.98)");
+    ctx.fillStyle = body; ctx.beginPath(); ctx.arc(cx, cy, pr, 0, 6.2832); ctx.fill();
+    const spin = t * 0.25;
+    for (const [px, py, pz] of planet) { const lon = Math.atan2(pz, px) + spin, lat = Math.asin(py);
+      const x0 = Math.cos(lon) * Math.cos(lat), z0 = Math.sin(lon) * Math.cos(lat), y0 = Math.sin(lat);
+      const [xa, ya] = [x0 * Math.cos(tilt) - y0 * Math.sin(tilt), x0 * Math.sin(tilt) + y0 * Math.cos(tilt)];
+      const [x, y, z] = rot(xa * PR, ya * PR, z0 * PR, 0, rx * 0.6); if (z > 0.02) continue;
+      const band = 0.5 + 0.5 * Math.sin(lat * 9 + Math.sin(lon * 2 + t * 0.4) * 0.35), storm = Math.exp(-((lat + 0.35) ** 2) * 40 - ((Math.cos(lon - 1.2) - 1) ** 2) * 18);
+      const light = 0.35 + 0.65 * Math.max(0, (-x * 0.6 - y * 0.5 - z * 0.6) / PR);
+      const col = storm > 0.25 ? "226,176,87" : band > 0.62 ? "95,240,168" : "140,205,176";
+      const [sx2, sy2, , f] = pj([x, y, z]); const a = (0.18 + 0.7 * light * (0.55 + 0.45 * band)) * A, s = (1.1 + 1.2 * light) * f;
+      ctx.fillStyle = `rgba(${col},${a})`; ctx.fillRect(sx2 - s / 2, sy2 - s / 2, s, s); }
+    const rim = ctx.createRadialGradient(cx, cy, pr * 0.85, cx, cy, pr * 1.12); rim.addColorStop(0, "rgba(95,240,168,0)"); rim.addColorStop(0.7, `rgba(95,240,168,${0.18 * A})`); rim.addColorStop(1, "rgba(95,240,168,0)");
+    ctx.fillStyle = rim; ctx.beginPath(); ctx.arc(cx, cy, pr * 1.12, 0, 6.2832); ctx.fill();
+    // ring, front half
+    for (const [x, y, z, f, b] of RP) if (z <= 0) dot(x, y, z, f, b, "95,240,168", 0.12, 0.75, 1);
+    // gate
+    const [g1x, g1y] = ringPt(GATE, 0, ry, rx), [g2x, g2y] = ringPt(GATE, Math.PI, ry, rx), gz = ringPt(GATE, 0, ry, rx)[2], gA = (0.5 + 0.4 * Math.sin(t * 3)) * A * (gz > 0 ? 0.35 : 1);
+    const mx = (g1x + g2x) / 2, my = (g1y + g2y) / 2, ex = (g1x - g2x), ey = (g1y - g2y), L = Math.hypot(ex, ey) || 1, nx = -ey / L, ny = ex / L;
+    ctx.strokeStyle = `rgba(226,176,87,${gA})`; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(mx + nx * S * 0.12, my + ny * S * 0.12); ctx.lineTo(mx - nx * S * 0.12, my - ny * S * 0.12); ctx.stroke();
+    const gg = ctx.createRadialGradient(mx, my, 0, mx, my, S * 0.22); gg.addColorStop(0, `rgba(226,176,87,${0.25 * gA})`); gg.addColorStop(1, "rgba(226,176,87,0)"); ctx.fillStyle = gg; ctx.fillRect(mx - S * 0.22, my - S * 0.22, S * 0.44, S * 0.44);
+    // packets
+    if (packets.length < 24) spawn();
+    for (const k of packets) { if (k.dead) continue; const norm = (u) => ((u - GATE) % 6.2832 + 6.2832) % 6.2832, before = norm(k.u); k.u += k.sp; const after = norm(k.u);
+      if (after < before && k.held) { k.dead = true; const [x, y] = ringPt(GATE, k.v, ry, rx); for (let i = 0; i < 30; i++) { const a = Math.random() * 6.28, s = 0.6 + Math.random() * 2.8; sparks.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 1 }); } continue; }
+      const col = k.held && (6.2832 - after) < 0.7 ? "255,107,107" : "95,240,168";
+      for (let s = 0; s < 16; s++) { const [x, y, z, f] = ringPt(k.u - s * 0.011, k.v, ry, rx); if (hidden(x, y, z)) continue; const d = (1 - z) / 2, a = (1 - s / 16) * (0.35 + 0.65 * d) * A, sz = (s === 0 ? 4.4 : 2.4) * f;
+        ctx.fillStyle = `rgba(${col},${a})`; ctx.fillRect(x - sz / 2, y - sz / 2, sz, sz); }
+      const [hx, hy, hz] = ringPt(k.u, k.v, ry, rx); if (!hidden(hx, hy, hz)) { const hg = ctx.createRadialGradient(hx, hy, 0, hx, hy, 15); hg.addColorStop(0, `rgba(${col},${0.5 * A})`); hg.addColorStop(1, `rgba(${col},0)`); ctx.fillStyle = hg; ctx.fillRect(hx - 15, hy - 15, 30, 30); } }
+    packets = packets.filter((k) => !k.dead);
+    for (const s of sparks) { s.x += s.vx; s.y += s.vy; s.vx *= 0.96; s.vy *= 0.96; s.life -= 0.02; ctx.fillStyle = `rgba(255,107,107,${Math.max(0, s.life) * A})`; ctx.fillRect(s.x - 1.2, s.y - 1.2, 2.4, 2.4); }
+    sparks = sparks.filter((s) => s.life > 0);
+    if (!still) requestAnimationFrame(frame); }
+  addEventListener("resize", size); size(); requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
