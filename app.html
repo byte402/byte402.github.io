@@ -124,7 +124,7 @@ $("addAgent").onclick = async () => { $("agentLog").innerHTML = ""; $("secret").
   if (!(await run("agentLog", calls, `Add AI ${A.short(ai)}: max ${A.fmt(per)} per payment, ${A.fmt(day)} per day, ${payees.length} payee${payees.length > 1 ? "s" : ""}${d ? `, key expires in ${d} days` : ""}.`))) return;
   $("secret").hidden = false; $("secretKey").textContent = key.privateKey;
   $("copyKey").onclick = async () => { try { await navigator.clipboard.writeText(key.privateKey); $("copyKey").textContent = "Copied"; } catch { getSelection().selectAllChildren($("secretKey")); } };
-  $("cfg").hidden = false; $("cfg").textContent = JSON.stringify({ mcpServers: { allot: { command: "npx", args: ["-y", "allot-connector"], env: { ALLOT_VAULT: vault, ALLOT_AGENT_KEY: "paste the key above here", ALLOT_RPC: A.RPC } } } }, null, 2);
+  $("cfg").hidden = false; $("cfg").textContent = JSON.stringify({ mcpServers: { allot: { command: "npx", args: ["-y", "github:byte402/allot-connector"], env: { ALLOT_VAULT: vault, ALLOT_AGENT_KEY: "paste the key above here", ALLOT_RPC: A.RPC } } } }, null, 2);
   say("agentLog", "wait", "· your AI also needs a little ETH on Robinhood Chain for gas: send about 0.0001 ETH to " + ai);
   await refresh();
 } catch (e) { fail("agentLog", e); } };
