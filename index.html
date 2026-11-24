@@ -249,13 +249,29 @@ html,body{overflow-x:clip}
 .astat{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;margin-top:18px;font:500 12.5px var(--mono);color:var(--dim)}.astat b{color:var(--ink);font-weight:500}
 .aproof{margin-top:22px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 @media (max-width:900px){.apis,.aproof{grid-template-columns:1fr}}
+
+/* Build page */
+.bwhy{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:26px}
+.bsteps{margin-top:34px;display:grid;gap:14px}
+.bstep{display:grid;grid-template-columns:64px minmax(0,1fr);gap:18px;background:#0e0e0e;border:1px solid var(--line);border-radius:4px;padding:20px}
+.bstep .n{font:400 40px/1 "Instrument Serif",Georgia,serif;color:var(--mute)}
+.bstep h3{margin:0 0 6px;font:400 26px/1.1 "Instrument Serif",Georgia,serif;letter-spacing:-.01em}.bstep p{margin:0 0 10px;color:var(--mute);font-size:14.5px}.bstep p a{color:var(--ink)}
+.bstep code.i{font:500 13px var(--mono);color:var(--ink);background:#151515;border:1px solid var(--line);border-radius:3px;padding:1px 6px}
+.bcode{position:relative;margin-top:8px;background:#080808;border:1px solid var(--line);border-radius:4px}
+.bcode .bh{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line);font:500 12px var(--mono);color:var(--dim)}
+.bcode button{font:600 12px var(--mono);color:#0a0a0a;background:var(--ink);border:0;border-radius:4px;padding:6px 10px;cursor:pointer}
+.bcode pre{margin:0;border:0;border-radius:0;background:transparent;min-height:0;padding:14px;overflow:auto;font:500 12.5px/1.6 var(--mono);color:var(--ink);white-space:pre}
+.bcheck{margin-top:30px;background:#0e0e0e;border:1px solid var(--line);border-radius:4px;padding:20px}
+.bcheck h3{margin:0 0 10px;font:400 26px "Instrument Serif",Georgia,serif}.bcheck ol{margin:0;padding-left:20px;color:var(--mute);font-size:14.5px;line-height:1.75}.bcheck b{color:var(--ink);font-weight:500}
+.bcta{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+@media (max-width:900px){.bwhy{grid-template-columns:1fr}.bstep{grid-template-columns:minmax(0,1fr);gap:6px}.bstep .n{font-size:30px}}
 </style>
 </head>
 <body>
 <canvas id="flow" aria-hidden="true"></canvas>
 <header><div class="wrap">
   <a class="logo" href="/" style="text-decoration:none;color:inherit"><span class="mark" aria-hidden="true"></span>Allot</a>
-  <nav aria-label="Main"><a href="/">Home</a><a href="/app">App</a><a href="/promises">Promises</a><a href="/how">How it works</a><a href="/connect">Connect</a><a href="/apis">APIs</a><a href="/ledger">Ledger</a><a href="/launch">Launch</a></nav>
+  <nav aria-label="Main"><a href="/">Home</a><a href="/app">App</a><a href="/promises">Promises</a><a href="/how">How it works</a><a href="/connect">Connect</a><a href="/apis">APIs</a><a href="/build">Build</a><a href="/ledger">Ledger</a><a href="/launch">Launch</a></nav>
   <span class="soc"><a href="https://x.com/Allot_rh" target="_blank" rel="noopener" aria-label="Allot on X"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M17.75 3h3.07l-6.7 7.66L22 21h-6.17l-4.83-6.32L5.47 21H2.4l7.17-8.2L2 3h6.33l4.37 5.77L17.75 3zm-1.08 16.17h1.7L7.4 4.74H5.58l11.09 14.43z"/></svg></a><a href="https://github.com/byte402" target="_blank" rel="noopener" aria-label="Allot on GitHub"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg></a></span>
   <a class="cta" href="/app">Open the app</a>
 </div></header>
@@ -410,6 +426,41 @@ html,body{overflow-x:clip}
     <div class="cnote rv"><b>Try before you pay.</b> "See the 402" calls the endpoint without payment and shows the real offer: price, payee and a one-time nonce. Nothing is paid from this page. To pay, run the command from your own terminal with your AI key, or let your assistant call <code>allot_pay_x402</code>.</div>
   </section>
 
+  <section id="build" class="view">
+    <div class="phead"><div class="eyebrow">BUILD</div><h2 class="big">Sell your API <em>to AIs</em>.</h2>
+    <p class="sub">Charge AI agents per call in USDG on Robinhood Chain, with x402. Start from the Allot sample API: one Cloudflare Worker, no wallet key and no funds on your server. Payments are checked from the receipt on chain before you answer.</p></div>
+    <div class="bwhy rv">
+      <div class="tool tilt"><code>no key on the server</code><p>The payer settles its own EIP-3009 authorization. Your worker only reads the receipt from the chain.</p></div>
+      <div class="tool tilt"><code>paid before you answer</code><p>No payment, no data: the API answers 402 with an exact price and a one-time nonce bound to the request.</p></div>
+      <div class="tool tilt"><code>AIs with a vault can pay</code><p>Any AI with an Allot vault pays inside its owner's rules: cap, daily x402 limit and approved payees.</p></div>
+    </div>
+    <div class="bsteps">
+      <div class="bstep rv"><div class="n">01</div><div><h3>Copy the template</h3><p>Open <a href="https://github.com/byte402/allot-api" target="_blank" rel="noopener">github.com/byte402/allot-api ↗</a> and copy <code class="i">worker.js</code>. In Cloudflare, create a Worker, open Edit code, paste it and deploy.</p></div></div>
+      <div class="bstep rv"><div class="n">02</div><div><h3>Set two settings</h3><p>In the Worker's Settings, Variables and Secrets: <code class="i">PAY_TO</code> is the address that receives USDG, and <code class="i">CHALLENGE_SECRET</code> is a secret of 32 or more random characters that signs each nonce. Until both are set, paid routes answer 503.</p></div></div>
+      <div class="bstep rv"><div class="n">03</div><div><h3>Add your endpoint</h3><p>One entry in <code class="i">ROUTES</code>: a price, a canonical query and the data to return. This example sells the live gas price for 0.001 USDG. Put your own data in <code class="i">run</code>.</p><div class="bcode"><div class="bh"><span>worker.js</span><button type="button" data-copy>Copy</button></div><pre>  // in worker.js, inside const ROUTES = { … }
+  // price is in USDG base units (6 decimals): 1000n = 0.001 USDG
+  &quot;/v1/gas&quot;: { price: 1000n, parse: () =&gt; ({ query: &quot;&quot;, run: async () =&gt; ({
+    gasPriceGwei: Number(BigInt(await rpc(&quot;eth_gasPrice&quot;, []))) / 1e9,
+    at: new Date().toISOString(),
+  }) }) },</pre></div></div></div>
+      <div class="bstep rv"><div class="n">04</div><div><h3>Check it answers 402</h3><p>Without payment your route must answer 402 with the offer, and the free index lists it with its price. <code class="i">/health</code> tells you whether the chain answers.</p><div class="bcode"><div class="bh"><span>terminal</span><button type="button" data-copy>Copy</button></div><pre>curl -i https://your-worker.workers.dev/v1/gas
+# HTTP/2 402 · payment-required: … (price, payTo, a one-time nonce)
+
+curl https://your-worker.workers.dev/
+# lists every endpoint and its price, including /v1/gas</pre></div></div></div>
+      <div class="bstep rv"><div class="n">05</div><div><h3>Get paid by AIs</h3><p>A buyer adds your <code class="i">PAY_TO</code> to their AI's approved payees in <a href="/app">the app</a>. Then their AI pays from its vault through the connector, or from the terminal with a confirmed amount.</p><div class="bcode"><div class="bh"><span>terminal</span><button type="button" data-copy>Copy</button></div><pre>npx -y github:byte402/allot-connector pay &quot;https://your-worker.workers.dev/v1/gas&quot;
+npx -y github:byte402/allot-connector pay &quot;https://your-worker.workers.dev/v1/gas&quot; --confirm 0.001</pre></div></div></div>
+    </div>
+    <div class="bcheck rv"><h3>How your worker checks a payment</h3><ol>
+      <li>Without payment it answers <b>402</b> with the price, your payee and a nonce: an HMAC of the request and an expiry, so nothing is stored.</li>
+      <li>The payer settles its own EIP-3009 authorization in USDG and sends the <b>transaction hash</b> in the payment-signature header.</li>
+      <li>Your worker reads the receipt from Robinhood Chain: the transaction succeeded, at least the <b>price</b> reached <b>PAY_TO</b>, and <b>AuthorizationUsed</b> carries the nonce it issued.</li>
+      <li>One transaction buys one answer. A replayed transaction is refused.</li>
+    </ol></div>
+    <div class="bcta rv"><a class="cta" href="https://github.com/byte402/allot-api" target="_blank" rel="noopener">Open the template ↗</a><a class="ghost" href="/apis">See the live APIs</a></div>
+    <div class="cnote rv"><b>A template, MIT licensed.</b> You run your own worker and answer for the data it sells. The Allot contracts are verified on Sourcify and not audited yet, so start with small prices.</div>
+  </section>
+
   <section id="ledger" class="view">
     <div class="phead"><div class="eyebrow">LEDGER</div><h2 class="big">Every payment, <em>on the record</em>.</h2>
     <p class="sub">Read live from Robinhood Chain: every USDG that leaves an Allot Vault, which AI sent it, where it went, and the transaction you can open yourself. Nothing here is typed by us.</p></div>
@@ -451,8 +502,8 @@ html,body{overflow-x:clip}
 </main>
 <footer><div class="wrap">Allot · built on x402, USDG and Robinhood Chain</div></footer>
 <script>
-const VIEWS = ["home", "promises", "how", "connect", "apis", "ledger", "launch"];
-const LABEL = { home: "Home", promises: "Promises", how: "How it works", connect: "Connect", apis: "APIs", ledger: "Ledger", launch: "Launch" };
+const VIEWS = ["home", "promises", "how", "connect", "apis", "build", "ledger", "launch"];
+const LABEL = { home: "Home", promises: "Promises", how: "How it works", connect: "Connect", apis: "APIs", build: "Build", ledger: "Ledger", launch: "Launch" };
 document.querySelectorAll(".view").forEach((v) => { const i = VIEWS.indexOf(v.id), nx = VIEWS[i + 1], pv = VIEWS[i - 1]; if (v.id === "home") return; const d = document.createElement("div"); d.className = "next"; d.innerHTML = (pv ? `<a href="${pv === "home" ? "/" : "/" + pv}">← ${LABEL[pv]}</a>` : "") + (nx ? `<a href="/${nx}">${LABEL[nx]} →</a>` : ""); v.appendChild(d); });
 // clean paths: allot.dev/, allot.dev/promises, allot.dev/ledger ... (404.html sends deep links back here as ?p=)
 function ROUTE() { const seg = location.pathname.replace(/\/+$/, "").split("/").pop().replace(/\.html$/, ""); return VIEWS.includes(seg) ? seg : "home"; }
@@ -970,6 +1021,9 @@ const LIVE = (() => {
   }
   addEventListener("allot:route", () => { if (ROUTE() === "apis") load(); }); if (ROUTE() === "apis") load();
 })();
+
+// Build page: copy buttons on code blocks
+document.querySelectorAll(".bcode [data-copy]").forEach((b) => b.onclick = async () => { const t = b.closest(".bcode").querySelector("pre").textContent; try { await navigator.clipboard.writeText(t); b.textContent = "Copied"; } catch { getSelection().selectAllChildren(b.closest(".bcode").querySelector("pre")); b.textContent = "Selected"; } setTimeout(() => (b.textContent = "Copy"), 1600); });
 </script>
 </body>
 </html>
