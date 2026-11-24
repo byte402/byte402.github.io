@@ -71,6 +71,14 @@ nav a.on{color:var(--blue);box-shadow:inset 0 -2px 0 var(--blue)}
 @media (max-width:900px){.hero>.req{margin-top:30px;justify-self:stretch;max-width:none}.hero{padding-top:42vh}.hero,.code,.launch{grid-template-columns:1fr}h1{font-size:44px}.grid3{grid-template-columns:1fr 1fr}.steps{grid-template-columns:1fr 1fr}.pv{margin-left:0}}
 @media (max-width:640px){header .wrap{gap:10px 18px}.pv,header .cta{display:none}nav{flex-wrap:nowrap;overflow-x:auto;width:100%;gap:16px;scrollbar-width:none}nav a{white-space:nowrap}}
 @media (max-width:520px){h1{font-size:36px}h2{font-size:30px}.grid3,.steps{grid-template-columns:1fr}.launch{padding:24px}}
+.pipe{margin-top:30px;background:rgba(4,9,7,.78);border:1px solid var(--line);border-radius:20px;padding:18px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.pipe svg{display:block;width:100%;height:auto}.pipe .v{display:none}
+.pipe .cap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:500 11.5px var(--mono);color:var(--dim);margin-top:10px}
+.pipe .cap i{font-style:normal;display:inline-flex;align-items:center;gap:6px;margin-right:14px}.pipe .cap i::before{content:"";width:14px;height:3px;border-radius:2px;background:var(--c)}
+@keyframes flowdash{to{stroke-dashoffset:-40}}
+.pipe .wet{animation:flowdash 1.1s linear infinite}.pipe .wet.slow{animation-duration:2.2s}
+@media (prefers-reduced-motion:reduce){.pipe .wet{animation:none}.pipe .drop{display:none}}
+@media (max-width:760px){.pipe .h{display:none}.pipe .v{display:block}.pipe{padding:12px}}
 </style>
 </head>
 <body>
@@ -122,6 +130,10 @@ nav a.on{color:var(--blue);box-shadow:inset 0 -2px 0 var(--blue)}
 
   <section id="how" class="view">
     <h2>Four steps, then it <em>just pays</em>.</h2>
+    <div class="pipe" role="img" aria-label="How a payment flows: your AI asks the connector, the Allot Vault checks the rules, then the x402 API is paid or the request is refused. Your wallet funds and controls the vault.">
+      <div class="h"></div><div class="v"></div>
+      <div class="cap"><span><i style="--c:#5ff0a8">paid</i><i style="--c:#ff6b6b">refused</i><i style="--c:#e2b057">your control</i></span><span>Live animation of the real flow, amounts are an example.</span></div>
+    </div>
     <div class="steps">
       <div class="stp"><b>01</b><h3>Create an allowance</h3><p>A fresh wallet for your AI, made in your browser. Its key never touches our server.</p></div>
       <div class="stp"><b>02</b><h3>Fund it</h3><p>Send a few USDG. That amount is the most it can ever spend.</p></div>
@@ -246,6 +258,67 @@ addEventListener("hashchange", show); show();
     sparks = sparks.filter((s) => s.life > 0);
     if (!still) requestAnimationFrame(frame); }
   addEventListener("resize", size); size(); requestAnimationFrame(frame);
+})();
+
+// pipeline: nodes and elbow pipes with water-like flow, a horizontal and a vertical layout
+(() => {
+  const NS = "http://www.w3.org/2000/svg", M = "#5ff0a8", R = "#ff6b6b", G = "#e2b057";
+  const H = { vb: [1100, 470], dir: "h", nodes: {
+    claude: [20, 40, 210, 70, "Claude", "MCP client"], cursor: [20, 170, 210, 70, "Cursor", "MCP client"], any: [20, 300, 210, 70, "Any AI agent", "x402 request"],
+    conn: [300, 170, 210, 70, "Allot connector", "runs on your machine"],
+    vault: [580, 95, 240, 220, "Allot Vault", "", ["cap per payment", "today's x402 limit", "approved payees", "simulated first"]],
+    api: [890, 70, 190, 70, "x402 API", "paid 0.01 USDG"], no: [890, 270, 190, 70, "Refused", "nothing signed"],
+    you: [580, 380, 240, 70, "Your wallet", "fund · revoke · freeze"] },
+    edges: [["claude", "conn", M], ["cursor", "conn", M], ["any", "conn", M], ["conn", "vault", M], ["vault", "api", M], ["vault", "no", R], ["you", "vault", G, "up"]] };
+  const V = { vb: [360, 790], dir: "v", nodes: {
+    claude: [10, 10, 105, 62, "Claude", "MCP"], cursor: [127, 10, 106, 62, "Cursor", "MCP"], any: [245, 10, 105, 62, "Any agent", "x402"],
+    conn: [70, 130, 220, 66, "Allot connector", "on your machine"],
+    vault: [50, 260, 260, 230, "Allot Vault", "", ["cap per payment", "today's x402 limit", "approved payees", "simulated first"]],
+    api: [10, 580, 160, 66, "x402 API", "paid 0.01"], no: [190, 580, 160, 66, "Refused", "nothing signed"],
+    you: [70, 690, 220, 66, "Your wallet", "fund · revoke · freeze"] },
+    edges: [["claude", "conn", M], ["cursor", "conn", M], ["any", "conn", M], ["conn", "vault", M], ["vault", "api", M], ["vault", "no", R], ["you", "vault", G, "up"]] };
+  const el = (n, a, p) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); p && p.appendChild(e); return e; };
+  // rounded elbow from a to b: out along the main axis, turn, then in
+  function elbow(x1, y1, x2, y2, dir, r = 14) {
+    if (dir === "h") { if (Math.abs(y2 - y1) < 1) return `M${x1} ${y1}H${x2}`; const mx = (x1 + x2) / 2, s = Math.sign(y2 - y1), rr = Math.min(r, Math.abs(y2 - y1) / 2);
+      return `M${x1} ${y1}H${mx - rr}Q${mx} ${y1} ${mx} ${y1 + s * rr}V${y2 - s * rr}Q${mx} ${y2} ${mx + rr} ${y2}H${x2}`; }
+    if (Math.abs(x2 - x1) < 1) return `M${x1} ${y1}V${y2}`; const my = (y1 + y2) / 2, s = Math.sign(x2 - x1), rr = Math.min(r, Math.abs(x2 - x1) / 2), d = Math.sign(y2 - y1);
+    return `M${x1} ${y1}V${my - d * rr}Q${x1} ${my} ${x1 + s * rr} ${my}H${x2 - s * rr}Q${x2} ${my} ${x2} ${my + d * rr}V${y2}`;
+  }
+  function build(L, host) {
+    const svg = el("svg", { viewBox: `0 0 ${L.vb[0]} ${L.vb[1]}`, "aria-hidden": "true" }, host), N = L.nodes;
+    const defs = el("defs", {}, svg), f = el("filter", { id: "glow" + L.dir, x: "-50%", y: "-50%", width: "200%", height: "200%" }, defs);
+    el("feGaussianBlur", { stdDeviation: "3.5" }, f);
+    const pipes = el("g", {}, svg), boxes = el("g", {}, svg);
+    const inbound = {}; L.edges.forEach(([, b, , up]) => { if (!up) inbound[b] = (inbound[b] || 0) + 1; });
+    L.edges.forEach(([a, b, c, up], i) => {
+      const [ax, ay, aw, ah] = N[a], [bx, by, bw, bh] = N[b]; let d;
+      if (up) d = L.dir === "h" ? `M${ax + aw / 2} ${ay}V${by + bh}` : `M${ax + aw / 2} ${ay}V${by + bh}`;
+      else if (L.dir === "h") d = elbow(ax + aw, ay + ah / 2, bx, by + bh / 2, "h");
+      else d = elbow(ax + aw / 2, ay + ah, bx + bw / 2, by, "v");
+      el("path", { d, fill: "none", stroke: c, "stroke-opacity": ".14", "stroke-width": "9", "stroke-linecap": "round" }, pipes);
+      el("path", { d, fill: "none", stroke: c, "stroke-opacity": ".35", "stroke-width": "2" }, pipes);
+      el("path", { d, fill: "none", stroke: c, "stroke-width": "3", "stroke-linecap": "round", "stroke-dasharray": "10 30", class: "wet" + (c === R ? " slow" : ""), filter: `url(#glow${L.dir})` }, pipes);
+      el("path", { d, fill: "none", stroke: c, "stroke-width": "2", "stroke-linecap": "round", "stroke-dasharray": "10 30", class: "wet" + (c === R ? " slow" : "") }, pipes);
+      const dur = c === R ? 5.5 : 3.2 + (i % 3) * 0.4;
+      for (let k = 0; k < (c === R ? 1 : 2); k++) { const dot = el("circle", { r: "4.5", fill: c === G ? G : "#eafff4", class: "drop", filter: `url(#glow${L.dir})` }, pipes);
+        el("animateMotion", { dur: dur + "s", repeatCount: "indefinite", begin: `${-k * dur / 2 - i * 0.37}s`, path: d }, dot); }
+    });
+    for (const id in N) {
+      const [x, y, w, h, t, sub, list] = N[id], c = id === "no" ? R : id === "you" ? G : M, g = el("g", {}, boxes);
+      el("rect", { x, y, width: w, height: h, rx: 14, fill: "#06100c", stroke: c, "stroke-opacity": id === "vault" ? ".9" : ".45", "stroke-width": id === "vault" ? 1.6 : 1 }, g);
+      if (w > 130) el("circle", { cx: x + w - 16, cy: y + 18, r: 4, fill: c }, g);
+      const tt = el("text", { x: x + 16, y: y + (list ? 32 : h / 2 - 2), fill: "#e3ebe5", "font-family": "Familjen Grotesk, sans-serif", "font-weight": 700, "font-size": list ? 21 : 17 }, g); tt.textContent = t;
+      if (sub) { const s2 = el("text", { x: x + 16, y: y + h / 2 + 18, fill: "#9fb5aa", "font-family": "IBM Plex Mono, monospace", "font-size": 12.5 }, g); s2.textContent = sub; }
+      if (list) list.forEach((li, k) => { const yy = y + 66 + k * 38;
+        el("rect", { x: x + 14, y: yy - 19, width: w - 28, height: 30, rx: 8, fill: "#04070a" }, g);
+        const a = el("text", { x: x + 26, y: yy, fill: "#cfe0d6", "font-family": "IBM Plex Mono, monospace", "font-size": 12.5 }, g); a.textContent = li;
+        const ok = el("text", { x: x + w - 26, y: yy, fill: M, "text-anchor": "end", "font-family": "IBM Plex Mono, monospace", "font-size": 12.5, "font-weight": 600 }, g); ok.textContent = "✓";
+        const sc = el("rect", { x: x + 14, y: yy - 19, width: 0, height: 30, rx: 8, fill: M, "fill-opacity": ".12" }, g);
+        el("animate", { attributeName: "width", values: `0;${w - 28};${w - 28};0`, keyTimes: "0;.25;.8;1", dur: "3.2s", begin: `${k * 0.45}s`, repeatCount: "indefinite" }, sc); });
+    }
+  }
+  document.querySelectorAll(".pipe").forEach((p) => { build(H, p.querySelector(".h")); build(V, p.querySelector(".v")); });
 })();
 </script>
 </body>
