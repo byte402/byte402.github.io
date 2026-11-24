@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#04070a">
+<meta name="theme-color" content="#05070d">
 <meta name="description" content="Allot: x402 vaults for AI agents on Robinhood Chain. Let your AI pay. Never more than you allow.">
 <meta property="og:title" content="Allot · Let your AI pay. Never more than you allow.">
 <meta property="og:description" content="x402 vaults for AI agents on Robinhood Chain. A contract decides how much.">
@@ -11,22 +11,22 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>Allot</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap">
 <style>
 /* layout: paper ledger. Hero left, a live-looking payment request card right; then promises grid, steps, connector code, ledger table, launch strip */
-/* single deliberate look: Reinpay family. Terminal black, mint accent, gold labels, grid paper */
-:root{color-scheme:dark;--bg:#04070a;--paper:rgba(6,14,11,.92);--ink:#e3ebe5;--mute:#9fb5aa;--dim:#6f8a7d;--line:rgba(95,240,168,.22);--blue:#5ff0a8;--gold:#e2b057;--ok:#5ff0a8;--no:#ff6b6b;
---display:"Familjen Grotesk",system-ui,sans-serif;--body:"Familjen Grotesk",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace}
-body{background-image:linear-gradient(rgba(95,240,168,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(95,240,168,.035) 1px,transparent 1px);background-size:45px 45px}
+/* one look: deep navy black, electric blue accent, silver labels, grid paper */
+:root{color-scheme:dark;--bg:#05070d;--paper:rgba(7,11,20,.92);--ink:#eef3fa;--mute:#93a1b8;--dim:#6b7a93;--line:rgba(77,163,255,.22);--blue:#4da3ff;--gold:#d6dde8;--ok:#4da3ff;--no:#ff6b6b;
+--display:"Space Grotesk",system-ui,sans-serif;--body:"Space Grotesk",system-ui,sans-serif;--mono:"Space Mono",ui-monospace,monospace}
+body{background-image:linear-gradient(rgba(77,163,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(77,163,255,.035) 1px,transparent 1px);background-size:45px 45px}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
 .wrap{max-width:1140px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 header .wrap{display:flex;align-items:center;gap:26px;padding-block:18px;flex-wrap:wrap}
 .logo{display:flex;align-items:center;gap:10px;font:800 23px var(--display);letter-spacing:-.03em}
-.mark{width:28px;height:28px;border-radius:8px;background:#1f4a3a;position:relative}.mark::before{content:"";position:absolute;left:6px;right:6px;bottom:6px;height:4px;border-radius:2px;background:var(--gold)}.mark::after{content:"";position:absolute;left:6px;top:6px;width:9px;height:9px;border-radius:50%;background:var(--bg)}
+.mark{width:28px;height:28px;border-radius:8px;background:#14325c;position:relative}.mark::before{content:"";position:absolute;left:6px;right:6px;bottom:6px;height:4px;border-radius:2px;background:var(--gold)}.mark::after{content:"";position:absolute;left:6px;top:6px;width:9px;height:9px;border-radius:50%;background:var(--bg)}
 nav{display:flex;gap:20px;font-size:14px;flex-wrap:wrap}nav a{color:var(--mute);text-decoration:none}nav a:hover{color:var(--ink)}
 .pv{margin-left:auto;font:600 11px var(--mono);letter-spacing:.1em;color:#ffb36b;border:1px dashed #ffb36b;padding:5px 9px;border-radius:6px}
-.cta{font:700 14px var(--mono);background:var(--blue);color:#03140c;padding:10px 16px;border-radius:10px;text-decoration:none}
+.cta{font:700 14px var(--mono);background:var(--blue);color:#020a18;padding:10px 16px;border-radius:10px;text-decoration:none}
 .hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:48px;padding-block:56px 70px;align-items:center}
 .eyebrow{font:600 12px var(--mono);letter-spacing:.14em;color:var(--blue)}
 h1{font:800 56px/1 var(--display);letter-spacing:-.03em;margin:16px 0 0;text-wrap:balance}
@@ -35,9 +35,9 @@ h1 em{font-style:normal;color:var(--blue)}
 .btns{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}.ghost{font:600 14px var(--body);border:1px solid var(--line);color:var(--ink);padding:10px 16px;border-radius:10px;text-decoration:none}
 .works{margin-top:26px;font:500 12px var(--mono);color:var(--dim);display:flex;gap:16px;flex-wrap:wrap}
 .hero{align-items:start}.hero>.req{justify-self:end;max-width:330px;margin-top:430px;padding:18px}
-.req{background:rgba(4,9,7,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 40px 80px -40px rgba(0,0,0,.8),0 0 0 1px rgba(95,240,168,.08)}
+.req{background:rgba(5,8,15,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 40px 80px -40px rgba(0,0,0,.8),0 0 0 1px rgba(77,163,255,.08)}
 .req .top{display:flex;justify-content:space-between;align-items:center;font:500 12px var(--mono);color:var(--dim)}
-.req .who{display:flex;gap:10px;align-items:center;margin-top:14px}.req .av{display:inline-grid;flex:0 0 34px;width:34px;height:34px;border-radius:10px;background:#1f4a3a;color:#8ccdb0;display:grid;place-items:center;font:700 14px var(--display)}
+.req .who{display:flex;gap:10px;align-items:center;margin-top:14px}.req .av{display:inline-grid;flex:0 0 34px;width:34px;height:34px;border-radius:10px;background:#14325c;color:#9cc4f5;display:grid;place-items:center;font:700 14px var(--display)}
 .req .who b{font-family:var(--display);font-size:17px}.req .who span{display:block;font-size:12.5px;color:var(--mute)}
 .amt{margin-top:14px;font:800 38px var(--display);letter-spacing:-.03em;color:var(--blue)}.amt small{font:500 15px var(--mono);color:var(--mute);margin-left:6px}
 .to{font:500 13px var(--mono);color:var(--mute)}
@@ -52,18 +52,18 @@ h2{font:800 38px/1.05 var(--display);letter-spacing:-.03em;margin:0;text-wrap:ba
 .pr{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px}.pr small{font:600 12px var(--mono);color:var(--dim)}.pr b{display:block;font:700 21px var(--display);letter-spacing:-.02em;margin:10px 0 6px}.pr p{margin:0;color:var(--mute);font-size:14px}
 .steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:30px}.stp b{display:block;font:800 40px var(--display);color:var(--blue)}.stp h3{font:700 19px var(--display);margin:6px 0}.stp p{margin:0;color:var(--mute);font-size:14px}
 .code{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:30px;align-items:start;margin-top:10px}
-pre{margin:0;background:#020403;color:#cfe0d6;border:1px solid var(--line);border-radius:16px;padding:20px;font:500 13px/1.6 var(--mono);overflow-x:auto}pre .k{color:#5ff0a8}pre .s{color:#e2b057}
+pre{margin:0;background:#020308;color:#d3dceb;border:1px solid var(--line);border-radius:16px;padding:20px;font:500 13px/1.6 var(--mono);overflow-x:auto}pre .k{color:#4da3ff}pre .s{color:#d6dde8}
 .tw{overflow-x:auto;margin-top:26px;border:1px solid var(--line);border-radius:16px;background:var(--paper)}
 table{width:100%;border-collapse:collapse;min-width:640px}th,td{padding:13px 16px;text-align:left;border-bottom:1px solid var(--line);font-size:14px;font-variant-numeric:tabular-nums}th{font:600 11px var(--mono);letter-spacing:.1em;color:var(--dim)}td.ok{color:var(--ok);font-weight:600}td.no{color:var(--no);font-weight:600}tr:last-child td{border-bottom:0}
-.launch{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:30px;align-items:center;background:rgba(6,14,11,.95);border:1px solid var(--line);border-radius:24px;padding:36px}
+.launch{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:30px;align-items:center;background:rgba(7,11,20,.95);border:1px solid var(--line);border-radius:24px;padding:36px}
 .launch h2{color:var(--ink)}.launch .sub{color:var(--mute)}
-.ph{display:grid;gap:10px}.ph div{display:flex;gap:12px;align-items:baseline;padding:12px 14px;border-radius:12px;background:rgba(95,240,168,.05);font-size:14px}.ph b{font:700 13px var(--mono);color:var(--gold);min-width:64px}
+.ph{display:grid;gap:10px}.ph div{display:flex;gap:12px;align-items:baseline;padding:12px 14px;border-radius:12px;background:rgba(77,163,255,.05);font-size:14px}.ph b{font:700 13px var(--mono);color:var(--gold);min-width:64px}
 .ph .now{outline:1px solid var(--gold)}
 footer{padding-block:34px;color:var(--dim);font-size:13px}
 a:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
 #flow{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 header,main,footer{position:relative;z-index:1}
-header{background:linear-gradient(var(--bg),rgba(4,7,10,.6))}
+header{background:linear-gradient(var(--bg),rgba(5,7,13,.6))}
 .view{display:none}.view.on{display:block}.hero.view.on{display:grid}
 section.view{border-top:0;padding-block:48px 64px;min-height:60vh}
 nav a.on{color:var(--blue);box-shadow:inset 0 -2px 0 var(--blue)}
@@ -71,7 +71,7 @@ nav a.on{color:var(--blue);box-shadow:inset 0 -2px 0 var(--blue)}
 @media (max-width:900px){.hero>.req{margin-top:30px;justify-self:stretch;max-width:none}.hero{padding-top:42vh}.hero,.code,.launch{grid-template-columns:1fr}h1{font-size:44px}.grid3{grid-template-columns:1fr 1fr}.steps{grid-template-columns:1fr 1fr}.pv{margin-left:0}}
 @media (max-width:640px){header .wrap{gap:10px 18px}.pv,header .cta{display:none}nav{flex-wrap:nowrap;overflow-x:auto;width:100%;gap:16px;scrollbar-width:none}nav a{white-space:nowrap}}
 @media (max-width:520px){h1{font-size:36px}h2{font-size:30px}.grid3,.steps{grid-template-columns:1fr}.launch{padding:24px}}
-.pipe{margin-top:30px;background:rgba(4,9,7,.78);border:1px solid var(--line);border-radius:20px;padding:18px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.pipe{margin-top:30px;background:rgba(5,8,15,.78);border:1px solid var(--line);border-radius:20px;padding:18px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .pipe svg{display:block;width:100%;height:auto}.pipe .v{display:none}
 .pipe .cap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:500 11.5px var(--mono);color:var(--dim);margin-top:10px}
 .pipe .cap i{font-style:normal;display:inline-flex;align-items:center;gap:6px;margin-right:14px}.pipe .cap i::before{content:"";width:14px;height:3px;border-radius:2px;background:var(--c)}
@@ -79,6 +79,10 @@ nav a.on{color:var(--blue);box-shadow:inset 0 -2px 0 var(--blue)}
 .pipe .wet{animation:flowdash 1.1s linear infinite}.pipe .wet.slow{animation-duration:2.2s}
 @media (prefers-reduced-motion:reduce){.pipe .wet{animation:none}.pipe .drop{display:none}}
 @media (max-width:760px){.pipe .h{display:none}.pipe .v{display:block}.pipe{padding:12px}}
+.lstats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:26px}.lstats div{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 18px}.lstats b{display:block;font:700 30px var(--display);letter-spacing:-.02em;color:var(--blue)}.lstats small{font:600 11px var(--mono);letter-spacing:.12em;color:var(--dim)}
+.lbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px;font:500 12.5px var(--mono);color:var(--dim)}.lbar button{font:600 12px var(--mono);color:var(--blue);background:transparent;border:1px solid var(--line);border-radius:9px;padding:7px 12px;cursor:pointer}
+#ltable a{color:var(--blue);text-decoration:none;font-family:var(--mono);font-size:13px}#ltable td{white-space:nowrap}#ltable .k{font:500 12px var(--mono);color:var(--mute)}td.wd{color:var(--mute)}
+@media (max-width:640px){.lstats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -132,7 +136,7 @@ nav a.on{color:var(--blue);box-shadow:inset 0 -2px 0 var(--blue)}
     <h2>Four steps, then it <em>just pays</em>.</h2>
     <div class="pipe" role="img" aria-label="How a payment flows: your AI asks the connector, the Allot Vault checks the rules, then the x402 API is paid or the request is refused. Your wallet funds and controls the vault.">
       <div class="h"></div><div class="v"></div>
-      <div class="cap"><span><i style="--c:#5ff0a8">paid</i><i style="--c:#ff6b6b">refused</i><i style="--c:#e2b057">your control</i></span><span>Live animation of the real flow, amounts are an example.</span></div>
+      <div class="cap"><span><i style="--c:#4da3ff">paid</i><i style="--c:#ff6b6b">refused</i><i style="--c:#d6dde8">your control</i></span><span>Live animation of the real flow, amounts are an example.</span></div>
     </div>
     <div class="steps">
       <div class="stp"><b>01</b><h3>Create an allowance</h3><p>A fresh wallet for your AI, made in your browser. Its key never touches our server.</p></div>
@@ -162,30 +166,28 @@ nav a.on{color:var(--blue);box-shadow:inset 0 -2px 0 var(--blue)}
 
   <section id="ledger" class="view">
     <h2>Every payment, <em>on the record</em>.</h2>
-    <p class="sub">Each payment is a USDG transfer on Robinhood Chain you can open on the explorer. Refused requests are logged too, with the reason.</p>
-    <div class="tw"><table>
-      <tr><th>TIME</th><th>APP</th><th>PAID TO</th><th>AMOUNT</th><th>RESULT</th></tr>
-      <tr><td>09:42</td><td>Claude Desktop</td><td>market data API</td><td>0.01 USDG</td><td class="ok">paid</td></tr>
-      <tr><td>09:40</td><td>Cursor</td><td>docs search API</td><td>0.02 USDG</td><td class="ok">paid</td></tr>
-      <tr><td>09:31</td><td>Claude Desktop</td><td>unknown address</td><td>0.01 USDG</td><td class="no">refused · not on your list</td></tr>
-      <tr><td>09:12</td><td>Claude Code</td><td>image API</td><td>0.40 USDG</td><td class="no">refused · over 0.05 cap</td></tr>
+    <p class="sub">Read live from Robinhood Chain: every USDG that leaves an Allot Vault, which AI sent it, where it went, and the transaction you can open yourself. Nothing here is typed by us.</p>
+    <div class="lstats" id="lstats"><div><b>…</b><small>VAULTS</small></div><div><b>…</b><small>AIS ACTIVE</small></div><div><b>…</b><small>x402 PAYMENTS</small></div><div><b>…</b><small>USDG PAID BY AIS</small></div></div>
+    <div class="lbar"><span id="lstate">Reading Robinhood Chain…</span><button id="lrefresh" type="button">Refresh</button></div>
+    <div class="tw"><table id="ltable">
+      <tr><th>TIME (UTC)</th><th>WHAT</th><th>AI</th><th>FROM VAULT</th><th>TO</th><th>AMOUNT</th><th>TRANSACTION</th></tr>
     </table></div>
-    <p class="ex">Example rows, for illustration.</p>
+    <p class="ex">Requests a vault refuses never reach the chain, so they are not listed here: nothing was signed or sent.</p>
   </section>
 
   <section id="launch" class="view">
     <div class="launch">
       <div><h2>Product first. <br>Token after.</h2><p class="sub">Allot opens free. The token comes only once people are using it, and its job is simple: a share of every payment fee buys it back and burns it, on a public schedule.</p></div>
       <div class="ph">
-        <div class="now"><b>NOW</b><span>Preview of the site</span></div>
-        <div><b>NEXT</b><span>Connector live, free to use</span></div>
-        <div><b>THEN</b><span>Public ledger and first users</span></div>
+        <div class="now"><b>NOW</b><span>Vaults, connector and a paid x402 API live on mainnet</span></div>
+        <div><b>NEXT</b><span>More x402 APIs and AI agents paying through Allot</span></div>
+        <div><b>THEN</b><span>Security review and verified contracts</span></div>
         <div><b>LATER</b><span>Token launch with buyback and burn</span></div>
       </div>
     </div>
   </section>
 </main>
-<footer><div class="wrap">Allot · preview · built on x402, USDG and Robinhood Chain</div></footer>
+<footer><div class="wrap">Allot · beta · built on x402, USDG and Robinhood Chain</div></footer>
 <script>
 const VIEWS = ["home", "promises", "how", "connect", "ledger", "launch"];
 const LABEL = { home: "Home", promises: "Promises", how: "How it works", connect: "Connect", ledger: "Ledger", launch: "Launch" };
@@ -216,15 +218,15 @@ addEventListener("hashchange", show); show();
   for (let i = 0; i < 24; i++) spawn();
   function frame(now) { const t = (now - t0) / 1000, home = (document.querySelector(".view.on") || {}).id === "home", A = home ? 1 : 0.35;
     ctx.clearRect(0, 0, W, H);
-    const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, S * 1.6); glow.addColorStop(0, `rgba(95,240,168,${0.12 * A})`); glow.addColorStop(1, "rgba(95,240,168,0)"); ctx.fillStyle = glow; ctx.fillRect(0, 0, W, H);
-    for (const [sx, sy, sz] of stars) { ctx.fillStyle = `rgba(159,181,170,${(0.1 + 0.22 * Math.abs(Math.sin(t * 0.6 + sz * 9))) * A})`; ctx.fillRect(sx * W, sy * H, 1.3, 1.3); }
+    const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, S * 1.6); glow.addColorStop(0, `rgba(77,163,255,${0.12 * A})`); glow.addColorStop(1, "rgba(77,163,255,0)"); ctx.fillStyle = glow; ctx.fillRect(0, 0, W, H);
+    for (const [sx, sy, sz] of stars) { ctx.fillStyle = `rgba(147,161,184,${(0.1 + 0.22 * Math.abs(Math.sin(t * 0.6 + sz * 9))) * A})`; ctx.fillRect(sx * W, sy * H, 1.3, 1.3); }
     const ry = t * 0.12, rx = 0.38 + Math.sin(t * 0.2) * 0.05, tilt = -0.38;
     const RP = ring.map(([u, v, b]) => { const p = ringPt(u, v, ry, rx); p.push(b); return p; });
     const dot = (x, y, z, f, b, col, base, span, sz0) => { const d = (1 - z) / 2, a = (base + span * d) * b * A, s = (sz0 + 1.4 * d) * f; ctx.fillStyle = `rgba(${col},${a})`; ctx.fillRect(x - s / 2, y - s / 2, s, s); };
     // ring, back half
-    for (const [x, y, z, f, b] of RP) if (z > 0 && !hidden(x, y, z)) dot(x, y, z, f, b, "95,240,168", 0.08, 0.5, 0.8);
+    for (const [x, y, z, f, b] of RP) if (z > 0 && !hidden(x, y, z)) dot(x, y, z, f, b, "77,163,255", 0.08, 0.5, 0.8);
     // planet body: dark disc, then banded dots on the front hemisphere
-    const pr = PR * S * 3.2 / 3.2, body = ctx.createRadialGradient(cx - pr * 0.35, cy - pr * 0.35, pr * 0.1, cx, cy, pr); body.addColorStop(0, `rgba(14,40,30,${0.95})`); body.addColorStop(1, "rgba(2,6,4,0.98)");
+    const pr = PR * S * 3.2 / 3.2, body = ctx.createRadialGradient(cx - pr * 0.35, cy - pr * 0.35, pr * 0.1, cx, cy, pr); body.addColorStop(0, `rgba(14,30,56,${0.95})`); body.addColorStop(1, "rgba(2,4,9,0.98)");
     ctx.fillStyle = body; ctx.beginPath(); ctx.arc(cx, cy, pr, 0, 6.2832); ctx.fill();
     const spin = t * 0.25;
     for (const [px, py, pz] of planet) { const lon = Math.atan2(pz, px) + spin, lat = Math.asin(py);
@@ -233,23 +235,23 @@ addEventListener("hashchange", show); show();
       const [x, y, z] = rot(xa * PR, ya * PR, z0 * PR, 0, rx * 0.6); if (z > 0.02) continue;
       const band = 0.5 + 0.5 * Math.sin(lat * 9 + Math.sin(lon * 2 + t * 0.4) * 0.35), storm = Math.exp(-((lat + 0.35) ** 2) * 40 - ((Math.cos(lon - 1.2) - 1) ** 2) * 18);
       const light = 0.35 + 0.65 * Math.max(0, (-x * 0.6 - y * 0.5 - z * 0.6) / PR);
-      const col = storm > 0.25 ? "226,176,87" : band > 0.62 ? "95,240,168" : "140,205,176";
+      const col = storm > 0.25 ? "214,221,232" : band > 0.62 ? "77,163,255" : "120,170,230";
       const [sx2, sy2, , f] = pj([x, y, z]); const a = (0.18 + 0.7 * light * (0.55 + 0.45 * band)) * A, s = (1.1 + 1.2 * light) * f;
       ctx.fillStyle = `rgba(${col},${a})`; ctx.fillRect(sx2 - s / 2, sy2 - s / 2, s, s); }
-    const rim = ctx.createRadialGradient(cx, cy, pr * 0.85, cx, cy, pr * 1.12); rim.addColorStop(0, "rgba(95,240,168,0)"); rim.addColorStop(0.7, `rgba(95,240,168,${0.18 * A})`); rim.addColorStop(1, "rgba(95,240,168,0)");
+    const rim = ctx.createRadialGradient(cx, cy, pr * 0.85, cx, cy, pr * 1.12); rim.addColorStop(0, "rgba(77,163,255,0)"); rim.addColorStop(0.7, `rgba(77,163,255,${0.18 * A})`); rim.addColorStop(1, "rgba(77,163,255,0)");
     ctx.fillStyle = rim; ctx.beginPath(); ctx.arc(cx, cy, pr * 1.12, 0, 6.2832); ctx.fill();
     // ring, front half
-    for (const [x, y, z, f, b] of RP) if (z <= 0) dot(x, y, z, f, b, "95,240,168", 0.12, 0.75, 1);
+    for (const [x, y, z, f, b] of RP) if (z <= 0) dot(x, y, z, f, b, "77,163,255", 0.12, 0.75, 1);
     // gate
     const [g1x, g1y] = ringPt(GATE, 0, ry, rx), [g2x, g2y] = ringPt(GATE, Math.PI, ry, rx), gz = ringPt(GATE, 0, ry, rx)[2], gA = (0.5 + 0.4 * Math.sin(t * 3)) * A * (gz > 0 ? 0.35 : 1);
     const mx = (g1x + g2x) / 2, my = (g1y + g2y) / 2, ex = (g1x - g2x), ey = (g1y - g2y), L = Math.hypot(ex, ey) || 1, nx = -ey / L, ny = ex / L;
-    ctx.strokeStyle = `rgba(226,176,87,${gA})`; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(mx + nx * S * 0.12, my + ny * S * 0.12); ctx.lineTo(mx - nx * S * 0.12, my - ny * S * 0.12); ctx.stroke();
-    const gg = ctx.createRadialGradient(mx, my, 0, mx, my, S * 0.22); gg.addColorStop(0, `rgba(226,176,87,${0.25 * gA})`); gg.addColorStop(1, "rgba(226,176,87,0)"); ctx.fillStyle = gg; ctx.fillRect(mx - S * 0.22, my - S * 0.22, S * 0.44, S * 0.44);
+    ctx.strokeStyle = `rgba(214,221,232,${gA})`; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(mx + nx * S * 0.12, my + ny * S * 0.12); ctx.lineTo(mx - nx * S * 0.12, my - ny * S * 0.12); ctx.stroke();
+    const gg = ctx.createRadialGradient(mx, my, 0, mx, my, S * 0.22); gg.addColorStop(0, `rgba(214,221,232,${0.25 * gA})`); gg.addColorStop(1, "rgba(214,221,232,0)"); ctx.fillStyle = gg; ctx.fillRect(mx - S * 0.22, my - S * 0.22, S * 0.44, S * 0.44);
     // packets
     if (packets.length < 24) spawn();
     for (const k of packets) { if (k.dead) continue; const norm = (u) => ((u - GATE) % 6.2832 + 6.2832) % 6.2832, before = norm(k.u); k.u += k.sp; const after = norm(k.u);
       if (after < before && k.held) { k.dead = true; const [x, y] = ringPt(GATE, k.v, ry, rx); for (let i = 0; i < 30; i++) { const a = Math.random() * 6.28, s = 0.6 + Math.random() * 2.8; sparks.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 1 }); } continue; }
-      const col = k.held && (6.2832 - after) < 0.7 ? "255,107,107" : "95,240,168";
+      const col = k.held && (6.2832 - after) < 0.7 ? "255,107,107" : "77,163,255";
       for (let s = 0; s < 16; s++) { const [x, y, z, f] = ringPt(k.u - s * 0.011, k.v, ry, rx); if (hidden(x, y, z)) continue; const d = (1 - z) / 2, a = (1 - s / 16) * (0.35 + 0.65 * d) * A, sz = (s === 0 ? 4.4 : 2.4) * f;
         ctx.fillStyle = `rgba(${col},${a})`; ctx.fillRect(x - sz / 2, y - sz / 2, sz, sz); }
       const [hx, hy, hz] = ringPt(k.u, k.v, ry, rx); if (!hidden(hx, hy, hz)) { const hg = ctx.createRadialGradient(hx, hy, 0, hx, hy, 15); hg.addColorStop(0, `rgba(${col},${0.5 * A})`); hg.addColorStop(1, `rgba(${col},0)`); ctx.fillStyle = hg; ctx.fillRect(hx - 15, hy - 15, 30, 30); } }
@@ -262,7 +264,7 @@ addEventListener("hashchange", show); show();
 
 // pipeline: nodes and elbow pipes with water-like flow, a horizontal and a vertical layout
 (() => {
-  const NS = "http://www.w3.org/2000/svg", M = "#5ff0a8", R = "#ff6b6b", G = "#e2b057";
+  const NS = "http://www.w3.org/2000/svg", M = "#4da3ff", R = "#ff6b6b", G = "#d6dde8";
   const H = { vb: [1100, 470], dir: "h", nodes: {
     claude: [20, 40, 210, 70, "Claude", "MCP client"], cursor: [20, 170, 210, 70, "Cursor", "MCP client"], any: [20, 300, 210, 70, "Any AI agent", "x402 request"],
     conn: [300, 170, 210, 70, "Allot connector", "runs on your machine"],
@@ -301,24 +303,82 @@ addEventListener("hashchange", show); show();
       el("path", { d, fill: "none", stroke: c, "stroke-width": "3", "stroke-linecap": "round", "stroke-dasharray": "10 30", class: "wet" + (c === R ? " slow" : ""), filter: `url(#glow${L.dir})` }, pipes);
       el("path", { d, fill: "none", stroke: c, "stroke-width": "2", "stroke-linecap": "round", "stroke-dasharray": "10 30", class: "wet" + (c === R ? " slow" : "") }, pipes);
       const dur = c === R ? 5.5 : 3.2 + (i % 3) * 0.4;
-      for (let k = 0; k < (c === R ? 1 : 2); k++) { const dot = el("circle", { r: "4.5", fill: c === G ? G : "#eafff4", class: "drop", filter: `url(#glow${L.dir})` }, pipes);
+      for (let k = 0; k < (c === R ? 1 : 2); k++) { const dot = el("circle", { r: "4.5", fill: c === G ? G : "#eef5ff", class: "drop", filter: `url(#glow${L.dir})` }, pipes);
         el("animateMotion", { dur: dur + "s", repeatCount: "indefinite", begin: `${-k * dur / 2 - i * 0.37}s`, path: d }, dot); }
     });
     for (const id in N) {
       const [x, y, w, h, t, sub, list] = N[id], c = id === "no" ? R : id === "you" ? G : M, g = el("g", {}, boxes);
-      el("rect", { x, y, width: w, height: h, rx: 14, fill: "#06100c", stroke: c, "stroke-opacity": id === "vault" ? ".9" : ".45", "stroke-width": id === "vault" ? 1.6 : 1 }, g);
+      el("rect", { x, y, width: w, height: h, rx: 14, fill: "#070c16", stroke: c, "stroke-opacity": id === "vault" ? ".9" : ".45", "stroke-width": id === "vault" ? 1.6 : 1 }, g);
       if (w > 130) el("circle", { cx: x + w - 16, cy: y + 18, r: 4, fill: c }, g);
-      const tt = el("text", { x: x + 16, y: y + (list ? 32 : h / 2 - 2), fill: "#e3ebe5", "font-family": "Familjen Grotesk, sans-serif", "font-weight": 700, "font-size": list ? 21 : 17 }, g); tt.textContent = t;
-      if (sub) { const s2 = el("text", { x: x + 16, y: y + h / 2 + 18, fill: "#9fb5aa", "font-family": "IBM Plex Mono, monospace", "font-size": 12.5 }, g); s2.textContent = sub; }
+      const tt = el("text", { x: x + 16, y: y + (list ? 32 : h / 2 - 2), fill: "#eef3fa", "font-family": "Space Grotesk, sans-serif", "font-weight": 700, "font-size": list ? 21 : 17 }, g); tt.textContent = t;
+      if (sub) { const s2 = el("text", { x: x + 16, y: y + h / 2 + 18, fill: "#93a1b8", "font-family": "Space Mono, monospace", "font-size": 12.5 }, g); s2.textContent = sub; }
       if (list) list.forEach((li, k) => { const yy = y + 66 + k * 38;
-        el("rect", { x: x + 14, y: yy - 19, width: w - 28, height: 30, rx: 8, fill: "#04070a" }, g);
-        const a = el("text", { x: x + 26, y: yy, fill: "#cfe0d6", "font-family": "IBM Plex Mono, monospace", "font-size": 12.5 }, g); a.textContent = li;
-        const ok = el("text", { x: x + w - 26, y: yy, fill: M, "text-anchor": "end", "font-family": "IBM Plex Mono, monospace", "font-size": 12.5, "font-weight": 600 }, g); ok.textContent = "✓";
+        el("rect", { x: x + 14, y: yy - 19, width: w - 28, height: 30, rx: 8, fill: "#05070d" }, g);
+        const a = el("text", { x: x + 26, y: yy, fill: "#d3dceb", "font-family": "Space Mono, monospace", "font-size": 12.5 }, g); a.textContent = li;
+        const ok = el("text", { x: x + w - 26, y: yy, fill: M, "text-anchor": "end", "font-family": "Space Mono, monospace", "font-size": 12.5, "font-weight": 600 }, g); ok.textContent = "✓";
         const sc = el("rect", { x: x + 14, y: yy - 19, width: 0, height: 30, rx: 8, fill: M, "fill-opacity": ".12" }, g);
         el("animate", { attributeName: "width", values: `0;${w - 28};${w - 28};0`, keyTimes: "0;.25;.8;1", dur: "3.2s", begin: `${k * 0.45}s`, repeatCount: "indefinite" }, sc); });
     }
   }
   document.querySelectorAll(".pipe").forEach((p) => { build(H, p.querySelector(".h")); build(V, p.querySelector(".v")); });
+})();
+
+// public ledger: read straight from Robinhood Chain, no server. Vaults come from the Allot Factory's VaultCreated events,
+// payments from USDG Transfer events out of those vaults, classified by the other events in the same transaction
+(() => {
+  const RPC = "https://rpc.mainnet.chain.robinhood.com", EXP = "https://robinhoodchain.blockscout.com", USDG = "0x5fc5360d0400a0fd4f2af552add042d716f1d168";
+  const T = { created: "0x0b045af6aff86dd2cda5342fd0329a354dc66759ff1eda00d7ecf13a76c7fb3b", transfer: "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef", authUsed: "0x98de503528ee59b575ef0c0a2576a82497bfc029a5685b209e9ec333479b10a5", paid: "0xaa1c213df8b2ea1210243bbab345f0aa02826cd3b851cc92522eff84a1cf0f5e", withdrawn: "0x7084f5476618d8e60b11ef0d7d3f06914655adb8793e28ff7f018d4c76d505d5", agentSet: "0x847bbbd6959b7a64e1215d42f71ac0b56a53ad525e76f755e09f7708d3db37c8", authorized: "0xa2583fc4aed8837d363d1efef7f53f099d5d9935fd4266d54f92ea61bac47e6e" };
+  const KNOWN = { "0xe2933e837de82d2e05f22c8dbc5179e46ce39319": "Allot sample API" };
+  const $ = (id) => document.getElementById(id), sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const addr = (t) => "0x" + t.slice(-40), short = (a) => a.slice(0, 6) + "…" + a.slice(-4), hex = (n) => "0x" + n.toString(16);
+  const usdg = (raw) => (Number(BigInt(raw)) / 1e6).toLocaleString("en-US", { maximumFractionDigits: 6 });
+  async function rpc(method, params) {
+    for (let k = 0; k < 6; k++) { try { const r = await fetch(RPC, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }) }); const j = await r.json();
+      if (j.error) { if (j.error.code === 429) { await sleep(1500 * (k + 1)); continue; } throw new Error(j.error.message); } return j.result; } catch (e) { if (k === 5) throw e; await sleep(1500 * (k + 1)); } }
+    throw new Error("Robinhood Chain RPC is busy");
+  }
+  let busy = false;
+  async function load() {
+    if (busy) return; busy = true; $("lstate").textContent = "Reading Robinhood Chain…";
+    try {
+      const cfg = await (await fetch("config.json?t=" + Date.now(), { cache: "no-store" })).json(), from = hex(cfg.factoryBlock);
+      const created = await rpc("eth_getLogs", [{ address: cfg.factory, topics: [T.created], fromBlock: from, toBlock: "latest" }]);
+      const vaults = created.map((l) => "0x" + l.data.slice(26, 66)), vt = vaults.map((v) => "0x" + v.slice(2).padStart(64, "0"));
+      let rows = [], agents = {};
+      if (vaults.length) {
+        const [outs, sets, auths] = await Promise.all([
+          rpc("eth_getLogs", [{ address: USDG, topics: [T.transfer, vt], fromBlock: from, toBlock: "latest" }]),
+          rpc("eth_getLogs", [{ address: vaults, topics: [T.agentSet], fromBlock: from, toBlock: "latest" }]),
+          rpc("eth_getLogs", [{ address: vaults, topics: [T.authorized], fromBlock: from, toBlock: "latest" }])]);
+        for (const l of sets) agents[l.address.toLowerCase() + addr(l.topics[1])] = BigInt("0x" + l.data.slice(2 + 64 * 3, 2 + 64 * 4)) === 1n; // last AgentSet wins
+        const recent = outs.slice(-50).reverse(), blocks = {}, receipts = {};
+        await Promise.all([...new Set(recent.map((l) => l.blockNumber))].map(async (b) => { blocks[b] = Number((await rpc("eth_getBlockByNumber", [b, false])).timestamp); }));
+        await Promise.all([...new Set(recent.map((l) => l.transactionHash))].map(async (h) => { receipts[h] = await rpc("eth_getTransactionReceipt", [h]); }));
+        for (const l of recent) {
+          const rc = receipts[l.transactionHash], vault = addr(l.topics[1]), to = addr(l.topics[2]), amount = BigInt(l.data);
+          const has = (topic, at) => rc.logs.some((x) => x.topics[0] === topic && (!at || x.address.toLowerCase() === at));
+          let what = "transfer", ai = "";
+          if (has(T.authUsed, USDG)) { what = "x402 payment"; const a = auths.filter((x) => x.address.toLowerCase() === vault && addr(x.topics[2]) === to && BigInt("0x" + x.data.slice(2, 66)) === amount && Number(x.blockNumber) <= Number(l.blockNumber)).pop(); ai = a ? addr(a.topics[1]) : rc.from; }
+          else if (has(T.paid, vault)) { what = "direct payment"; const p = rc.logs.find((x) => x.topics[0] === T.paid); ai = addr(p.topics[1]); }
+          else if (has(T.withdrawn, vault)) what = "owner withdrawal";
+          rows.push({ t: blocks[l.blockNumber], what, ai, vault, to, amount, tx: l.transactionHash });
+        }
+      }
+      const allPays = rows.filter((r) => r.what !== "owner withdrawal" && r.what !== "transfer");
+      const st = $("lstats").querySelectorAll("b");
+      st[0].textContent = vaults.length; st[1].textContent = Object.values(agents).filter(Boolean).length;
+      st[2].textContent = rows.filter((r) => r.what === "x402 payment").length; st[3].textContent = usdg(allPays.reduce((s, r) => s + r.amount, 0n));
+      const tb = $("ltable"); tb.querySelectorAll("tr:not(:first-child)").forEach((r) => r.remove());
+      for (const r of rows) { const tr = document.createElement("tr"), d = new Date(r.t * 1000).toISOString().replace("T", " ").slice(0, 16);
+        tr.innerHTML = `<td class="k">${d}</td><td class="${r.what === "owner withdrawal" ? "wd" : "ok"}">${r.what}</td><td class="k">${r.ai ? short(r.ai) : "—"}</td><td><a href="${EXP}/address/${r.vault}" target="_blank" rel="noopener">${short(r.vault)}</a></td><td class="k">${r.what === "owner withdrawal" ? "owner " + short(r.to) : KNOWN[r.to] || short(r.to)}</td><td>${usdg(r.amount)} USDG</td><td><a href="${EXP}/tx/${r.tx}" target="_blank" rel="noopener">${short(r.tx)} ↗</a></td>`; tb.appendChild(tr); }
+      if (!rows.length) { const tr = document.createElement("tr"); tr.innerHTML = '<td colspan="7" class="k">No payments yet.</td>'; tb.appendChild(tr); }
+      $("lstate").textContent = `Live from Robinhood Chain mainnet · updated ${new Date().toLocaleTimeString()}`;
+    } catch (e) { $("lstate").textContent = "Could not read Robinhood Chain right now (" + e.message + "). Try Refresh."; }
+    busy = false;
+  }
+  $("lrefresh").onclick = load;
+  let started = false; const go = () => { if (location.hash === "#ledger" && !started) { started = true; load(); setInterval(() => location.hash === "#ledger" && load(), 60000); } };
+  addEventListener("hashchange", go); go();
 })();
 </script>
 </body>
