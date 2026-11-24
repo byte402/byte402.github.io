@@ -234,13 +234,28 @@ h1 em,h2 em{color:var(--mute)!important;font-style:italic!important}
 .tokbtns{display:flex;gap:8px}.tokbtns button,.tokbtns a{font:600 13px var(--mono);color:var(--ink);background:transparent;border:1px solid rgba(242,240,235,.3);border-radius:4px;padding:9px 13px;cursor:pointer;text-decoration:none}
 .tokbtns button{background:#f2f0eb;color:#0a0a0a;border-color:#f2f0eb}.tok .ex{padding:0 20px 16px;margin:0}
 .tok-home{margin-top:26px}
+
+/* APIs page */
+html,body{overflow-x:clip}
+.apis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:26px;align-items:start}
+.api{min-width:0;position:relative;background:#0e0e0e;border:1px solid var(--line);border-radius:4px;padding:18px 18px 16px;display:flex;flex-direction:column;gap:10px}
+.api .ah{display:flex;justify-content:space-between;align-items:baseline;gap:8px 12px}.api .ah code{font:600 15px var(--mono);color:var(--ink);min-width:0;overflow-wrap:anywhere}
+.api .pr{flex-shrink:0;font:500 12.5px var(--mono);color:var(--ink);border:1px solid rgba(242,240,235,.25);border-radius:3px;padding:3px 8px;white-space:nowrap}
+.api .nw{font:500 10px var(--mono);letter-spacing:.16em;color:var(--mute);margin-left:8px}
+.api p{margin:0;color:var(--mute);font-size:14px}.api .f{font:500 12px/1.6 var(--mono);color:var(--dim)}
+.api .ab{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}.api .ab button{font:600 12px var(--mono);color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:4px;padding:7px 11px;cursor:pointer}.api .ab button:hover{border-color:rgba(242,240,235,.5)}
+.api .ab button.pri{background:var(--ink);color:#0a0a0a;border-color:var(--ink)}
+.api pre{display:none;margin:0;max-height:260px;overflow:auto;background:#080808;border:1px solid var(--line);border-radius:4px;padding:12px;font:500 12px/1.55 var(--mono);color:var(--mute);white-space:pre-wrap;overflow-wrap:anywhere}.api pre.on{display:block}
+.astat{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;margin-top:18px;font:500 12.5px var(--mono);color:var(--dim)}.astat b{color:var(--ink);font-weight:500}
+.aproof{margin-top:22px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:900px){.apis,.aproof{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <canvas id="flow" aria-hidden="true"></canvas>
 <header><div class="wrap">
   <a class="logo" href="/" style="text-decoration:none;color:inherit"><span class="mark" aria-hidden="true"></span>Allot</a>
-  <nav aria-label="Main"><a href="/">Home</a><a href="/app">App</a><a href="/promises">Promises</a><a href="/how">How it works</a><a href="/connect">Connect</a><a href="/ledger">Ledger</a><a href="/launch">Launch</a></nav>
+  <nav aria-label="Main"><a href="/">Home</a><a href="/app">App</a><a href="/promises">Promises</a><a href="/how">How it works</a><a href="/connect">Connect</a><a href="/apis">APIs</a><a href="/ledger">Ledger</a><a href="/launch">Launch</a></nav>
   <span class="soc"><a href="https://x.com/Allot_rh" target="_blank" rel="noopener" aria-label="Allot on X"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M17.75 3h3.07l-6.7 7.66L22 21h-6.17l-4.83-6.32L5.47 21H2.4l7.17-8.2L2 3h6.33l4.37 5.77L17.75 3zm-1.08 16.17h1.7L7.4 4.74H5.58l11.09 14.43z"/></svg></a><a href="https://github.com/byte402" target="_blank" rel="noopener" aria-label="Allot on GitHub"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg></a></span>
   <a class="cta" href="/app">Open the app</a>
 </div></header>
@@ -382,6 +397,19 @@ h1 em,h2 em{color:var(--mute)!important;font-style:italic!important}
     <div class="cnote rv"><b>Open source.</b> Read every line at <a href="https://github.com/byte402/allot-connector" target="_blank" rel="noopener">github.com/byte402/allot-connector ↗</a>. Some assistants prefer not to pay on your behalf: terminal mode lets you confirm each amount with <code>--confirm</code>.</div>
   </section>
 
+  <section id="apis" class="view">
+    <div class="phead"><div class="eyebrow">APIS</div><h2 class="big">Five endpoints, <em>paid per call</em>.</h2>
+    <p class="sub">The Allot sample API sells live Robinhood Chain data in USDG with x402. An AI pays from its vault, inside its rules, and gets the answer back. The server holds no key and no funds: it checks each payment from the receipt on chain.</p></div>
+    <div class="astat rv"><span><i class="pulse"></i> <span id="aHealth">checking the API…</span></span><span>network <b>Robinhood Chain mainnet</b></span><span>asset <b>USDG</b></span><span>payee <b id="aPayTo">…</b></span></div>
+    <div class="apis rv" id="apiList"></div>
+    <div class="aproof rv">
+      <a class="pf tilt" href="https://robinhoodchain.blockscout.com/tx/0x917f0100b99e753db76955c8c0d023d4be6792df5357c4154c5f54db04e6b396" target="_blank" rel="noopener"><b>First paid /v1/prices</b><span>0.02 USDG · block 122,180,445 ↗</span></a>
+      <a class="pf tilt" href="https://robinhoodchain.blockscout.com/tx/0x66d2ef61c2350f95175ff1b73db59021e04ea67ccc82d367424f10310afd05c5" target="_blank" rel="noopener"><b>First paid /v1/price</b><span>0.01 USDG · block 121,877,960 ↗</span></a>
+      <a class="pf tilt" href="https://github.com/byte402/allot-api" target="_blank" rel="noopener"><b>Build your own</b><span>one Cloudflare Worker, MIT ↗</span></a>
+    </div>
+    <div class="cnote rv"><b>Try before you pay.</b> "See the 402" calls the endpoint without payment and shows the real offer: price, payee and a one-time nonce. Nothing is paid from this page. To pay, run the command from your own terminal with your AI key, or let your assistant call <code>allot_pay_x402</code>.</div>
+  </section>
+
   <section id="ledger" class="view">
     <div class="phead"><div class="eyebrow">LEDGER</div><h2 class="big">Every payment, <em>on the record</em>.</h2>
     <p class="sub">Read live from Robinhood Chain: every USDG that leaves an Allot Vault, which AI sent it, where it went, and the transaction you can open yourself. Nothing here is typed by us.</p></div>
@@ -407,9 +435,9 @@ h1 em,h2 em{color:var(--mute)!important;font-style:italic!important}
     <div class="road rv">
       <div class="rline"><i></i></div>
       <div class="rs now"><span class="rdot"></span><b>DONE</b><h3>Live on mainnet</h3><p>Vault contracts, the app, the connector and a paid x402 API.</p></div>
-      <div class="rs now"><span class="rdot"></span><b>NOW</b><h3>$ALLOT on Pons</h3><p>Launch, with the contract address on this page and on X.</p></div>
-      <div class="rs"><span class="rdot"></span><b>NEXT</b><h3>More APIs, more AIs</h3><p>More x402 APIs and agents paying through Allot.</p></div>
-      <div class="rs"><span class="rdot"></span><b>THEN</b><h3>Reviewed and verified</h3><p>Security review and verified contract source.</p></div>
+      <div class="rs now"><span class="rdot"></span><b>DONE</b><h3>$ALLOT and verified source</h3><p>$ALLOT on Pons. Factory and Vault verified on Sourcify, exact match.</p></div>
+      <div class="rs now"><span class="rdot"></span><b>NOW</b><h3>More APIs, more AIs</h3><p>Five paid x402 endpoints live. More APIs and agents paying through Allot.</p></div>
+      <div class="rs"><span class="rdot"></span><b>NEXT</b><h3>Security review</h3><p>An open review of the contracts, then an audit.</p></div>
     </div>
     <div class="proofs rv">
       <div class="eyebrow">ALREADY LIVE, CHECK IT YOURSELF</div>
@@ -423,8 +451,8 @@ h1 em,h2 em{color:var(--mute)!important;font-style:italic!important}
 </main>
 <footer><div class="wrap">Allot · built on x402, USDG and Robinhood Chain</div></footer>
 <script>
-const VIEWS = ["home", "promises", "how", "connect", "ledger", "launch"];
-const LABEL = { home: "Home", promises: "Promises", how: "How it works", connect: "Connect", ledger: "Ledger", launch: "Launch" };
+const VIEWS = ["home", "promises", "how", "connect", "apis", "ledger", "launch"];
+const LABEL = { home: "Home", promises: "Promises", how: "How it works", connect: "Connect", apis: "APIs", ledger: "Ledger", launch: "Launch" };
 document.querySelectorAll(".view").forEach((v) => { const i = VIEWS.indexOf(v.id), nx = VIEWS[i + 1], pv = VIEWS[i - 1]; if (v.id === "home") return; const d = document.createElement("div"); d.className = "next"; d.innerHTML = (pv ? `<a href="${pv === "home" ? "/" : "/" + pv}">← ${LABEL[pv]}</a>` : "") + (nx ? `<a href="/${nx}">${LABEL[nx]} →</a>` : ""); v.appendChild(d); });
 // clean paths: allot.dev/, allot.dev/promises, allot.dev/ledger ... (404.html sends deep links back here as ?p=)
 function ROUTE() { const seg = location.pathname.replace(/\/+$/, "").split("/").pop().replace(/\.html$/, ""); return VIEWS.includes(seg) ? seg : "home"; }
@@ -906,6 +934,42 @@ const LIVE = (() => {
       const e = q(".tk-exp"); e.hidden = false; e.href = "https://robinhoodchain.blockscout.com/token/" + c.token;
       if (c.tokenUrl) q(".tk-pons").href = c.tokenUrl; });
   }).catch(() => {}); })();
+
+// APIs page: endpoints and prices read live from the API itself; "See the 402" shows the real unpaid answer
+(() => {
+  const API = "https://allot-api.polished-dream-0948.workers.dev", $ = (id) => document.getElementById(id);
+  const META = {
+    "/v1/price?symbol=NVDA": ["One market price", "symbol, priceUsdg, quotedWith, at", false],
+    "/v1/prices": ["Every market price in one call", "prices{ETH, BTC, NVDA, TSLA, … 14 markets}, unit, missing, at", true],
+    "/v1/quote?from=USDG&to=NVDA&amount=100": ["A swap quote. Nothing is swapped", "amountOut, rate, amountInUsd, amountOutUsd, gasUsd, venues", true],
+    "/v1/wallet?address=0x…": ["Balances of an address", "ETH, USDG and market tokens (non-zero), block", true],
+    "/v1/chain": ["Chain at a glance", "block, avgBlockSeconds, gasPriceGwei, baseFeeGwei, usdgTotalSupply", true],
+  };
+  const SAMPLE = { "/v1/wallet?address=0x…": "/v1/wallet?address=0x000000000000000000000000000000000000dEaD" };
+  let built = false;
+  function card(path, price) {
+    const [title, fields, isNew] = META[path] || [path, "", false], url = API + (SAMPLE[path] || path), amt = String(price).replace(/ USDG$/, "");
+    const d = document.createElement("div"); d.className = "api tilt";
+    d.innerHTML = `<div class="ah"><code>${path.replace(/</g, "&lt;")}</code><span class="pr">${price}</span></div><p>${title}${isNew ? '<span class="nw">NEW</span>' : ""}</p><div class="f">${fields}</div>
+      <div class="ab"><button type="button" class="pri" data-a="see">See the 402</button><button type="button" data-a="cmd">Copy pay command</button></div><pre></pre>`;
+    const pre = d.querySelector("pre"), cmd = `npx -y github:byte402/allot-connector pay "${url}" --confirm ${amt}`;
+    d.querySelector('[data-a="see"]').onclick = async (e) => { pre.classList.add("on"); pre.textContent = "GET " + url + "\n…";
+      try { const r = await fetch(url); const j = await r.json(); const o = (j.accepts || [])[0];
+        pre.textContent = `GET ${url}\nHTTP ${r.status}${r.status === 402 ? " Payment Required" : ""}\n\n` + (o ? `price    ${Number(o.amount) / 1e6} USDG\nnetwork  ${o.network}\nasset    ${o.asset}\npayTo    ${o.payTo}\nnonce    ${o.extra?.nonce}\nexpires  ${new Date(o.extra?.expires * 1000).toISOString()}\nsettle   by the payer (EIP-3009), then send the tx hash\n\nNothing was paid.` : JSON.stringify(j, null, 2));
+      } catch (err) { pre.textContent = "Could not reach the API from this browser: " + err.message; } };
+    d.querySelector('[data-a="cmd"]').onclick = async (e) => { const b = e.currentTarget; try { await navigator.clipboard.writeText(cmd); b.textContent = "Copied"; } catch { pre.classList.add("on"); pre.textContent = cmd; } setTimeout(() => (b.textContent = "Copy pay command"), 1600); };
+    return d;
+  }
+  async function load() {
+    if (built) return; built = true; const list = $("apiList");
+    try { const j = await (await fetch(API + "/")).json(); $("aPayTo").textContent = j.payTo ? j.payTo.slice(0, 6) + "…" + j.payTo.slice(-4) : "–";
+      for (const [p, price] of Object.entries(j.endpoints || {})) list.appendChild(card(p, price));
+    } catch { for (const [p, price] of [["/v1/price?symbol=NVDA", "0.01 USDG"], ["/v1/prices", "0.02 USDG"], ["/v1/quote?from=USDG&to=NVDA&amount=100", "0.01 USDG"], ["/v1/wallet?address=0x…", "0.01 USDG"], ["/v1/chain", "0.005 USDG"]]) list.appendChild(card(p, price)); }
+    try { const h = await (await fetch(API + "/health")).json(); $("aHealth").textContent = h.ok ? `API live · version ${h.version} · price source ${h.priceSource} · chain ${h.chain}` : "API answering, a source is busy: " + JSON.stringify(h); }
+    catch { $("aHealth").textContent = "Could not reach the API from this browser right now"; }
+  }
+  addEventListener("allot:route", () => { if (ROUTE() === "apis") load(); }); if (ROUTE() === "apis") load();
+})();
 </script>
 </body>
 </html>
