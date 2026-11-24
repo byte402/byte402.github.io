@@ -423,11 +423,11 @@ addEventListener("hashchange", show); show();
   addEventListener("mousemove", (e) => { mx = e.clientX; lastMove = performance.now(); }, { passive: true });
   const t0 = performance.now();
   function draw(now) {
-    const t = (now - t0) / 1000, home = (document.querySelector(".view.on") || {}).id === "home", A = home ? 0.55 : 1;
+    const t = (now - t0) / 1000, home = (document.querySelector(".view.on") || {}).id === "home", A = home ? 0.8 : 1;
     const idle = !mx || now - lastMove > 4000, fx = idle ? W * (0.5 + 0.38 * Math.sin(t * 0.18)) : mx, fy = H * 0.92;
     x.clearRect(0, 0, W, H);
     // faint field
-    x.lineWidth = 0.55; x.strokeStyle = `rgba(242,240,235,${0.06 * A})`; x.beginPath();
+    x.lineWidth = 0.6; x.strokeStyle = `rgba(242,240,235,${0.1 * A})`; x.beginPath();
     const hot = [];
     for (const p of th) { const near = Math.abs(p.tx - fx) < W * 0.09; if (near) { hot.push(p); continue; }
       const s = Math.sin(t * 0.6 + p.ph) * p.amp; x.moveTo(p.sx, -4); x.bezierCurveTo(p.sx + s, p.c1, p.tx - s, H - p.c2, p.tx, H + 4); }
@@ -444,7 +444,7 @@ addEventListener("hashchange", show); show();
     // the point they gather on
     const g = x.createRadialGradient(fx, fy, 0, fx, fy, 40); g.addColorStop(0, `rgba(255,255,255,${0.35 * A})`); g.addColorStop(1, "rgba(255,255,255,0)"); x.fillStyle = g; x.beginPath(); x.arc(fx, fy, 40, 0, 6.283); x.fill();
   }
-  function frame(now) { requestAnimationFrame(frame); if (document.hidden) return; if ((document.querySelector(".view.on") || {}).id === "home") { x.clearRect(0, 0, W, H); return; } draw(now); }
+  function frame(now) { requestAnimationFrame(frame); if (!document.hidden) draw(now); }
   if (still) draw(performance.now()); else requestAnimationFrame(frame);
 })();
 
