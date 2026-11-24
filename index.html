@@ -402,6 +402,7 @@ const VIEWS = ["home", "promises", "how", "connect", "ledger", "launch"];
 const LABEL = { home: "Home", promises: "Promises", how: "How it works", connect: "Connect", ledger: "Ledger", launch: "Launch" };
 document.querySelectorAll(".view").forEach((v) => { const i = VIEWS.indexOf(v.id), nx = VIEWS[i + 1], pv = VIEWS[i - 1]; if (v.id === "home") return; const d = document.createElement("div"); d.className = "next"; d.innerHTML = (pv ? `<a href="#${pv}">← ${LABEL[pv]}</a>` : "") + (nx ? `<a href="#${nx}">${LABEL[nx]} →</a>` : ""); v.appendChild(d); });
 function show() { const h = location.hash.slice(1), id = VIEWS.includes(h) ? h : "home";
+  if (id === "home" && location.hash) history.replaceState(null, "", location.pathname + location.search); // home lives at allot.dev, not allot.dev/#home
   document.querySelectorAll(".view").forEach((v) => v.classList.toggle("on", v.id === id));
   document.querySelectorAll("nav a").forEach((a) => a.classList.toggle("on", a.getAttribute("href") === "#" + id));
   window.scrollTo(0, 0); }
