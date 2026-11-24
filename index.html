@@ -265,13 +265,23 @@ html,body{overflow-x:clip}
 .bcheck h3{margin:0 0 10px;font:400 26px "Instrument Serif",Georgia,serif}.bcheck ol{margin:0;padding-left:20px;color:var(--mute);font-size:14.5px;line-height:1.75}.bcheck b{color:var(--ink);font-weight:500}
 .bcta{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
 @media (max-width:900px){.bwhy{grid-template-columns:1fr}.bstep{grid-template-columns:minmax(0,1fr);gap:6px}.bstep .n{font-size:30px}}
+
+/* Security page */
+.sgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+.sbox{background:#0e0e0e;border:1px solid var(--line);border-radius:4px;padding:18px}
+.sbox h3{margin:0 0 6px;font:400 24px/1.1 "Instrument Serif",Georgia,serif}.sbox p{margin:0;color:var(--mute);font-size:14.5px}.sbox code{font:500 12.5px var(--mono);color:var(--ink)}
+.sbox.lim{border-style:dashed}.sbox .tag{display:inline-block;margin-bottom:8px;font:500 10.5px var(--mono);letter-spacing:.16em;color:var(--dim)}
+.shead{margin-top:44px}.shead .eyebrow{margin-bottom:4px}.shead h3{margin:0;font:400 34px/1.1 "Instrument Serif",Georgia,serif;letter-spacing:-.01em}
+.sreport{margin-top:14px;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:12px}
+.sreport ol{margin:0;padding-left:20px;color:var(--mute);font-size:14.5px;line-height:1.8}.sreport b{color:var(--ink);font-weight:500}.sreport a{color:var(--ink)}
+@media (max-width:900px){.sgrid,.sreport{grid-template-columns:minmax(0,1fr)}}
 </style>
 </head>
 <body>
 <canvas id="flow" aria-hidden="true"></canvas>
 <header><div class="wrap">
   <a class="logo" href="/" style="text-decoration:none;color:inherit"><span class="mark" aria-hidden="true"></span>Allot</a>
-  <nav aria-label="Main"><a href="/">Home</a><a href="/app">App</a><a href="/promises">Promises</a><a href="/how">How it works</a><a href="/connect">Connect</a><a href="/apis">APIs</a><a href="/build">Build</a><a href="/ledger">Ledger</a><a href="/launch">Launch</a></nav>
+  <nav aria-label="Main"><a href="/">Home</a><a href="/app">App</a><a href="/promises">Promises</a><a href="/how">How it works</a><a href="/connect">Connect</a><a href="/apis">APIs</a><a href="/build">Build</a><a href="/security">Security</a><a href="/ledger">Ledger</a><a href="/launch">Launch</a></nav>
   <span class="soc"><a href="https://x.com/Allot_rh" target="_blank" rel="noopener" aria-label="Allot on X"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M17.75 3h3.07l-6.7 7.66L22 21h-6.17l-4.83-6.32L5.47 21H2.4l7.17-8.2L2 3h6.33l4.37 5.77L17.75 3zm-1.08 16.17h1.7L7.4 4.74H5.58l11.09 14.43z"/></svg></a><a href="https://github.com/byte402" target="_blank" rel="noopener" aria-label="Allot on GitHub"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg></a></span>
   <a class="cta" href="/app">Open the app</a>
 </div></header>
@@ -455,10 +465,43 @@ npx -y github:byte402/allot-connector pay &quot;https://your-worker.workers.dev/
       <li>Without payment it answers <b>402</b> with the price, your payee and a nonce: an HMAC of the request and an expiry, so nothing is stored.</li>
       <li>The payer settles its own EIP-3009 authorization in USDG and sends the <b>transaction hash</b> in the payment-signature header.</li>
       <li>Your worker reads the receipt from Robinhood Chain: the transaction succeeded, at least the <b>price</b> reached <b>PAY_TO</b>, and <b>AuthorizationUsed</b> carries the nonce it issued.</li>
-      <li>One transaction buys one answer. A replayed transaction is refused.</li>
+      <li>One transaction buys one answer. A replayed transaction is refused by the data center that served it; for strict one-time use across all of them, see <a href="/security">Security</a>.</li>
     </ol></div>
     <div class="bcta rv"><a class="cta" href="https://github.com/byte402/allot-api" target="_blank" rel="noopener">Open the template ↗</a><a class="ghost" href="/apis">See the live APIs</a></div>
     <div class="cnote rv"><b>A template, MIT licensed.</b> You run your own worker and answer for the data it sells. The Allot contracts are verified on Sourcify and not audited yet, so start with small prices.</div>
+  </section>
+
+  <section id="security" class="view">
+    <div class="phead"><div class="eyebrow">SECURITY</div><h2 class="big">What holds, <em>and what doesn't yet</em>.</h2>
+    <p class="sub">Every rule your AI follows is enforced by the vault contract on Robinhood Chain, not by the AI or by us. Here is what that code guarantees, its known limits, and how to report anything you find. The contracts are verified on Sourcify and not audited yet.</p></div>
+
+    <div class="shead rv"><div class="eyebrow">GUARANTEED BY THE CONTRACT</div><h3>Read it in AllotVault.sol</h3></div>
+    <div class="sgrid rv">
+      <div class="sbox"><h3>Only your wallet controls the vault</h3><p>Adding an AI, its payees, freeze, unfreeze and withdraw are <code>onlyOwner</code>. There is no admin key and no upgrade path. The factory only deploys and lists vaults, and keeps no control over them.</p></div>
+      <div class="sbox"><h3>Every AI payment passes every rule</h3><p>Before any transfer, <code>_spend</code> refuses if the vault is frozen, the AI is not active, its key has expired, the payee is not on its list, the amount is over the cap, or today's x402 limit would be passed.</p></div>
+      <div class="sbox"><h3>Exact, one-time authorizations</h3><p>For x402 the vault approves one EIP-3009 transfer by its exact digest. USDG asks <code>isValidSignature</code>, and the answer is yes only for that digest, and never while the vault is frozen. No open allowance is left behind.</p></div>
+      <div class="sbox"><h3>Unsettled payments give the limit back</h3><p>An authorization that was never settled can be cancelled with <code>release</code> by the AI or the owner. On the same UTC day its amount returns to the AI's limit.</p></div>
+    </div>
+
+    <div class="shead rv"><div class="eyebrow">KNOWN LIMITS</div><h3>Stated plainly</h3></div>
+    <div class="sgrid rv">
+      <div class="sbox lim"><span class="tag">NOT AUDITED</span><h3>No audit yet</h3><p>The Factory and Vault are verified on Sourcify with an exact match, but no audit firm has reviewed them. Keep balances small.</p></div>
+      <div class="sbox lim"><span class="tag">REVOKE</span><h3>Revoke stops new payments</h3><p><code>revoke</code> turns an AI off at once, but an authorization it made just before stays valid until it expires, about 5 minutes with the connector. To stop it now, freeze the vault or call <code>release</code>. That amount was already inside the AI's rules.</p></div>
+      <div class="sbox lim"><span class="tag">TRUST</span><h3>What you rely on</h3><p>The USDG token contract and its EIP-3009 and ERC-1271 handling, Robinhood Chain itself, and the machine your AI key lives on. A leaked AI key can still only pay approved payees, within the cap and the daily limit.</p></div>
+      <div class="sbox lim"><span class="tag">SAMPLE API</span><h3>Replay check is per data center</h3><p>The sample API remembers settled payments in Cloudflare's cache, which is kept per data center. The same payment replayed elsewhere could get a second answer: a cost to the API owner, never to the buyer. For strict one-time use, store them in Workers KV or a Durable Object.</p></div>
+    </div>
+
+    <div class="shead rv"><div class="eyebrow">OPEN REVIEW</div><h3>Found something? Tell us first</h3></div>
+    <div class="sreport rv">
+      <div class="sbox"><ol>
+        <li>Email <a href="mailto:hello@allot.dev">hello@allot.dev</a> with what you found, the steps to reproduce it, and the contract or file it concerns.</li>
+        <li>Please do not post a working exploit in public or use it on a vault you do not own while we look into it.</li>
+        <li>We confirm, fix or explain, and credit you in the changelog if you want.</li>
+        <li>Questions and ideas that are not vulnerabilities are welcome as GitHub issues.</li>
+      </ol></div>
+      <div class="sbox"><h3>Check it yourself</h3><p><a href="https://repo.sourcify.dev/4663/0xc2623e62d5fae1eeebc2990a9d51f9e69a8a9092" target="_blank" rel="noopener">AllotFactory on Sourcify ↗</a><br><a href="https://repo.sourcify.dev/4663/0xF64cF6131941B9B239ab61866429eB46132012Ca" target="_blank" rel="noopener">AllotVault on Sourcify ↗</a><br><a href="https://github.com/byte402/allot-contracts" target="_blank" rel="noopener">Contracts and tests on GitHub ↗</a><br><a href="https://github.com/byte402/allot-connector" target="_blank" rel="noopener">Connector source ↗</a></p></div>
+    </div>
+    <div class="cnote rv"><b>In the app,</b> every write is simulated on Robinhood Chain mainnet before you sign, and you sign it in your own wallet. Allot never sees your AI's key: it is made in your browser and shown once.</div>
   </section>
 
   <section id="ledger" class="view">
@@ -502,8 +545,8 @@ npx -y github:byte402/allot-connector pay &quot;https://your-worker.workers.dev/
 </main>
 <footer><div class="wrap">Allot · built on x402, USDG and Robinhood Chain</div></footer>
 <script>
-const VIEWS = ["home", "promises", "how", "connect", "apis", "build", "ledger", "launch"];
-const LABEL = { home: "Home", promises: "Promises", how: "How it works", connect: "Connect", apis: "APIs", build: "Build", ledger: "Ledger", launch: "Launch" };
+const VIEWS = ["home", "promises", "how", "connect", "apis", "build", "security", "ledger", "launch"];
+const LABEL = { home: "Home", promises: "Promises", how: "How it works", connect: "Connect", apis: "APIs", build: "Build", security: "Security", ledger: "Ledger", launch: "Launch" };
 document.querySelectorAll(".view").forEach((v) => { const i = VIEWS.indexOf(v.id), nx = VIEWS[i + 1], pv = VIEWS[i - 1]; if (v.id === "home") return; const d = document.createElement("div"); d.className = "next"; d.innerHTML = (pv ? `<a href="${pv === "home" ? "/" : "/" + pv}">← ${LABEL[pv]}</a>` : "") + (nx ? `<a href="/${nx}">${LABEL[nx]} →</a>` : ""); v.appendChild(d); });
 // clean paths: allot.dev/, allot.dev/promises, allot.dev/ledger ... (404.html sends deep links back here as ?p=)
 function ROUTE() { const seg = location.pathname.replace(/\/+$/, "").split("/").pop().replace(/\.html$/, ""); return VIEWS.includes(seg) ? seg : "home"; }
