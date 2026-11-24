@@ -230,8 +230,8 @@ h1 em,h2 em{color:var(--mute)!important;font-style:italic!important}
 <body>
 <canvas id="flow" aria-hidden="true"></canvas>
 <header><div class="wrap">
-  <a class="logo" href="#home" style="text-decoration:none;color:inherit"><span class="mark" aria-hidden="true"></span>Allot</a>
-  <nav aria-label="Main"><a href="#home">Home</a><a href="/app">App</a><a href="#promises">Promises</a><a href="#how">How it works</a><a href="#connect">Connect</a><a href="#ledger">Ledger</a><a href="#launch">Launch</a></nav>
+  <a class="logo" href="/" style="text-decoration:none;color:inherit"><span class="mark" aria-hidden="true"></span>Allot</a>
+  <nav aria-label="Main"><a href="/">Home</a><a href="/app">App</a><a href="/promises">Promises</a><a href="/how">How it works</a><a href="/connect">Connect</a><a href="/ledger">Ledger</a><a href="/launch">Launch</a></nav>
   <span class="pv">BETA</span>
   <a class="cta" href="/app">Open the app</a>
 </div></header>
@@ -247,7 +247,7 @@ h1 em,h2 em{color:var(--mute)!important;font-style:italic!important}
   <div class="herorow">
     <div>
       <p class="lead">AI agents are starting to buy data, APIs and tools on their own. Allot gives each one a vault on Robinhood Chain with rules you write: how much per payment, how much per day, and who it may pay. Every thread above is a request; each one has to pass the rules before a single USDG moves.</p>
-      <div class="btns"><a class="cta" href="/app">Create your x402 vault</a><a class="ghost" href="#how">How it works</a></div>
+      <div class="btns"><a class="cta" href="/app">Create your x402 vault</a><a class="ghost" href="/how">How it works</a></div>
       <div class="works"><span>Claude</span><span>Cursor</span><span>Claude Code</span><span>Any MCP client</span><span>x402 · USDG · Robinhood Chain</span></div>
     </div>
     <div class="req tilt" id="livecard" aria-label="Latest real payment on Robinhood Chain">
@@ -261,7 +261,7 @@ h1 em,h2 em{color:var(--mute)!important;font-style:italic!important}
         <div class="ck"><span id="lc-c3l">Inside the daily x402 limit</span><b id="lc-c3">…</b></div>
         <div class="ck"><span>Settled on Robinhood Chain</span><b id="lc-c4">…</b></div>
       </div>
-      <a class="verdict" id="lc-tx" href="#ledger"><span>Open the transaction</span><span>↗</span></a>
+      <a class="verdict" id="lc-tx" href="/ledger"><span>Open the transaction</span><span>↗</span></a>
       <div class="ex">Read live from mainnet. Nothing on this card is typed by us.</div>
     </div>
   </div>
@@ -346,7 +346,7 @@ h1 em,h2 em{color:var(--mute)!important;font-style:italic!important}
       <div class="tstep rv"><div class="dot">03</div><div class="tc"><h3>Add an AI with its own rules</h3><p>A new key for your AI is made in your browser and shown once. Allot never sees it. Set the cap, the daily x402 limit and the approved payees.</p><div class="mini chipsr"><span>cap 0.05</span><span>limit 1.00 / day</span><span>payee 0xe293…9319</span><span>expires 30 days</span></div><div class="mini"><span class="k">AI key</span> <span id="hxKey" class="hx">0x…</span> <span class="d">· shown once</span></div></div></div>
       <div class="tstep rv"><div class="dot">04</div><div class="tc"><h3>Connect your AI</h3><p>Add the connector to Claude, Cursor or any MCP client, or pay from your terminal and confirm each amount yourself.</p><div class="mini"><span class="k">npx</span> -y github:byte402/allot-connector</div></div></div>
     </div>
-    <div class="howcta rv"><a class="cta" href="/app">Open the app</a><a class="ghost" href="#connect">See the connector</a></div>
+    <div class="howcta rv"><a class="cta" href="/app">Open the app</a><a class="ghost" href="/connect">See the connector</a></div>
   </section>
 
   <section id="connect" class="view">
@@ -392,7 +392,7 @@ h1 em,h2 em{color:var(--mute)!important;font-style:italic!important}
       <a class="pf tilt" href="/app"><b>The app</b><span>create a vault, add an AI, revoke ↗</span></a>
       <a class="pf tilt" href="https://github.com/byte402/allot-connector" target="_blank" rel="noopener"><b>The connector</b><span>open source MCP server ↗</span></a>
       <a class="pf tilt" href="https://allot-api.polished-dream-0948.workers.dev/health" target="_blank" rel="noopener"><b>Sample x402 API</b><span id="apiState">checking…</span></a>
-      <a class="pf tilt" href="#ledger"><b>Public ledger</b><span id="ledState">real payments, live ↗</span></a>
+      <a class="pf tilt" href="/ledger"><b>Public ledger</b><span id="ledState">real payments, live ↗</span></a>
     </div>
   </section>
 </main>
@@ -400,13 +400,21 @@ h1 em,h2 em{color:var(--mute)!important;font-style:italic!important}
 <script>
 const VIEWS = ["home", "promises", "how", "connect", "ledger", "launch"];
 const LABEL = { home: "Home", promises: "Promises", how: "How it works", connect: "Connect", ledger: "Ledger", launch: "Launch" };
-document.querySelectorAll(".view").forEach((v) => { const i = VIEWS.indexOf(v.id), nx = VIEWS[i + 1], pv = VIEWS[i - 1]; if (v.id === "home") return; const d = document.createElement("div"); d.className = "next"; d.innerHTML = (pv ? `<a href="#${pv}">← ${LABEL[pv]}</a>` : "") + (nx ? `<a href="#${nx}">${LABEL[nx]} →</a>` : ""); v.appendChild(d); });
-function show() { const h = location.hash.slice(1), id = VIEWS.includes(h) ? h : "home";
-  if (id === "home" && location.hash) history.replaceState(null, "", location.pathname + location.search); // home lives at allot.dev, not allot.dev/#home
+document.querySelectorAll(".view").forEach((v) => { const i = VIEWS.indexOf(v.id), nx = VIEWS[i + 1], pv = VIEWS[i - 1]; if (v.id === "home") return; const d = document.createElement("div"); d.className = "next"; d.innerHTML = (pv ? `<a href="${pv === "home" ? "/" : "/" + pv}">← ${LABEL[pv]}</a>` : "") + (nx ? `<a href="/${nx}">${LABEL[nx]} →</a>` : ""); v.appendChild(d); });
+// clean paths: allot.dev/, allot.dev/promises, allot.dev/ledger ... (404.html sends deep links back here as ?p=)
+function ROUTE() { const seg = location.pathname.replace(/\/+$/, "").split("/").pop().replace(/\.html$/, ""); return VIEWS.includes(seg) ? seg : "home"; }
+(() => { const q = new URLSearchParams(location.search).get("p"), h = location.hash.slice(1);
+  if (q) history.replaceState(null, "", q);
+  else if (VIEWS.includes(h)) history.replaceState(null, "", h === "home" ? "/" : "/" + h); })();
+function show() { const id = ROUTE();
   document.querySelectorAll(".view").forEach((v) => v.classList.toggle("on", v.id === id));
-  document.querySelectorAll("nav a").forEach((a) => a.classList.toggle("on", a.getAttribute("href") === "#" + id));
-  window.scrollTo(0, 0); }
-addEventListener("hashchange", show); show();
+  document.querySelectorAll("nav a").forEach((a) => a.classList.toggle("on", a.getAttribute("href") === (id === "home" ? "/" : "/" + id)));
+  window.scrollTo(0, 0); dispatchEvent(new Event("allot:route")); }
+function go(path) { if (path !== location.pathname) history.pushState(null, "", path); show(); }
+document.addEventListener("click", (e) => { const a = e.target.closest("a[href]"); if (!a || e.metaKey || e.ctrlKey || e.shiftKey || a.target === "_blank") return;
+  const href = a.getAttribute("href"); const seg = href === "/" ? "home" : href.startsWith("/") ? href.slice(1) : null;
+  if (seg && VIEWS.includes(seg)) { e.preventDefault(); go(href); } });
+addEventListener("popstate", show); show();
 
 // background: threads. Payment requests fall from the top edge as fine lines; the bundle under your cursor
 // (or a slow sweep when the cursor rests) gathers and lights up, like requests converging on one vault rule.
@@ -586,8 +594,8 @@ const LIVE = (() => {
     busy = false;
   }
   $("lrefresh").onclick = load;
-  let started = false; const go = () => { if (location.hash === "#ledger" && !started) { started = true; load(); setInterval(() => location.hash === "#ledger" && load(), 60000); } };
-  addEventListener("hashchange", go); go();
+  let started = false; const go = () => { if (ROUTE() === "ledger" && !started) { started = true; load(); setInterval(() => ROUTE() === "ledger" && load(), 60000); } };
+  addEventListener("allot:route", go); go();
 })();
 
 // ---------- Home: live card, numbers, ticker, pipeline surge ----------
@@ -676,7 +684,7 @@ const LIVE = (() => {
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
   // intro, once per visit
   let seen = false; try { seen = sessionStorage.getItem("allot-intro") === "1"; sessionStorage.setItem("allot-intro", "1"); } catch {}
-  if (!still && !seen && (location.hash === "" || location.hash === "#home")) {
+  if (!still && !seen && ROUTE() === "home") {
     const iv = document.createElement("div"); iv.className = "intro";
     iv.innerHTML = '<svg class="lns" viewBox="0 0 200 170" aria-hidden="true"><path d="M10 0 C10 70,84 90,94.0 160"/><path d="M32 0 C32 70,87 90,95.5 160"/><path d="M54 0 C54 70,90 90,97.0 160"/><path d="M76 0 C76 70,93 90,98.5 160"/><path d="M98 0 C98 70,96 90,100.0 160"/><path d="M120 0 C120 70,99 90,101.5 160"/><path d="M142 0 C142 70,102 90,103.0 160"/><path d="M164 0 C164 70,105 90,104.5 160"/><path d="M186 0 C186 70,108 90,106.0 160"/></svg><div class="iw">Allot</div><div class="is">x402 vaults for AI agents · Robinhood Chain</div>';
     document.body.appendChild(iv); const end = () => { iv.classList.add("out"); setTimeout(() => iv.remove(), 900); };
@@ -714,7 +722,7 @@ const LIVE = (() => {
     walk(h); }
   const onShow = () => { const v = document.querySelector(".view.on"); if (!v) return; titles.forEach(([h, html]) => { if (v.contains(h)) reveal(h, html); });
     v.querySelectorAll(".rv").forEach((el) => { el.classList.remove("in"); requestAnimationFrame(() => setTimeout(() => el.classList.add("in"), 60)); }); };
-  addEventListener("hashchange", () => setTimeout(onShow, 10)); setTimeout(onShow, 30);
+  addEventListener("allot:route", () => setTimeout(onShow, 10)); setTimeout(onShow, 30);
 
   // rule tester: the vault's checks, in the browser
   if ($("tChecks")) {
@@ -742,7 +750,7 @@ const LIVE = (() => {
   if ($("tfill")) {
     const line = document.querySelector(".tline");
     const fill = () => { if (!line.offsetParent) return; const r = line.getBoundingClientRect(), k = Math.min(1, Math.max(0, (innerHeight * 0.6 - r.top) / r.height)); $("tfill").style.height = k * 100 + "%"; };
-    addEventListener("scroll", fill, { passive: true }); addEventListener("hashchange", () => setTimeout(fill, 50)); fill();
+    addEventListener("scroll", fill, { passive: true }); addEventListener("allot:route", () => setTimeout(fill, 50)); fill();
     const hexs = "0123456789abcdef", scramble = (el, len) => { let n = 0; const t = setInterval(() => { let s = "0x"; for (let i = 0; i < len; i++) s += hexs[(Math.random() * 16) | 0]; el.textContent = len > 20 ? s.slice(0, 14) + "…" + s.slice(-6) : s; if (++n > 26) clearInterval(t); }, 45); };
     const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); const h = e.target.querySelector(".hx"); if (h) scramble(h, h.id === "hxKey" ? 64 : 40); } }), { threshold: 0.5 });
     document.querySelectorAll(".tstep").forEach((s) => io.observe(s));
@@ -790,7 +798,7 @@ const LIVE = (() => {
   if ($("apiState")) {
     const check = () => { fetch("https://allot-api.polished-dream-0948.workers.dev/health", { cache: "no-store" }).then((r) => r.json()).then((h) => ($("apiState").textContent = h.ok ? "online · answering 402 ↗" : "price source busy ↗")).catch(() => ($("apiState").textContent = "health check ↗"));
       if (typeof LIVE !== "undefined") LIVE.get().then((d) => ($("ledState").textContent = `${d.x402} real x402 payments ↗`)).catch(() => {}); };
-    let done = false; const go = () => { if (location.hash === "#launch" && !done) { done = true; check(); } }; addEventListener("hashchange", go); go();
+    let done = false; const go = () => { if (ROUTE() === "launch" && !done) { done = true; check(); } }; addEventListener("allot:route", go); go();
   }
 })();
 
@@ -837,7 +845,7 @@ const LIVE = (() => {
       for (let k = 0; k < PER; k++) { const tg = Math.floor(Math.random() * T.length), q = T[tg] || { x: W / 2, w: 100, top: H };
         threads.push({ sx, sy: 62, tg, tx: q.x + (Math.random() - 0.5) * q.w * 0.9, ty: q.top, c1: 110 + Math.random() * 170, c2: 60 + Math.random() * 200, ph: Math.random() * 6.28, amp: 4 + Math.random() * 14, fl: Math.random() }); } }
   }
-  addEventListener("resize", build); addEventListener("hashchange", () => setTimeout(build, 60)); document.fonts.ready.then(build); setTimeout(build, 300);
+  addEventListener("resize", build); addEventListener("allot:route", () => setTimeout(build, 60)); document.fonts.ready.then(build); setTimeout(build, 300);
   const bez = (a, b, c, d, u) => { const v = 1 - u; return v * v * v * a + 3 * v * v * u * b + 3 * v * u * u * c + u * u * u * d; };
   let reqs = 0; const t0 = performance.now(), meta = document.getElementById("stageMeta");
   function draw(now) {
