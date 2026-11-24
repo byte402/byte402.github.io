@@ -275,6 +275,36 @@ html,body{overflow-x:clip}
 .sreport{margin-top:14px;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:12px}
 .sreport ol{margin:0;padding-left:20px;color:var(--mute);font-size:14.5px;line-height:1.8}.sreport b{color:var(--ink);font-weight:500}.sreport a{color:var(--ink)}
 @media (max-width:900px){.sgrid,.sreport{grid-template-columns:minmax(0,1fr)}}
+
+/* Follow one payment */
+.follow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:40px;margin-top:26px}
+.fsteps{display:flex;flex-direction:column}
+.fstep{min-height:62vh;display:flex;flex-direction:column;justify-content:center;opacity:.35;transition:opacity .4s}
+.fstep.on{opacity:1}
+.fstep .fn{font:500 11px var(--mono);letter-spacing:.2em;color:var(--dim)}
+.fstep h3{margin:10px 0 10px;font:400 clamp(30px,3.4vw,46px)/1.02 "Instrument Serif",Georgia,serif;letter-spacing:-.02em}.fstep h3 em{color:var(--mute)}
+.fstep p{margin:0;color:var(--mute);font-size:15.5px;max-width:460px}
+.fpanel{position:sticky;top:96px;align-self:start;height:min(560px,calc(100vh - 130px));display:flex;flex-direction:column;background:#0b0b0b;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.fph{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--ink);color:#0a0a0a;padding:9px 14px;font:600 12px var(--mono);letter-spacing:.04em}
+.fph .st{font-weight:500;opacity:.75}
+.fthr{position:relative;height:120px;border-bottom:1px solid var(--line)}.fthr svg{position:absolute;inset:0;width:100%;height:100%}
+.fthr path{fill:none;stroke:rgba(242,240,235,.16);stroke-width:.7;transition:d .7s cubic-bezier(.2,.8,.2,1)}.fthr path.hot{stroke:rgba(255,255,255,.55);stroke-width:.9}
+.fthr .nodes{position:absolute;left:14px;right:14px;bottom:10px;display:flex;justify-content:space-between;font:500 10px var(--mono);letter-spacing:.12em;color:var(--dim)}
+.fthr .nodes span{transition:color .3s}.fthr .nodes span.on{color:var(--ink)}
+.fbody{flex:1;overflow:auto;padding:14px 16px}
+.frow{display:flex;justify-content:space-between;gap:14px;border-top:1px solid rgba(242,240,235,.08);padding:9px 0;font:500 13px/1.45 var(--mono)}.frow:first-child{border-top:0}
+.frow span{color:var(--dim);white-space:nowrap}.frow b{font-weight:500;color:var(--ink);text-align:right;overflow-wrap:anywhere;min-width:0}.frow b a{color:var(--ink)}
+.frow b.ok::after{content:"  ✓";color:var(--mute)}
+.fbody pre{margin:0;font:500 12.5px/1.6 var(--mono);color:var(--mute);white-space:pre-wrap}
+.fbody .k{display:block;margin:4px 0 8px;font:500 10.5px var(--mono);letter-spacing:.16em;color:var(--dim)}
+.fbody .grid2{display:grid;grid-template-columns:1fr 1fr;column-gap:18px}
+.ffoot{border-top:1px solid var(--line);padding:9px 14px;font:500 11.5px var(--mono);color:var(--dim)}
+.fstep .fin{display:none}
+.blk{font:500 11.5px var(--mono);color:var(--dim);border:1px solid rgba(242,240,235,.18);border-radius:4px;padding:8px 10px;white-space:nowrap}.blk b{color:var(--ink);font-weight:500}.blk i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ink);margin-right:7px;vertical-align:1px;animation:blkp 1.6s infinite}
+@keyframes blkp{50%{opacity:.25}}
+@media (max-width:1100px){.blk{display:none}}
+@media (max-width:900px){.follow{grid-template-columns:minmax(0,1fr)}.fpanel{display:none}.fstep{min-height:0;opacity:1;padding:22px 0;border-top:1px solid var(--line)}.fstep .fin{display:block;margin-top:14px;background:#0b0b0b;border:1px solid var(--line);border-radius:4px;padding:12px 14px}}
+@media (prefers-reduced-motion:reduce){.fthr path{transition:none}.blk i{animation:none}}
 </style>
 </head>
 <body>
@@ -282,7 +312,7 @@ html,body{overflow-x:clip}
 <header><div class="wrap">
   <a class="logo" href="/" style="text-decoration:none;color:inherit"><span class="mark" aria-hidden="true"></span>Allot</a>
   <nav aria-label="Main"><a href="/">Home</a><a href="/app">App</a><a href="/promises">Promises</a><a href="/how">How it works</a><a href="/connect">Connect</a><a href="/apis">APIs</a><a href="/build">Build</a><a href="/security">Security</a><a href="/ledger">Ledger</a><a href="/launch">Launch</a></nav>
-  <span class="soc"><a href="https://x.com/Allot_rh" target="_blank" rel="noopener" aria-label="Allot on X"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M17.75 3h3.07l-6.7 7.66L22 21h-6.17l-4.83-6.32L5.47 21H2.4l7.17-8.2L2 3h6.33l4.37 5.77L17.75 3zm-1.08 16.17h1.7L7.4 4.74H5.58l11.09 14.43z"/></svg></a><a href="https://github.com/byte402" target="_blank" rel="noopener" aria-label="Allot on GitHub"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg></a></span>
+  <span class="blk" id="blk" title="Latest block on Robinhood Chain mainnet"><i></i>block <b>…</b></span><span class="soc"><a href="https://x.com/Allot_rh" target="_blank" rel="noopener" aria-label="Allot on X"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M17.75 3h3.07l-6.7 7.66L22 21h-6.17l-4.83-6.32L5.47 21H2.4l7.17-8.2L2 3h6.33l4.37 5.77L17.75 3zm-1.08 16.17h1.7L7.4 4.74H5.58l11.09 14.43z"/></svg></a><a href="https://github.com/byte402" target="_blank" rel="noopener" aria-label="Allot on GitHub"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg></a></span>
   <a class="cta" href="/app">Open the app</a>
 </div></header>
 
@@ -339,6 +369,27 @@ html,body{overflow-x:clip}
     <div class="pipe" role="img" aria-label="How a payment flows: your AI asks the connector, the Allot Vault checks the rules, then the x402 API is paid or the request is refused. Your wallet funds and controls the vault.">
       <div class="h"></div><div class="v"></div>
       <div class="cap"><span><i style="--c:#f2f0eb">paid</i><i style="--c:#ff6b6b">refused</i><i style="--c:#a7a39b">your control</i></span><span>Surges when a real payment lands on mainnet.</span></div>
+    </div>
+  </section>
+
+  <section class="home-sec" id="follow">
+    <div class="eyebrow">FOLLOW ONE PAYMENT</div>
+    <h2>One real payment, <em>step by step</em>.</h2>
+    <p class="sub">On 24 Nov 2026 an AI bought fourteen market prices from the Allot sample API for 0.02 USDG. Scroll through what happened. Every value on the right is read from Robinhood Chain as you watch, except the answer, which the API returned once.</p>
+    <div class="follow">
+      <div class="fsteps">
+        <div class="fstep" data-i="0"><span class="fn">01 · ASK</span><h3>The AI asks <em>for data</em>.</h3><p>An AI with its own key in an Allot vault calls a paid endpoint through the connector. It has no wallet of its own, only rules.</p><div class="fin"></div></div>
+        <div class="fstep" data-i="1"><span class="fn">02 · 402</span><h3>The API names <em>its price</em>.</h3><p>No payment, no data. The API answers 402 Payment Required with an exact amount, a payee and a nonce made for this one request.</p><div class="fin"></div></div>
+        <div class="fstep" data-i="2"><span class="fn">03 · RULES</span><h3>The vault <em>checks every rule</em>.</h3><p>Cap per payment, today's x402 limit, approved payee, not frozen. Only then does it authorize this exact transfer, and nothing else.</p><div class="fin"></div></div>
+        <div class="fstep" data-i="3"><span class="fn">04 · SETTLE</span><h3>USDG moves <em>on chain</em>.</h3><p>The AI settles the authorization itself. USDG goes from the vault to the payee, and the token marks the nonce as used, so it can never be paid twice.</p><div class="fin"></div></div>
+        <div class="fstep" data-i="4"><span class="fn">05 · ANSWER</span><h3>The receipt is read. <em>The data comes back.</em></h3><p>The API holds no key and no funds. It read this receipt from the chain, saw its own nonce and the right amount, and answered.</p><div class="fin"></div></div>
+      </div>
+      <div class="fpanel" aria-live="polite">
+        <div class="fph"><span id="fTitle">GET /v1/prices</span><span class="st" id="fState">reading the chain…</span></div>
+        <div class="fthr"><svg id="fSvg" viewBox="0 0 600 120" preserveAspectRatio="none" aria-hidden="true"></svg><div class="nodes"><span>ASK</span><span>402</span><span>RULES</span><span>SETTLE</span><span>ANSWER</span></div></div>
+        <div class="fbody" id="fBody"></div>
+        <div class="ffoot" id="fFoot">Robinhood Chain mainnet · vault 0xF64c…12Ca</div>
+      </div>
     </div>
   </section>
 
@@ -1067,6 +1118,65 @@ const LIVE = (() => {
 
 // Build page: copy buttons on code blocks
 document.querySelectorAll(".bcode [data-copy]").forEach((b) => b.onclick = async () => { const t = b.closest(".bcode").querySelector("pre").textContent; try { await navigator.clipboard.writeText(t); b.textContent = "Copied"; } catch { getSelection().selectAllChildren(b.closest(".bcode").querySelector("pre")); b.textContent = "Selected"; } setTimeout(() => (b.textContent = "Copy"), 1600); });
+
+// Follow one payment: a real /v1/prices payment, read from Robinhood Chain as you scroll
+(() => {
+  const RPC = "https://rpc.mainnet.chain.robinhood.com", EXP = "https://robinhoodchain.blockscout.com";
+  const AUTH = "0xfd7136e3553be2e76371a7003ef4c2a28eafef429206b4df193d953d8a2a1ab1", SETTLE = "0x917f0100b99e753db76955c8c0d023d4be6792df5357c4154c5f54db04e6b396";
+  const V = "0xf64cf6131941b9b239ab61866429eb46132012ca", API = "https://allot-api.polished-dream-0948.workers.dev/v1/prices";
+  const T = { agentSet: "0x847bbbd6", payeeSet: "0xd8d1c180", authorized: "0xa2583fc4", used: "0x98de5035", transfer: "0xddf252ad" };
+  // the answer the API returned to that payment, recorded once (the only value here not read from the chain)
+  const ANSWER = { ETH: 1678.9363, BTC: 59636.231, NVDA: 155.85809, TSLA: 379.09897, AAPL: 349.76038, AMZN: 254.01977, GOOGL: 279.33845, META: 587.55155, MSFT: 492.17212, SPY: 716.76033, QQQ: 639.51862, GLD: 332.20553, COIN: 105.5632, MSTR: 80.677574 };
+  const $ = (id) => document.getElementById(id), steps = [...document.querySelectorAll(".fstep")];
+  if (!steps.length) return;
+  const rpc = async (method, params) => { for (let k = 0; k < 4; k++) { try { const r = await fetch(RPC, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }) }); const j = await r.json(); if (j.error) throw new Error(j.error.message); return j.result; } catch (e) { if (k === 3) throw e; await new Promise((r) => setTimeout(r, 600 * (k + 1))); } } };
+  const addr = (t) => "0x" + t.slice(26), short = (a) => a.slice(0, 6) + "…" + a.slice(-4), usdg = (h) => (Number(BigInt(h)) / 1e6).toString() + " USDG";
+  const tx = (h, label) => `<a href="${EXP}/tx/${h}" target="_blank" rel="noopener">${label || short(h)} ↗</a>`, ad = (a) => `<a href="${EXP}/address/${a}" target="_blank" rel="noopener">${short(a)} ↗</a>`;
+  const row = (k, v, ok) => `<div class="frow"><span>${k}</span><b${ok ? ' class="ok"' : ""}>${v}</b></div>`;
+  let D = null, cur = -1;
+  async function load() {
+    const [ra, rs] = await Promise.all([rpc("eth_getTransactionReceipt", [AUTH]), rpc("eth_getTransactionReceipt", [SETTLE])]);
+    const au = ra.logs.find((l) => l.topics[0].startsWith(T.authorized)), tr = rs.logs.find((l) => l.topics[0].startsWith(T.transfer)), us = rs.logs.find((l) => l.topics[0].startsWith(T.used));
+    const agent = addr(au.topics[1]), payee = addr(au.topics[2]), amount = BigInt("0x" + au.data.slice(2, 66)), digest = "0x" + au.data.slice(66, 130);
+    const ab = parseInt(ra.blockNumber, 16), sb = parseInt(rs.blockNumber, 16);
+    const [rules, blA, blS] = await Promise.all([rpc("eth_getLogs", [{ address: V, fromBlock: "0x" + (ab - 20000).toString(16), toBlock: "0x" + ab.toString(16), topics: [null, au.topics[1]] }]), rpc("eth_getBlockByNumber", ["0x" + ab.toString(16), false]), rpc("eth_getBlockByNumber", ["0x" + sb.toString(16), false])]);
+    const set = rules.filter((l) => l.topics[0].startsWith(T.agentSet)).pop(), pay = rules.filter((l) => l.topics[0].startsWith(T.payeeSet) && addr(l.topics[2]) === payee).pop();
+    const per = BigInt("0x" + set.data.slice(2, 66)), day = BigInt("0x" + set.data.slice(66, 130));
+    D = { agent, payee, amount, digest, ab, sb, per, day, nonce: us.topics[2], from: addr(tr.topics[1]), to: addr(tr.topics[2]), moved: BigInt(tr.data), payBlock: pay ? parseInt(pay.blockNumber, 16) : null,
+      ta: new Date(parseInt(blA.timestamp, 16) * 1000), ts: new Date(parseInt(blS.timestamp, 16) * 1000), ok: ra.status === "0x1" && rs.status === "0x1" };
+  }
+  const iso = (d) => d.toISOString().replace("T", " ").slice(0, 19) + " UTC";
+  function html(i) {
+    if (!D) return ["…", "reading the chain…", `<pre>Reading the receipts from Robinhood Chain…</pre>`];
+    const m = Number(D.amount) / 1e6;
+    if (i === 0) return ["GET /v1/prices", "request", row("url", API.replace("https://", "")) + row("AI key", ad(D.agent)) + row("from vault", ad(V)) + row("through", "allot-connector") + row("time", iso(D.ta))];
+    if (i === 1) return ["HTTP 402", "payment required", row("price", m + " USDG") + row("asset", "USDG · eip155:4663") + row("payTo", ad(D.payee)) + row("nonce", short(D.nonce)) + row("settlement", "by the payer, EIP-3009")];
+    if (i === 2) return ["vault.authorize()", "block " + D.ab.toLocaleString("en-US"), row("cap per payment", (Number(D.per) / 1e6) + " ≥ " + m, true) + row("x402 limit today", (Number(D.day) / 1e6).toFixed(2) + " ≥ " + m, true) + row("payee on the list", D.payBlock ? "since block " + D.payBlock.toLocaleString("en-US") : "yes", true) + row("vault frozen", "no", true) + row("approved digest", short(D.digest)) + row("transaction", tx(AUTH))];
+    if (i === 3) return ["USDG transfer", "block " + D.sb.toLocaleString("en-US"), row("from vault", ad(D.from)) + row("to payee", ad(D.to)) + row("amount", usdg("0x" + D.moved.toString(16))) + row("nonce marked used", short(D.nonce), true) + row("time", iso(D.ts)) + row("transaction", tx(SETTLE))];
+    const p = Object.entries(ANSWER).map(([k, v]) => row(k, v.toLocaleString("en-US", { maximumFractionDigits: 6 }))).join("");
+    return ["HTTP 200", "14 prices", `<span class="k">RECORDED · THE ANSWER IT GOT · USDG PER TOKEN</span><div class="grid2">${p}</div>`];
+  }
+  // threads converging on the active node
+  const svg = $("fSvg"), N = 26, seeds = Array.from({ length: N }, (_, k) => ({ x: (k / (N - 1)) * 600, a: Math.random(), b: Math.random(), hot: k % 3 === 0 }));
+  if (svg) svg.innerHTML = seeds.map((t) => `<path class="${t.hot ? "hot" : ""}"></path>`).join("");
+  function threads(i) { if (!svg) return; const tx = 24 + i * 138, paths = svg.querySelectorAll("path");
+    seeds.forEach((t, k) => { const ex = t.hot ? tx + (t.a - .5) * 14 : t.x * .3 + tx * .7 + (t.b - .5) * 60, c1 = 30 + t.a * 30, c2 = 50 + t.b * 30;
+      paths[k].setAttribute("d", `M${t.x} -2 C${t.x} ${c1},${ex} ${c2},${ex} 98`); }); }
+  function show(i) { if (i === cur && D) return; cur = i; const [t, st, b] = html(i);
+    $("fTitle").textContent = t; $("fState").textContent = st; $("fBody").innerHTML = b; $("fBody").scrollTop = 0;
+    document.querySelectorAll(".fthr .nodes span").forEach((s, k) => s.classList.toggle("on", k <= i)); steps.forEach((s, k) => s.classList.toggle("on", k === i)); threads(i); }
+  function fillInline() { steps.forEach((s, k) => { const [t, st, b] = html(k); s.querySelector(".fin").innerHTML = `<div class="frow"><span>${t}</span><b>${st}</b></div>` + b; }); }
+  const io = new IntersectionObserver((es) => { es.forEach((e) => { if (e.isIntersecting) show(+e.target.dataset.i); }); }, { rootMargin: "-45% 0px -45% 0px" });
+  steps.forEach((s) => io.observe(s)); show(0); fillInline();
+  let started = false; const start = () => { if (started) return; started = true;
+    load().then(() => { const c = cur; cur = -1; show(Math.max(0, c)); fillInline(); $("fFoot").textContent = (D.ok ? "both transactions succeeded" : "a transaction failed") + " · read live from Robinhood Chain mainnet"; })
+      .catch(() => { $("fState").textContent = "could not read the chain"; $("fFoot").textContent = "Open the transactions on the explorer: " + short(AUTH) + " · " + short(SETTLE); }); };
+  new IntersectionObserver((es, o) => { if (es.some((e) => e.isIntersecting)) { start(); o.disconnect(); } }, { rootMargin: "300px" }).observe($("follow"));
+})();
+// header: latest block on Robinhood Chain, refreshed while the tab is visible
+(() => { const el = document.querySelector("#blk b"); if (!el) return;
+  const tick = async () => { if (document.hidden) return; try { const r = await fetch("https://rpc.mainnet.chain.robinhood.com", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_blockNumber", params: [] }) }); const j = await r.json(); if (j.result) el.textContent = parseInt(j.result, 16).toLocaleString("en-US"); } catch {} };
+  tick(); setInterval(tick, 5000); })();
 </script>
 </body>
 </html>
