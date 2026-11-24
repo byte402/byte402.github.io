@@ -227,6 +227,12 @@ h1 em,h2 em{color:var(--mute)!important;font-style:italic!important}
 .mark::after{background:none!important;left:4px!important;top:3px!important;width:18px!important;height:16px!important;border-radius:0!important;border-left:1px solid #f2f0eb;border-right:1px solid #f2f0eb;transform:perspective(20px) rotateX(-25deg)}
 .soc{margin-left:auto;display:flex;gap:6px;align-items:center}.soc a{display:grid;place-items:center;width:36px;height:36px;color:var(--mute);border:1px solid rgba(242,240,235,.18);border-radius:4px;transition:color .2s,border-color .2s}.soc a:hover{color:#fff;border-color:rgba(242,240,235,.5)}
 @media (max-width:640px){header .soc{order:2}header nav{order:3}}
+.tok{margin-top:36px;background:#0e0e0e;border:1px solid rgba(242,240,235,.2);border-radius:4px}
+.tokh{display:flex;justify-content:space-between;gap:10px;background:#f2f0eb;color:#0a0a0a;padding:9px 16px;font:600 13px var(--mono)}
+.tokb{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;padding:18px 20px}
+.toklabel{font:500 11px var(--mono);letter-spacing:.2em;color:var(--mute)}.tokca{margin-top:8px;font:500 18px var(--mono);word-break:break-all}.tokca a{color:var(--ink)}
+.tokbtns{display:flex;gap:8px}.tokbtns button,.tokbtns a{font:600 13px var(--mono);color:var(--ink);background:transparent;border:1px solid rgba(242,240,235,.3);border-radius:4px;padding:9px 13px;cursor:pointer;text-decoration:none}
+.tokbtns button{background:#f2f0eb;color:#0a0a0a;border-color:#f2f0eb}.tok .ex{padding:0 20px 16px;margin:0}
 </style>
 </head>
 <body>
@@ -379,14 +385,22 @@ h1 em,h2 em{color:var(--mute)!important;font-style:italic!important}
   </section>
 
   <section id="launch" class="view">
-    <div class="phead"><div class="eyebrow">LAUNCH</div><h2 class="big">Product first. <em>Token after.</em></h2>
-    <p class="sub">Allot is free to use today. A token comes only once people are paying through it, and its job is simple: a share of future payment fees buys it back and burns it, on a public schedule.</p></div>
+    <div class="phead"><div class="eyebrow">LAUNCH</div><h2 class="big">The product is live. <em>Now $ALLOT.</em></h2>
+    <p class="sub">Vaults, the app, the connector and a paid x402 API were live on Robinhood Chain mainnet before the token. $ALLOT launches on Pons. Allot charges no fee today, and every burn is posted with its transaction.</p></div>
+    <div class="tok rv" id="tok">
+      <div class="tokh"><span>$ALLOT · ROBINHOOD CHAIN</span><span id="tokState">LAUNCHING ON PONS</span></div>
+      <div class="tokb">
+        <div><div class="toklabel">CONTRACT ADDRESS</div><div class="tokca" id="tokCa">Announced on <a href="https://x.com/Allot_rh" target="_blank" rel="noopener">@Allot_rh</a> at launch</div></div>
+        <div class="tokbtns"><button type="button" id="tokCopy" hidden>Copy CA</button><a id="tokPons" href="https://ponsfamily.com" target="_blank" rel="noopener">Pons ↗</a><a id="tokExp" href="#" target="_blank" rel="noopener" hidden>Explorer ↗</a></div>
+      </div>
+      <p class="ex">Only trust the address shown here and on @Allot_rh. Not financial advice: a launchpad token can lose all its value.</p>
+    </div>
     <div class="road rv">
       <div class="rline"><i></i></div>
-      <div class="rs now"><span class="rdot"></span><b>NOW</b><h3>Live on mainnet</h3><p>Vault contracts, the app, the connector and a paid x402 API.</p></div>
+      <div class="rs now"><span class="rdot"></span><b>DONE</b><h3>Live on mainnet</h3><p>Vault contracts, the app, the connector and a paid x402 API.</p></div>
+      <div class="rs now"><span class="rdot"></span><b>NOW</b><h3>$ALLOT on Pons</h3><p>Launch, with the contract address on this page and on X.</p></div>
       <div class="rs"><span class="rdot"></span><b>NEXT</b><h3>More APIs, more AIs</h3><p>More x402 APIs and agents paying through Allot.</p></div>
       <div class="rs"><span class="rdot"></span><b>THEN</b><h3>Reviewed and verified</h3><p>Security review and verified contract source.</p></div>
-      <div class="rs"><span class="rdot"></span><b>LATER</b><h3>Token</h3><p>Launch with buyback and burn from fees, on a public schedule.</p></div>
     </div>
     <div class="proofs rv">
       <div class="eyebrow">ALREADY LIVE, CHECK IT YOURSELF</div>
@@ -872,6 +886,16 @@ const LIVE = (() => {
   function frame(now) { requestAnimationFrame(frame); if (!document.hidden && (document.querySelector(".view.on") || {}).id === "home") draw(now); }
   if (still) setTimeout(() => draw(performance.now()), 400); else requestAnimationFrame(frame);
 })();
+
+// $ALLOT: the contract address comes from config.json ("token"), so going live is a one-line edit
+(() => { const $ = (id) => document.getElementById(id); if (!$("tok")) return;
+  fetch("config.json?t=" + Date.now(), { cache: "no-store" }).then((r) => r.json()).then((c) => {
+    if (!c.token || !/^0x[0-9a-fA-F]{40}$/.test(c.token)) return;
+    $("tokState").textContent = "LIVE"; $("tokCa").textContent = c.token;
+    $("tokCopy").hidden = false; $("tokCopy").onclick = async () => { try { await navigator.clipboard.writeText(c.token); $("tokCopy").textContent = "Copied"; setTimeout(() => ($("tokCopy").textContent = "Copy CA"), 1500); } catch {} };
+    $("tokExp").hidden = false; $("tokExp").href = "https://robinhoodchain.blockscout.com/token/" + c.token;
+    if (c.tokenUrl) $("tokPons").href = c.tokenUrl;
+  }).catch(() => {}); })();
 </script>
 </body>
 </html>
