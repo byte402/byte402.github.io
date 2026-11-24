@@ -176,6 +176,14 @@ h2 .ch{display:inline-block;opacity:0;transform:translateY(.45em);filter:blur(5p
 @media (max-width:900px){.tester{grid-template-columns:1fr;padding:20px}.tools{grid-template-columns:1fr}.road{grid-template-columns:1fr 1fr;row-gap:30px}.rline{display:none}.proofs{grid-template-columns:1fr 1fr}.tline{padding-left:60px}.tstep .dot{left:-60px;width:44px;height:44px}.tbar2{left:21px}.howcta{padding-left:0}}
 .wd{display:inline-block;white-space:nowrap}
 .road .rs{background:rgba(5,7,13,.55);border-radius:14px}
+#fx{position:fixed;inset:0;z-index:0;pointer-events:none}
+.aurora{position:fixed;inset:-20%;z-index:0;pointer-events:none;opacity:.6}
+.aurora i{position:absolute;border-radius:50%;will-change:transform}
+.aurora i:nth-child(1){width:46vw;height:46vw;left:48%;top:4%;background:radial-gradient(circle,rgba(40,110,255,.30),rgba(40,110,255,.08) 40%,transparent 70%);animation:au1 22s ease-in-out infinite alternate}
+.aurora i:nth-child(2){width:38vw;height:38vw;left:8%;top:44%;background:radial-gradient(circle,rgba(0,190,255,.16),rgba(0,190,255,.04) 40%,transparent 70%);animation:au2 28s ease-in-out infinite alternate}
+.aurora i:nth-child(3){width:30vw;height:30vw;left:62%;top:58%;background:radial-gradient(circle,rgba(130,90,255,.16),rgba(130,90,255,.04) 40%,transparent 70%);animation:au3 25s ease-in-out infinite alternate}
+@keyframes au1{to{transform:translate(-14vw,10vh) scale(1.2)}}@keyframes au2{to{transform:translate(18vw,-12vh) scale(1.15)}}@keyframes au3{to{transform:translate(-20vw,-16vh) scale(.85)}}
+@media (prefers-reduced-motion:reduce){.aurora{display:none}}
 </style>
 </head>
 <body>
@@ -753,6 +761,79 @@ const LIVE = (() => {
       if (typeof LIVE !== "undefined") LIVE.get().then((d) => ($("ledState").textContent = `${d.x402} real x402 payments ↗`)).catch(() => {}); };
     let done = false; const go = () => { if (location.hash === "#launch" && !done) { done = true; check(); } }; addEventListener("hashchange", go); go();
   }
+})();
+
+// ---------- FX layer behind the planet: warp starfield, payment comets, shockwaves, aurora, cursor gravity ----------
+(() => {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const cv = document.createElement("canvas"); cv.id = "fx"; cv.setAttribute("aria-hidden", "true");
+  const flow = document.getElementById("flow"); flow.parentNode.insertBefore(cv, flow);
+  const au = document.createElement("div"); au.className = "aurora"; au.setAttribute("aria-hidden", "true"); au.innerHTML = "<i></i><i></i><i></i>"; cv.parentNode.insertBefore(au, cv);
+  const ctx = cv.getContext("2d"); let W, H, dpr, cx, cy, S;
+  function size() { dpr = Math.min(devicePixelRatio || 1, 1.5); W = innerWidth; H = innerHeight; cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + "px"; cv.style.height = H + "px"; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const wide = W > 900; cx = wide ? W * 0.7 : W * 0.5; cy = wide ? H * 0.38 : H * 0.28; S = Math.min(W, H) * (wide ? 0.34 : 0.4); }
+  size(); addEventListener("resize", size);
+  const fine = matchMedia("(pointer:fine)").matches, N = fine ? 520 : 240;
+  const stars = Array.from({ length: N }, () => ({ x: (Math.random() - 0.5) * 2, y: (Math.random() - 0.5) * 2, z: Math.random(), pz: 0 }));
+  const comets = [], waves = [], sparks = [], trail = [];
+  let warp = 0, lastY = scrollY, mx = -1e4, my = -1e4, t0 = performance.now();
+  addEventListener("scroll", () => { warp = Math.min(1, warp + Math.abs(scrollY - lastY) / 400); lastY = scrollY; }, { passive: true });
+  addEventListener("hashchange", () => { warp = 1; wave(cx, cy, 1.2); });
+  addEventListener("mousemove", (e) => { mx = e.clientX; my = e.clientY; if (trail.length < 80) trail.push({ x: mx, y: my, vx: (Math.random() - 0.5) * 0.6, vy: (Math.random() - 0.5) * 0.6, life: 1 }); }, { passive: true });
+  addEventListener("click", (e) => { if (e.target.closest("a,button,input,label,pre,code")) return; burst(e.clientX, e.clientY, 26, "77,163,255"); wave(e.clientX, e.clientY, 0.5); comet(true, e.clientX, e.clientY); });
+  function wave(x, y, k = 1) { waves.push({ x, y, r: S * 0.55, a: 0.55 * k, k }); }
+  function burst(x, y, n, col) { for (let i = 0; i < n; i++) { const a = Math.random() * 6.283, v = 1 + Math.random() * 4; sparks.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 1, col }); } }
+  // a payment comet: flies in from off screen toward the planet's ring; ~1 in 8 is held at the gate and bursts red
+  function comet(fromClick, sx, sy) {
+    const a = Math.random() * 6.283, d = Math.max(W, H) * 0.75;
+    const x = fromClick ? sx : cx + Math.cos(a) * d, y = fromClick ? sy : cy + Math.sin(a) * d * 0.7;
+    const held = !fromClick && Math.random() < 0.13;
+    comets.push({ x, y, px: x, py: y, sp: 0.012 + Math.random() * 0.01, k: 0, sx: x, sy: y, ctrlx: (x + cx) / 2 + (Math.random() - 0.5) * W * 0.4, ctrly: (y + cy) / 2 + (Math.random() - 0.5) * H * 0.4, held, hist: [], ta: Math.random() * 6.283 });
+  }
+  setInterval(() => { if (!document.hidden && comets.length < 7) comet(false); }, 900);
+  // a real payment on chain (the home page's surge) fires a big wave
+  new MutationObserver(() => { if (document.querySelector(".pipe.surge")) { wave(cx, cy, 2); burst(cx, cy, 60, "214,221,232"); } }).observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class"] });
+  function frame(now) {
+    requestAnimationFrame(frame); if (document.hidden) return;
+    const t = (now - t0) / 1000; warp *= 0.95;
+    ctx.clearRect(0, 0, W, H);
+    // warp starfield: stars fly toward you, streaks stretch when you scroll or change page
+    const sp = 0.0016 + warp * 0.03, f = Math.min(W, H) * 0.9;
+    ctx.lineCap = "round";
+    for (const s of stars) {
+      s.pz = s.z; s.z -= sp; if (s.z <= 0.02) { s.x = (Math.random() - 0.5) * 2; s.y = (Math.random() - 0.5) * 2; s.z = 1; s.pz = 1; }
+      let x = W / 2 + (s.x / s.z) * f, y = H / 2 + (s.y / s.z) * f; const px = W / 2 + (s.x / s.pz) * f, py = H / 2 + (s.y / s.pz) * f;
+      // cursor gravity: stars near the cursor bend around it
+      const dx = x - mx, dy = y - my, dd = dx * dx + dy * dy; if (dd < 22000) { const k = (1 - dd / 22000) * 18; x += (dx / Math.sqrt(dd + 1)) * k; y += (dy / Math.sqrt(dd + 1)) * k; }
+      if (x < -50 || x > W + 50 || y < -50 || y > H + 50) { s.z = 0; continue; }
+      const b = (1 - s.z), a = Math.min(1, b * 1.3) * 0.85;
+      ctx.strokeStyle = `rgba(${b > 0.7 ? "238,245,255" : "120,175,240"},${a})`; ctx.lineWidth = 0.4 + b * 1.6;
+      ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(x + (x - px) * warp * 6, y + (y - py) * warp * 6); ctx.stroke();
+    }
+    // comets along a curve into the ring, with a glowing tail
+    for (let i = comets.length - 1; i >= 0; i--) {
+      const c = comets[i]; c.k += c.sp; const k = Math.min(1, c.k), u = 1 - k;
+      const tx = cx + (c.held ? 0 : Math.cos(c.ta) * S * 0.95), ty = cy + (c.held ? -S * 0.18 : Math.sin(c.ta) * S * 0.36);
+      c.x = u * u * c.sx + 2 * u * k * c.ctrlx + k * k * tx; c.y = u * u * c.sy + 2 * u * k * c.ctrly + k * k * ty;
+      c.hist.push([c.x, c.y]); if (c.hist.length > 26) c.hist.shift();
+      const col = c.held && k > 0.8 ? "255,107,107" : "120,185,255";
+      for (let j = 1; j < c.hist.length; j++) { const q = j / c.hist.length; ctx.strokeStyle = `rgba(${col},${q * 0.7})`; ctx.lineWidth = q * 4; ctx.beginPath(); ctx.moveTo(c.hist[j - 1][0], c.hist[j - 1][1]); ctx.lineTo(c.hist[j][0], c.hist[j][1]); ctx.stroke(); }
+      const g = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, 16); g.addColorStop(0, `rgba(${c.held && k > 0.8 ? "255,140,140" : "235,245,255"},1)`); g.addColorStop(1, `rgba(${col},0)`); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(c.x, c.y, 16, 0, 6.283); ctx.fill();
+      if (c.k >= 1) { comets.splice(i, 1); if (c.held) burst(c.x, c.y, 34, "255,107,107"); else { burst(c.x, c.y, 14, "120,185,255"); if (Math.random() < 0.35) wave(cx, cy, 0.7); } }
+    }
+    // shockwaves rolling out of the planet
+    for (let i = waves.length - 1; i >= 0; i--) { const w = waves[i]; w.r += 4 + w.k * 3; w.a *= 0.975;
+      ctx.strokeStyle = `rgba(77,163,255,${w.a})`; ctx.lineWidth = 2 + w.k * 2; ctx.beginPath(); ctx.ellipse(w.x, w.y, w.r, w.r * 0.42, -0.38, 0, 6.283); ctx.stroke();
+      ctx.strokeStyle = `rgba(214,221,232,${w.a * 0.4})`; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(w.x, w.y, w.r * 0.94, w.r * 0.39, -0.38, 0, 6.283); ctx.stroke();
+      if (w.a < 0.01) waves.splice(i, 1); }
+    // sparks and the cursor trail
+    for (let i = sparks.length - 1; i >= 0; i--) { const p = sparks[i]; p.x += p.vx; p.y += p.vy; p.vx *= 0.95; p.vy *= 0.95; p.life -= 0.022; if (p.life <= 0) { sparks.splice(i, 1); continue; } ctx.fillStyle = `rgba(${p.col},${p.life})`; ctx.fillRect(p.x - 1.3, p.y - 1.3, 2.6, 2.6); }
+    for (let i = trail.length - 1; i >= 0; i--) { const p = trail[i]; p.x += p.vx; p.y += p.vy; p.life -= 0.03; if (p.life <= 0) { trail.splice(i, 1); continue; } ctx.fillStyle = `rgba(120,185,255,${p.life * 0.6})`; ctx.beginPath(); ctx.arc(p.x, p.y, 1.6 * p.life + 0.4, 0, 6.283); ctx.fill(); }
+    // a slow heartbeat wave, even when nothing else happens
+    if (Math.floor(t / 5) !== Math.floor((t - 0.017) / 5)) wave(cx, cy, 0.5);
+  }
+  setTimeout(() => { warp = 1; wave(cx, cy, 1.6); }, 300);
+  requestAnimationFrame(frame);
 })();
 </script>
 </body>
