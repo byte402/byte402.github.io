@@ -70,7 +70,7 @@ const fail = (el, e) => say(el, "no", "✗ " + (e.reason || e.message || e));
 const vi = () => new E.Interface(abi.vault), fi = () => new E.Interface(abi.factory), ti = () => A.iface("token");
 
 // one confirm step for every write: simulate → show → sign
-function ask(html) { return new Promise((res) => { $("cText").innerHTML = html; $("confirm").hidden = false; $("confirm").scrollIntoView({ behavior: "smooth", block: "center" });
+function ask(html, el) { return new Promise((res) => { $("cText").innerHTML = html; if (el) $(el).after($("confirm")); $("confirm").hidden = false; $("confirm").scrollIntoView({ behavior: "smooth", block: "center" });
   $("cYes").onclick = () => { $("confirm").hidden = true; res(true); }; $("cNo").onclick = () => { $("confirm").hidden = true; res(false); }; }); }
 async function run(el, calls, what) {
   say(el, "wait", "· simulating on Robinhood Chain mainnet…");
@@ -78,7 +78,7 @@ async function run(el, calls, what) {
   if (bad >= 0) { say(el, "no", `✗ step ${bad + 1} would fail: ${sims[bad].why}. Nothing was signed.`); return false; }
   const price = BigInt(await A.rpc("eth_gasPrice", [])), gas = sims.reduce((s, x) => s + x.gas, 0);
   say(el, "ok", `✓ simulated · ${calls.length} transaction${calls.length > 1 ? "s" : ""} · fee ≈ ${E.formatEther(BigInt(Math.ceil(gas * 1.3)) * price)} ETH`);
-  if (!(await ask(`<b>${what}</b><br><span class="muted">Simulated on mainnet: it works. ${calls.length > 1 ? `Your wallet will ask ${calls.length} times.` : "Your wallet will ask once."}</span>`))) { say(el, "wait", "· cancelled, nothing signed"); return false; }
+  if (!(await ask(`<b>${what}</b><br><span class="muted">Simulated on mainnet: it works. ${calls.length > 1 ? `Your wallet will ask ${calls.length} times.` : "Your wallet will ask once."}</span>`, el))) { say(el, "wait", "· cancelled, nothing signed"); return false; }
   for (let i = 0; i < calls.length; i++) { say(el, "wait", `· confirm ${i + 1}/${calls.length} in your wallet…`); const { hash } = await A.send(me, calls[i], sims[i].gas); say(el, "ok", `✓ <a href="${A.EXP}/tx/${hash}" target="_blank" rel="noopener">${A.short(hash)}</a>`); }
   return true;
 }
