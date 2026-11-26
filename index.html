@@ -24,7 +24,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font
 header .wrap{display:flex;align-items:center;gap:26px;padding-block:18px;flex-wrap:wrap}
 .logo{display:flex;align-items:center;gap:10px;font:800 23px var(--display);letter-spacing:-.03em}
 .mark{width:28px;height:28px;border-radius:8px;background:#1a1a1a;position:relative}.mark::before{content:"";position:absolute;left:6px;right:6px;bottom:6px;height:4px;border-radius:2px;background:var(--gold)}.mark::after{content:"";position:absolute;left:6px;top:6px;width:9px;height:9px;border-radius:50%;background:var(--bg)}
-nav{display:flex;gap:20px;font-size:14px;flex-wrap:wrap}nav a{color:var(--mute);text-decoration:none}nav a:hover{color:var(--ink)}
+nav{display:flex;gap:16px;font-size:14px;flex-wrap:wrap}nav a{color:var(--mute);text-decoration:none}nav a:hover{color:var(--ink)}
 .pv{margin-left:auto;font:600 11px var(--mono);letter-spacing:.1em;color:#ffb36b;border:1px dashed #ffb36b;padding:5px 9px;border-radius:6px}
 .cta{font:700 14px var(--mono);background:var(--blue);color:#0a0a0a;padding:10px 16px;border-radius:10px;text-decoration:none}
 .hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:48px;padding-block:56px 70px;align-items:center}
@@ -314,13 +314,22 @@ html,body{overflow-x:clip}
 .dsub{margin-top:34px;background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:20px 22px}.dsub h3{margin:0;font:700 18px var(--display)}
 .dform{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}.dform input,.dform textarea{font:500 13px var(--mono);color:var(--ink);background:#0d0d0d;border:1px solid var(--line);border-radius:4px;padding:10px 12px;outline:none;min-width:0}.dform .wide{grid-column:1/-1}
 @media (max-width:760px){.dform{grid-template-columns:minmax(0,1fr)}.dsearch{flex-direction:column;align-items:stretch}}
+
+.cgrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;margin-top:18px}.cpanel{background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:18px 20px}.cpanel h3{margin:0 0 12px;font:700 16px var(--display)}
+.cbars{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;align-items:end;height:170px}.cb{display:flex;flex-direction:column;align-items:center;gap:4px;height:100%}.cbs{flex:1;width:100%;display:flex;flex-direction:column-reverse;background:#0d0d0d;border-radius:3px;overflow:hidden}.cbs i{display:block;width:100%}.cbs i.o,.key.o{background:#6b6b6b}.cbs i.g,.key.g{background:var(--blue)}.cb b{font:600 11px var(--mono)}.cb small{font:500 10.5px var(--mono);color:var(--dim)}
+.key{display:inline-block;width:9px;height:9px;border-radius:2px;margin:0 3px 0 8px;vertical-align:middle}.ccats{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;font:500 12px var(--mono);color:var(--mute)}.ccats span{border:1px solid var(--line);border-radius:4px;padding:5px 9px}.ccats span.g{border-color:var(--blue);color:var(--blue)}.ccats .mute{border:0;padding:5px 0}.ccats a{color:var(--blue)}
+.cai{border-top:1px solid var(--line);padding:12px 0}.cai:first-child{border-top:0;padding-top:0}.caih{display:flex;justify-content:space-between;font:600 13px var(--mono)}.caih a{color:var(--ink);text-decoration:none}.caih .on{color:#4ade80}.caih .off{color:#ff6b6b}
+.crule{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:6px;font:500 12px var(--mono);color:var(--mute)}.crule b{color:var(--ink)}.cbar{height:7px;background:#0d0d0d;border-radius:4px;margin-top:9px;overflow:hidden}.cbar i{display:block;height:100%;background:var(--blue)}
+.cw{margin:6px 0;font:500 13px var(--mono);padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--paper)}.cw.no{color:#ff8a8a;border-color:rgba(255,107,107,.45)}.cw.mid{color:#e8d48a}.cw.ok{color:#4ade80}
+#cpays{margin-top:18px}#cpays td{white-space:nowrap}#cpays a{color:var(--blue);text-decoration:none;font-family:var(--mono);font-size:13px}.cg{color:var(--blue);font:600 12px var(--mono)}
+@media (max-width:860px){.cgrid{grid-template-columns:minmax(0,1fr)}}
 </style>
 </head>
 <body>
 <canvas id="flow" aria-hidden="true"></canvas>
 <header><div class="wrap">
   <a class="logo" href="/" style="text-decoration:none;color:inherit"><span class="mark" aria-hidden="true"></span>Allot</a>
-  <nav aria-label="Main"><a href="/">Home</a><a href="/app">App</a><a href="/promises">Promises</a><a href="/how">How it works</a><a href="/connect">Connect</a><a href="/apis">APIs</a><a href="/directory">Directory</a><a href="/build">Build</a><a href="/security">Security</a><a href="/ledger">Ledger</a><a href="/launch">Launch</a></nav>
+  <nav aria-label="Main"><a href="/">Home</a><a href="/app">App</a><a href="/promises">Promises</a><a href="/how">How</a><a href="/connect">Connect</a><a href="/apis">APIs</a><a href="/directory">Directory</a><a href="/compute">Compute</a><a href="/build">Build</a><a href="/security">Security</a><a href="/ledger">Ledger</a><a href="/launch">Launch</a></nav>
   <span class="soc"><a href="https://x.com/Allot_rh" target="_blank" rel="noopener" aria-label="Allot on X"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M17.75 3h3.07l-6.7 7.66L22 21h-6.17l-4.83-6.32L5.47 21H2.4l7.17-8.2L2 3h6.33l4.37 5.77L17.75 3zm-1.08 16.17h1.7L7.4 4.74H5.58l11.09 14.43z"/></svg></a><a href="https://github.com/byte402" target="_blank" rel="noopener" aria-label="Allot on GitHub"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg></a></span>
   <a class="cta" href="/app">Open the app</a>
 </div></header>
@@ -508,6 +517,22 @@ html,body{overflow-x:clip}
     <p class="ex">Listed is not endorsed. Before you approve a payee, read the live 402 and the payments above. Your vault rules still apply to every call: cap per payment, daily x402 limit, approved payees.</p>
   </section>
 
+  <section id="compute" class="view">
+    <div class="phead"><div class="eyebrow">COMPUTE</div><h2 class="big">Your AI rents GPUs. <em>You see every cent.</em></h2>
+    <p class="sub">AI agents now pay per job for GPU compute, models and data. Paste your vault and see what each AI spent, on what, against the limits you set. GPU compute is split out from everything else, and anything unusual is flagged: a limit nearly used up, a burst of payments, a new payee. Read from the chain, nothing to sign.</p></div>
+    <div class="dsearch rv"><input id="cv" placeholder="vault address 0x…" spellcheck="false" autocomplete="off"><button type="button" id="cgo" class="ghost" style="cursor:pointer;background:transparent">Read ▸</button><button type="button" id="cme" class="ghost" style="cursor:pointer;background:transparent">My vaults</button></div>
+    <div id="cmine" class="chipsr" style="margin-top:8px"></div><p id="cerr" class="ex" style="color:#ff6b6b"></p>
+    <div id="cout" hidden>
+      <div class="lstats" id="csum"></div>
+      <div id="cwarn" style="margin-top:18px"></div>
+      <div class="cgrid"><div class="cpanel"><h3>Last 7 days</h3><div id="cbars" class="cbars"></div><p class="ex"><i class="key g"></i> GPU compute <i class="key o"></i> everything else · UTC days</p><div id="ccats" class="ccats"></div></div>
+      <div class="cpanel"><h3>Each AI, against its limits</h3><div id="cais"></div></div></div>
+      <div class="tw" id="cpays"></div>
+      <p class="ex" id="cmeta"></p>
+    </div>
+    <div class="cnote rv" style="margin-top:22px"><b>How a GPU job stays inside your rules.</b> A GPU provider that takes x402 answers with a price in USDG. Your AI pays from its vault only if the provider is on its approved list, the price is under its cap per payment, and today's x402 limit has room. A loop of a thousand jobs stops at the daily limit. Providers list themselves in the <a href="/directory">directory</a> with the category "GPU compute".</div>
+  </section>
+
   <section id="build" class="view">
     <div class="phead"><div class="eyebrow">BUILD</div><h2 class="big">Sell your API <em>to AIs</em>.</h2>
     <p class="sub">Charge AI agents per call in USDG on Robinhood Chain, with x402. Start from the Allot sample API: one Cloudflare Worker, no wallet key and no funds on your server. Payments are checked from the receipt on chain before you answer.</p></div>
@@ -617,8 +642,8 @@ npx -y github:byte402/allot-connector pay &quot;https://your-worker.workers.dev/
 </main>
 <footer><div class="wrap">Allot · built on x402, USDG and Robinhood Chain</div></footer>
 <script>
-const VIEWS = ["home", "promises", "how", "connect", "apis", "directory", "build", "security", "ledger", "launch"];
-const LABEL = { home: "Home", promises: "Promises", how: "How it works", connect: "Connect", apis: "APIs", directory: "Directory", build: "Build", security: "Security", ledger: "Ledger", launch: "Launch" };
+const VIEWS = ["home", "promises", "how", "connect", "apis", "directory", "compute", "build", "security", "ledger", "launch"];
+const LABEL = { home: "Home", promises: "Promises", how: "How it works", connect: "Connect", apis: "APIs", directory: "Directory", compute: "Compute", build: "Build", security: "Security", ledger: "Ledger", launch: "Launch" };
 document.querySelectorAll(".view").forEach((v) => { const i = VIEWS.indexOf(v.id), nx = VIEWS[i + 1], pv = VIEWS[i - 1]; if (v.id === "home") return; const d = document.createElement("div"); d.className = "next"; d.innerHTML = (pv ? `<a href="${pv === "home" ? "/" : "/" + pv}">← ${LABEL[pv]}</a>` : "") + (nx ? `<a href="/${nx}">${LABEL[nx]} →</a>` : ""); v.appendChild(d); });
 // clean paths: allot.dev/, allot.dev/promises, allot.dev/ledger ... (404.html sends deep links back here as ?p=)
 function ROUTE() { const seg = location.pathname.replace(/\/+$/, "").split("/").pop().replace(/\.html$/, ""); return VIEWS.includes(seg) ? seg : "home"; }
@@ -1266,6 +1291,79 @@ document.querySelectorAll(".bcode [data-copy]").forEach((b) => b.onclick = async
   addEventListener("allot:route", () => { if (ROUTE() === "directory") start(); });
   if ($("sgo")) $("sgo").onclick = submit;
   if (ROUTE() === "directory") start();
+})();
+</script>
+<script>
+// ---------- Compute: what each AI in a vault spends, on GPU compute and everything else, read from the chain ----------
+(() => {
+  const RPC = "https://rpc.mainnet.chain.robinhood.com", EXP = "https://robinhoodchain.blockscout.com", USDG = "0x5fc5360d0400a0fd4f2af552add042d716f1d168";
+  const FACTORY = "0xc2623e62d5fae1eeebc2990a9d51f9e69a8a9092", FROM = 121807504;
+  const T = { transfer: "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef", authUsed: "0x98de503528ee59b575ef0c0a2576a82497bfc029a5685b209e9ec333479b10a5", paid: "0xaa1c213df8b2ea1210243bbab345f0aa02826cd3b851cc92522eff84a1cf0f5e", withdrawn: "0x7084f5476618d8e60b11ef0d7d3f06914655adb8793e28ff7f018d4c76d505d5", agentSet: "0x847bbbd6959b7a64e1215d42f71ac0b56a53ad525e76f755e09f7708d3db37c8", payeeSet: "0xd8d1c1804cbbd03caaf50ecc88f67d58b4bec59da41e30a3da7f18546dd8d376", authorized: "0xa2583fc4aed8837d363d1efef7f53f099d5d9935fd4266d54f92ea61bac47e6e" };
+  const S = { agents: "0xfd66091e", remaining: "0xec52e060", vaultsOf: "0x6cc811f8", frozen: "0x054f7d9c", owner: "0x8da5cb5b", balanceOf: "0x70a08231" };
+  const $ = (i) => document.getElementById(i), esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;"), sh = (a) => a.slice(0, 6) + "…" + a.slice(-4);
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms)), hx = (n) => "0x" + n.toString(16), pad = (a) => "0x" + a.toLowerCase().slice(2).padStart(64, "0"), addr = (t) => ("0x" + t.slice(-40)).toLowerCase();
+  const W = (d, i) => BigInt("0x" + (d.slice(2 + 64 * i, 66 + 64 * i) || "0")), usd = (v) => { const n = Number(v) / 1e6; return n.toLocaleString("en-US", { maximumFractionDigits: n >= 1 ? 2 : 6 }); };
+  const isGpu = (c) => /gpu|compute|inference|render/i.test(c || "");
+  async function rpc(method, params) { for (let k = 0; k < 6; k++) { try { const r = await fetch(RPC, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }) }); if (r.status === 429) throw new Error("busy"); const j = await r.json(); if (j.error) { if (/rate|many/i.test(j.error.message)) throw new Error("busy"); throw Object.assign(new Error(j.error.message), { final: true }); } return j.result; } catch (e) { if (e.final) throw e; await sleep(900 * (k + 1)); } } throw new Error("the RPC is busy, try again"); }
+  async function batch(calls) { const out = []; for (let i = 0; i < calls.length; i += 25) { const part = calls.slice(i, i + 25); if (i) await sleep(250);
+      for (let k = 0; k < 6; k++) { try { const r = await fetch(RPC, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(part.map(([m, p], j) => ({ jsonrpc: "2.0", id: j, method: m, params: p }))) }); const j = await r.json(); if (!Array.isArray(j)) throw new Error("busy"); j.sort((a, b) => a.id - b.id); out.push(...j.map((x) => x.result ?? null)); break; } catch (e) { if (k === 5) throw e; await sleep(1200 * (k + 1)); } } } return out; }
+  const getLogs = (f) => rpc("eth_getLogs", [{ ...f, fromBlock: hx(FROM), toBlock: "latest" }]);
+  let DIR = null; async function directory() { if (DIR) return DIR; try { DIR = await (await fetch("/directory.json", { cache: "no-cache" })).json(); } catch { DIR = { apis: [] }; } return DIR; }
+  async function read(vault) { vault = vault.toLowerCase(); const call = (to, data) => ["eth_call", [{ to, data }, "latest"]];
+    const [code] = await batch([["eth_getCode", [vault, "latest"]]]); if (!code || code === "0x") throw new Error("No contract at this address on Robinhood Chain.");
+    const [own, frz, bal, blk] = await batch([call(vault, S.owner), call(vault, S.frozen), call(USDG, S.balanceOf + pad(vault).slice(2)), ["eth_getBlockByNumber", ["latest", false]]]);
+    const created = await getLogs({ address: FACTORY }), isAllot = created.some((l) => ("0x" + l.data.slice(26, 66)).toLowerCase() === vault); if (!isAllot) throw new Error("This address is not a vault made by the Allot Factory.");
+    const [sets, payees, auths, outs] = await Promise.all([getLogs({ address: vault, topics: [T.agentSet] }), getLogs({ address: vault, topics: [T.payeeSet] }), getLogs({ address: vault, topics: [T.authorized] }), getLogs({ address: USDG, topics: [T.transfer, pad(vault)] })]);
+    const now = parseInt(blk.timestamp, 16), today = Math.floor(now / 86400), A = {};
+    for (const l of sets) A[addr(l.topics[1])] = { agent: addr(l.topics[1]), perPayment: W(l.data, 0), perDay: W(l.data, 1), expiry: Number(W(l.data, 2)), active: W(l.data, 3) === 1n };
+    const ids = Object.keys(A), st = await batch(ids.flatMap((a) => [call(vault, S.agents + pad(a).slice(2)), call(vault, S.remaining + pad(a).slice(2))]));
+    ids.forEach((a, i) => { const d = st[2 * i] || "0x", day = Number(W(d, 3)); A[a].spentToday = day === today ? W(d, 2) : 0n; A[a].remaining = st[2 * i + 1] && st[2 * i + 1] !== "0x" ? BigInt(st[2 * i + 1]) : 0n; A[a].payees = new Set(); });
+    for (const l of payees) { const a = addr(l.topics[1]), p = addr(l.topics[2]); if (!A[a]) continue; if (W(l.data, 0) === 1n) A[a].payees.add(p); else A[a].payees.delete(p); }
+    // classify each USDG transfer out of the vault by the other logs in the same transaction (like the Ledger page)
+    const recent = outs.slice(-300), txs = [...new Set(recent.map((l) => l.transactionHash))], bks = [...new Set(recent.map((l) => l.blockNumber))];
+    const r = await batch([...txs.map((h) => ["eth_getTransactionReceipt", [h]]), ...bks.map((b) => ["eth_getBlockByNumber", [b, false]])]);
+    const RC = new Map(txs.map((h, i) => [h, r[i]])), TS = new Map(bks.map((b, i) => [b, r[txs.length + i] ? parseInt(r[txs.length + i].timestamp, 16) : null]));
+    const D = await directory(), CAT = new Map(); for (const a of D.apis || []) CAT.set(a.payTo.toLowerCase(), { name: a.name, category: a.category });
+    const pays = [];
+    for (const l of recent) { const rc = RC.get(l.transactionHash); if (!rc) continue; const to = addr(l.topics[2]), amount = BigInt(l.data), has = (t, at) => rc.logs.some((x) => x.topics[0] === t && (!at || x.address.toLowerCase() === at));
+      let kind = null, ai = null;
+      if (has(T.authUsed, USDG)) { kind = "x402"; const a = auths.filter((x) => addr(x.topics[2]) === to && W(x.data, 0) === amount && Number(x.blockNumber) <= Number(l.blockNumber)).pop(); ai = a ? addr(a.topics[1]) : null; }
+      else if (has(T.paid, vault)) { kind = "direct"; const p = rc.logs.find((x) => x.topics[0] === T.paid); ai = p ? addr(p.topics[1]) : null; }
+      if (!kind) continue; const c = CAT.get(to);
+      pays.push({ t: TS.get(l.blockNumber), block: parseInt(l.blockNumber, 16), tx: l.transactionHash, to, amount, kind, ai, name: c ? c.name : null, category: c ? c.category : "unlisted", gpu: c ? isGpu(c.category) : false }); }
+    return { vault, owner: addr(own || "0x0"), frozen: frz && BigInt(frz) === 1n, balance: bal && bal !== "0x" ? BigInt(bal) : 0n, now, today, agents: Object.values(A), pays: pays.reverse(), gpuListed: (D.apis || []).filter((a) => isGpu(a.category)).length };
+  }
+  function warnings(R) { const out = [], seen = new Map(); [...R.pays].reverse().forEach((p) => { if (!seen.has(p.to)) seen.set(p.to, p.t); });
+    if (R.frozen) out.push(["no", "The vault is frozen: no AI can pay until you unfreeze it."]);
+    for (const a of R.agents) { if (!a.active) continue;
+      if (a.perDay > 0n && a.remaining * 5n < a.perDay) out.push(["no", `${sh(a.agent)} has used ${Math.round(100 - Number((a.remaining * 1000n) / a.perDay) / 10)}% of today's limit: ${usd(a.remaining)} USDG left until 00:00 UTC.`]);
+      if (a.expiry && a.expiry - R.now < 3 * 86400 && a.expiry > R.now) out.push(["mid", `${sh(a.agent)}'s key expires in ${Math.ceil((a.expiry - R.now) / 3600)} h.`]);
+      const mine = R.pays.filter((p) => p.ai === a.agent && p.t).map((p) => p.t).sort((x, y) => x - y); for (let i = 4; i < mine.length; i++) if (mine[i] - mine[i - 4] <= 60) { out.push(["no", `${sh(a.agent)} made 5 payments within one minute at ${new Date(mine[i] * 1000).toISOString().slice(0, 16).replace("T", " ")} UTC: check it is not stuck in a loop.`]); break; } }
+    for (const [to, t] of seen) if (t && R.now - t < 86400) out.push(["mid", `First payment to a new payee ${sh(to)} in the last 24 hours.`]);
+    return out; }
+  function render(R) { const day = (t) => Math.floor(t / 86400), sum = (a) => a.reduce((s, p) => s + p.amount, 0n);
+    const todayP = R.pays.filter((p) => p.t && day(p.t) === R.today), weekP = R.pays.filter((p) => p.t && R.today - day(p.t) < 7), gpuW = weekP.filter((p) => p.gpu);
+    $("csum").innerHTML = `<div><b>${usd(sum(todayP))}</b><small>USDG SPENT TODAY (UTC)</small></div><div><b>${usd(sum(weekP))}</b><small>USDG, LAST 7 DAYS</small></div><div><b>${usd(sum(gpuW))}</b><small>ON GPU COMPUTE, 7 DAYS</small></div><div><b>${usd(R.balance)}</b><small>USDG IN THE VAULT</small></div>`;
+    const W2 = warnings(R); $("cwarn").innerHTML = W2.length ? W2.map(([k, m]) => `<p class="cw ${k}">${k === "no" ? "▲" : "●"} ${esc(m)}</p>`).join("") : '<p class="cw ok">✓ Nothing unusual: no limit near its end, no burst of payments, no new payee in the last 24 hours.</p>';
+    const days = [...Array(7)].map((_, i) => R.today - 6 + i), per = days.map((d) => ({ d, g: sum(R.pays.filter((p) => p.t && day(p.t) === d && p.gpu)), o: sum(R.pays.filter((p) => p.t && day(p.t) === d && !p.gpu)) })), mx = per.reduce((m, x) => (x.g + x.o > m ? x.g + x.o : m), 1n);
+    $("cbars").innerHTML = per.map((x) => { const h = (v) => Math.round(Number((v * 1000n) / mx) / 10); return `<div class="cb"><div class="cbs"><i class="o" style="height:${h(x.o)}%"></i><i class="g" style="height:${h(x.g)}%"></i></div><b>${usd(x.g + x.o)}</b><small>${new Date(x.d * 86400000).toISOString().slice(5, 10)}</small></div>`; }).join("");
+    const cats = {}; for (const p of weekP) { const k = p.gpu ? "GPU compute" : p.category; cats[k] = (cats[k] || 0n) + p.amount; }
+    $("ccats").innerHTML = (Object.keys(cats).length ? Object.entries(cats).sort((a, b) => (b[1] > a[1] ? 1 : -1)).map(([k, v]) => `<span class="${k === "GPU compute" ? "g" : ""}">${esc(k)} <b>${usd(v)}</b></span>`).join("") : '<span>no payments in the last 7 days</span>') + (R.gpuListed ? "" : ' <span class="mute">GPU compute: no GPU provider is listed in the <a href="/directory">directory</a> yet</span>');
+    $("cais").innerHTML = R.agents.length ? R.agents.map((a) => { const used = a.perDay > 0n ? Math.min(100, Math.round(Number(((a.perDay - a.remaining) * 1000n) / a.perDay) / 10)) : 0, mine = R.pays.filter((p) => p.ai === a.agent), g = sum(mine.filter((p) => p.gpu && p.t && R.today - day(p.t) < 7));
+      return `<div class="cai"><div class="caih"><a href="${EXP}/address/${a.agent}" target="_blank" rel="noopener">AI ${sh(a.agent)}</a><span class="${a.active ? "on" : "off"}">${a.active ? (a.expiry && a.expiry < R.now ? "expired" : "active") : "revoked"}</span></div>
+        <div class="crule"><span>per payment <b>${usd(a.perPayment)}</b></span><span>per day <b>${usd(a.perDay)}</b></span><span>payees <b>${a.payees.size}</b></span></div>
+        <div class="cbar"><i style="width:${a.active ? used : 0}%"></i></div><p class="ex" style="margin:6px 0 0">${a.active ? `today ${usd(a.perDay - a.remaining)} of ${usd(a.perDay)} USDG · ${usd(a.remaining)} left` : "cannot pay"} · ${mine.length} payments · GPU compute 7 days ${usd(g)}</p></div>`; }).join("") : '<p class="ex">No AI has been added to this vault yet.</p>';
+    $("cpays").innerHTML = R.pays.length ? `<table><tr><th>TIME (UTC)</th><th>AI</th><th>TO</th><th>CATEGORY</th><th>USDG</th><th>TX</th></tr>${R.pays.slice(0, 25).map((p) => `<tr><td>${p.t ? new Date(p.t * 1000).toISOString().slice(0, 16).replace("T", " ") : p.block}</td><td>${p.ai ? sh(p.ai) : "–"}</td><td>${esc(p.name || sh(p.to))}</td><td>${p.gpu ? '<span class="cg">GPU compute</span>' : esc(p.category)}</td><td>${usd(p.amount)}</td><td><a href="${EXP}/tx/${p.tx}" target="_blank" rel="noopener">${sh(p.tx)} ↗</a></td></tr>`).join("")}</table>` : '<p class="ex" style="padding:16px">No payments from this vault yet.</p>';
+    $("cmeta").textContent = `vault ${R.vault} · owner ${sh(R.owner)} · read from Robinhood Chain at ${new Date(R.now * 1000).toISOString().slice(0, 16).replace("T", " ")} UTC`; $("cout").hidden = false; }
+  async function go(v) { v = (v || $("cv").value).trim(); $("cerr").textContent = ""; if (!/^0x[0-9a-fA-F]{40}$/.test(v)) { $("cerr").textContent = "Paste a vault address (0x + 40 hex)."; return; }
+    $("cgo").textContent = "Reading…"; $("cgo").disabled = true; try { $("cv").value = v; render(await read(v)); history.replaceState(null, "", "/compute?vault=" + v.toLowerCase()); } catch (e) { $("cout").hidden = true; $("cerr").textContent = e.message || String(e); } finally { $("cgo").textContent = "Read ▸"; $("cgo").disabled = false; } }
+  async function mine() { $("cerr").textContent = ""; if (!window.ethereum) { $("cerr").textContent = "No wallet found in this browser. Paste your vault address instead."; return; }
+    try { const [me] = await window.ethereum.request({ method: "eth_requestAccounts" }); const r = await rpc("eth_call", [{ to: FACTORY, data: S.vaultsOf + pad(me).slice(2) }, "latest"]); const n = Number(W(r, 1)), list = [...Array(n)].map((_, i) => addr("0x" + r.slice(2 + 64 * (2 + i), 66 + 64 * (2 + i))));
+      if (!list.length) { $("cerr").textContent = "This wallet owns no Allot vault. Create one in the app."; return; } $("cmine").innerHTML = list.length > 1 ? list.map((v) => `<button type="button" data-v="${v}">${sh(v)}</button>`).join(" ") : ""; document.querySelectorAll("#cmine button").forEach((b) => (b.onclick = () => go(b.dataset.v))); go(list[list.length - 1]);
+    } catch (e) { $("cerr").textContent = e.message || String(e); } }
+  let started = false; function start() { if (started) return; started = true; const q = new URLSearchParams(location.search).get("vault"); if (q) go(q); }
+  if ($("cgo")) { $("cgo").onclick = () => go(); $("cv").addEventListener("keydown", (e) => { if (e.key === "Enter") go(); }); $("cme").onclick = mine; }
+  addEventListener("allot:route", () => { if (ROUTE() === "compute") start(); }); if (ROUTE() === "compute") start();
 })();
 </script>
 </body>
