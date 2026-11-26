@@ -305,13 +305,22 @@ html,body{overflow-x:clip}
 @media (max-width:640px){.blk{display:table;margin:10px 0 0}}
 @media (max-width:900px){.follow{grid-template-columns:minmax(0,1fr)}.fpanel{display:none}.fstep{min-height:0;opacity:1;padding:22px 0;border-top:1px solid var(--line)}.fstep .fin{display:block;margin-top:14px;background:#0b0b0b;border:1px solid var(--line);border-radius:4px;padding:12px 14px}}
 @media (prefers-reduced-motion:reduce){.fthr path{transition:none}.blk i{animation:none}}
+
+.dsearch{display:flex;gap:14px;align-items:center;margin-top:26px}.dsearch input{flex:1;font:500 15px var(--body);color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:12px 14px;outline:none}.dsearch input:focus{border-color:var(--blue)}
+.dapi{margin-top:22px;background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:20px 22px}.dh{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:flex-start}.dh b{font:700 20px var(--display);display:block}.dh span{font:500 12px var(--mono);color:var(--dim)}
+.dact{display:flex;gap:8px;align-items:center}.dact button{font:600 12px var(--mono);color:var(--blue);background:transparent;border:1px solid var(--line);border-radius:4px;padding:9px 12px;cursor:pointer}.dd{margin:10px 0 0;color:var(--mute);font-size:14.5px}
+.dstat{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:14px;font:500 12.5px var(--mono);color:var(--mute)}.dstat b{color:var(--ink)}.dstat a{color:var(--blue);text-decoration:none}.dapi .tw{margin-top:14px}.dapi code{font:500 12.5px var(--mono)}
+.dapi td[id^="dl-"]{white-space:nowrap;letter-spacing:0}.dok{color:#4ade80;font:600 12px var(--mono)}.dno{color:#ff6b6b;font:600 12px var(--mono)}.dmid{color:var(--dim);font:600 12px var(--mono)}
+.dsub{margin-top:34px;background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:20px 22px}.dsub h3{margin:0;font:700 18px var(--display)}
+.dform{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}.dform input,.dform textarea{font:500 13px var(--mono);color:var(--ink);background:#0d0d0d;border:1px solid var(--line);border-radius:4px;padding:10px 12px;outline:none;min-width:0}.dform .wide{grid-column:1/-1}
+@media (max-width:760px){.dform{grid-template-columns:minmax(0,1fr)}.dsearch{flex-direction:column;align-items:stretch}}
 </style>
 </head>
 <body>
 <canvas id="flow" aria-hidden="true"></canvas>
 <header><div class="wrap">
   <a class="logo" href="/" style="text-decoration:none;color:inherit"><span class="mark" aria-hidden="true"></span>Allot</a>
-  <nav aria-label="Main"><a href="/">Home</a><a href="/app">App</a><a href="/promises">Promises</a><a href="/how">How it works</a><a href="/connect">Connect</a><a href="/apis">APIs</a><a href="/build">Build</a><a href="/security">Security</a><a href="/ledger">Ledger</a><a href="/launch">Launch</a></nav>
+  <nav aria-label="Main"><a href="/">Home</a><a href="/app">App</a><a href="/promises">Promises</a><a href="/how">How it works</a><a href="/connect">Connect</a><a href="/apis">APIs</a><a href="/directory">Directory</a><a href="/build">Build</a><a href="/security">Security</a><a href="/ledger">Ledger</a><a href="/launch">Launch</a></nav>
   <span class="soc"><a href="https://x.com/Allot_rh" target="_blank" rel="noopener" aria-label="Allot on X"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M17.75 3h3.07l-6.7 7.66L22 21h-6.17l-4.83-6.32L5.47 21H2.4l7.17-8.2L2 3h6.33l4.37 5.77L17.75 3zm-1.08 16.17h1.7L7.4 4.74H5.58l11.09 14.43z"/></svg></a><a href="https://github.com/byte402" target="_blank" rel="noopener" aria-label="Allot on GitHub"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg></a></span>
   <a class="cta" href="/app">Open the app</a>
 </div></header>
@@ -487,6 +496,18 @@ html,body{overflow-x:clip}
     <div class="cnote rv"><b>Try before you pay.</b> "See the 402" calls the endpoint without payment and shows the real offer: price, payee and a one-time nonce. Nothing is paid from this page. To pay, run the command from your own terminal with your AI key, or let your assistant call <code>allot_pay_x402</code>.</div>
   </section>
 
+  <section id="directory" class="view">
+    <div class="phead"><div class="eyebrow">DIRECTORY</div><h2 class="big">x402 APIs your AI <em>can pay</em>.</h2>
+    <p class="sub">APIs that take USDG on Robinhood Chain, per call. Each listing is checked twice while you watch: the endpoint must answer 402 with an exact USDG offer to the listed payee, and its payments are read from the chain. Find an API, copy its payee, approve it for your AI, done.</p></div>
+    <div class="dsearch rv"><input id="dq" placeholder="search: prices, wallet, quote…" spellcheck="false" autocomplete="off"><span id="dcount" class="k">loading…</span></div>
+    <div id="dlist"></div>
+    <div class="dsub rv"><h3>List your API</h3><p class="ex" style="margin-top:4px">Anyone can list an x402 API that answers 402 with an exact USDG offer on eip155:4663. This opens a prefilled GitHub issue: nothing is stored by us, and the listing goes live after the 402 is checked.</p>
+      <div class="dform"><input id="sname" placeholder="API name"><input id="sby" placeholder="by (you or your project)"><input id="scat" placeholder="category, e.g. market data"><input id="sbase" placeholder="base URL https://…"><input id="spay" placeholder="payee 0x… (gets the USDG)"><input id="ssrc" placeholder="source or docs URL (optional)"><input id="sdesc" class="wide" placeholder="one line: what it returns">
+      <textarea id="spaths" class="wide" rows="3" placeholder="one endpoint per line: /path price what it returns&#10;/v1/gas 0.001 the live gas price"></textarea></div>
+      <button type="button" id="sgo" class="ghost" style="margin-top:12px;cursor:pointer;background:transparent">Open the listing request ↗</button> <span id="sout" class="ex"></span></div>
+    <p class="ex">Listed is not endorsed. Before you approve a payee, read the live 402 and the payments above. Your vault rules still apply to every call: cap per payment, daily x402 limit, approved payees.</p>
+  </section>
+
   <section id="build" class="view">
     <div class="phead"><div class="eyebrow">BUILD</div><h2 class="big">Sell your API <em>to AIs</em>.</h2>
     <p class="sub">Charge AI agents per call in USDG on Robinhood Chain, with x402. Start from the Allot sample API: one Cloudflare Worker, no wallet key and no funds on your server. Payments are checked from the receipt on chain before you answer.</p></div>
@@ -596,8 +617,8 @@ npx -y github:byte402/allot-connector pay &quot;https://your-worker.workers.dev/
 </main>
 <footer><div class="wrap">Allot · built on x402, USDG and Robinhood Chain</div></footer>
 <script>
-const VIEWS = ["home", "promises", "how", "connect", "apis", "build", "security", "ledger", "launch"];
-const LABEL = { home: "Home", promises: "Promises", how: "How it works", connect: "Connect", apis: "APIs", build: "Build", security: "Security", ledger: "Ledger", launch: "Launch" };
+const VIEWS = ["home", "promises", "how", "connect", "apis", "directory", "build", "security", "ledger", "launch"];
+const LABEL = { home: "Home", promises: "Promises", how: "How it works", connect: "Connect", apis: "APIs", directory: "Directory", build: "Build", security: "Security", ledger: "Ledger", launch: "Launch" };
 document.querySelectorAll(".view").forEach((v) => { const i = VIEWS.indexOf(v.id), nx = VIEWS[i + 1], pv = VIEWS[i - 1]; if (v.id === "home") return; const d = document.createElement("div"); d.className = "next"; d.innerHTML = (pv ? `<a href="${pv === "home" ? "/" : "/" + pv}">← ${LABEL[pv]}</a>` : "") + (nx ? `<a href="/${nx}">${LABEL[nx]} →</a>` : ""); v.appendChild(d); });
 // clean paths: allot.dev/, allot.dev/promises, allot.dev/ledger ... (404.html sends deep links back here as ?p=)
 function ROUTE() { const seg = location.pathname.replace(/\/+$/, "").split("/").pop().replace(/\.html$/, ""); return VIEWS.includes(seg) ? seg : "home"; }
@@ -1177,6 +1198,72 @@ document.querySelectorAll(".bcode [data-copy]").forEach((b) => b.onclick = async
 (() => { const el = document.querySelector("#blk b"); if (!el) return;
   const tick = async () => { if (document.hidden) return; try { const r = await fetch("https://rpc.mainnet.chain.robinhood.com", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_blockNumber", params: [] }) }); const j = await r.json(); if (j.result) el.textContent = parseInt(j.result, 16).toLocaleString("en-US"); } catch {} };
   tick(); setInterval(tick, 5000); })();
+</script>
+<script>
+// ---------- Directory: x402 APIs that take USDG on Robinhood Chain, checked live (the 402 offer) and on chain (payments received) ----------
+(() => {
+  const RPC = "https://rpc.mainnet.chain.robinhood.com", EXP = "https://robinhoodchain.blockscout.com", USDG = "0x5fc5360d0400a0fd4f2af552add042d716f1d168";
+  const T_TR = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef", T_AU = "0x98de503528ee59b575ef0c0a2576a82497bfc029a5685b209e9ec333479b10a5";
+  const FACTORY = "0xc2623e62d5fae1eeebc2990a9d51f9e69a8a9092", FACTORY_BLOCK = 121807504, ISSUE = "https://github.com/byte402/byte402.github.io/issues/new";
+  const $ = (i) => document.getElementById(i), esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"), sh = (a) => a.slice(0, 6) + "…" + a.slice(-4);
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms)), hx = (n) => "0x" + n.toString(16), pad = (a) => "0x" + a.toLowerCase().slice(2).padStart(64, "0");
+  const usdg = (v) => { const s = (Number(v) / 1e6).toFixed(6).replace(/0+$/, "").replace(/\.$/, ""); return s === "" ? "0" : s; };
+  async function rpc(method, params) { for (let k = 0; k < 6; k++) { try { const r = await fetch(RPC, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }) }); if (r.status === 429) throw new Error("busy"); const j = await r.json(); if (j.error) { if (/rate|many/i.test(j.error.message)) throw new Error("busy"); throw Object.assign(new Error(j.error.message), { final: true }); } return j.result; } catch (e) { if (e.final) throw e; await sleep(800 * (k + 1)); } } throw new Error("the RPC is busy, try again"); }
+  async function batch(calls) { const out = []; for (let i = 0; i < calls.length; i += 25) { const part = calls.slice(i, i + 25); if (i) await sleep(300);
+      for (let k = 0; k < 6; k++) { try { const r = await fetch(RPC, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(part.map(([m, p], j) => ({ jsonrpc: "2.0", id: j, method: m, params: p }))) }); const j = await r.json(); if (!Array.isArray(j)) throw new Error("busy"); j.sort((a, b) => a.id - b.id); out.push(...j.map((x) => x.result ?? null)); break; } catch (e) { if (k === 5) throw e; await sleep(1200 * (k + 1)); } } } return out; }
+  async function logs(filter, from, to) { const out = []; let step = 9000000; for (let a = from; a <= to; ) { const e = Math.min(to, a + step - 1);
+      try { out.push(...(await rpc("eth_getLogs", [{ ...filter, fromBlock: hx(a), toBlock: hx(e) }]))); a = e + 1; } catch (err) { const msg = err.message || "", m = /only (\d+) are allowed/.exec(msg); if (m) { step = Math.max(2000, Math.min(step >> 1, +m[1])); continue; } if (/timed? ?out|timeout|too many results|response size/i.test(msg) && step > 50000) { step = step >> 2; continue; } throw err; } } return out; }
+  let vaults = null;
+  async function allotVaults(head) { if (vaults) return vaults; const L = await logs({ address: FACTORY }, FACTORY_BLOCK, head); vaults = new Set(L.map((l) => ("0x" + l.data.slice(26, 66)).toLowerCase())); return vaults; }
+  // payments a payee received on chain: USDG transfers to it, which of them used an EIP-3009 authorization (x402 style), and which came from an Allot vault
+  async function onchain(payTo) { const head = parseInt(await rpc("eth_blockNumber", []), 16), V = await allotVaults(head);
+    const L = (await logs({ address: USDG, topics: [T_TR, null, pad(payTo)] }, 0, head)).slice(-150), txs = [...new Set(L.map((l) => l.transactionHash))];
+    const rc = await batch(txs.map((h) => ["eth_getTransactionReceipt", [h]])), auth = new Set(txs.filter((h, i) => rc[i] && rc[i].logs.some((x) => x.address.toLowerCase() === USDG && x.topics[0] === T_AU)));
+    const pays = L.filter((l) => auth.has(l.transactionHash)), last = pays[pays.length - 1];
+    let lastTime = null; if (last) { const b = await rpc("eth_getBlockByNumber", [last.blockNumber, false]); lastTime = parseInt(b.timestamp, 16); }
+    return { head, x402: pays.length, viaAllot: pays.filter((l) => V.has(("0x" + l.topics[1].slice(26)).toLowerCase())).length, payers: new Set(pays.map((l) => l.topics[1])).size, total: pays.reduce((s, l) => s + BigInt(l.data), 0n), last: last ? { tx: last.transactionHash, block: parseInt(last.blockNumber, 16), time: lastTime } : null, capped: L.length === 150 }; }
+  // the live 402: call the endpoint without paying and read the offer it answers with
+  async function live(url, listed) { try { const r = await fetch(url, { headers: { accept: "application/json" } });
+      if (r.status !== 402) return { ok: false, why: `answered ${r.status}, not 402` };
+      let o = null; try { const j = await r.clone().json(); o = j.accepts && j.accepts[0]; } catch {}
+      if (!o) { const h = r.headers.get("payment-required"); if (h) try { o = JSON.parse(atob(h)).accepts[0]; } catch {} }
+      if (!o) return { ok: false, why: "402 without an x402 offer" };
+      const issues = []; if (o.scheme !== "exact") issues.push("scheme " + o.scheme); if (o.network !== "eip155:4663") issues.push("network " + o.network); if (String(o.asset).toLowerCase() !== USDG) issues.push("not USDG");
+      if (String(o.payTo).toLowerCase() !== listed.payTo.toLowerCase()) issues.push("payee differs from the listing");
+      const price = usdg(o.amount); if (price !== String(Number(listed.price))) issues.push(`asks ${price}, listed ${listed.price}`);
+      return { ok: !issues.length, price, payTo: o.payTo, issues };
+    } catch (e) { return { ok: null, why: "the browser could not reach it (offline, or it does not allow cross-site requests)" }; } }
+  const ago = (s) => { if (!s) return "–"; const d = Date.now() / 1000 - s; return d < 3600 ? Math.round(d / 60) + " min ago" : d < 172800 ? Math.round(d / 3600) + " h ago" : Math.round(d / 86400) + " days ago"; };
+  let DIR = null, started = false; const OC = new Map(), LV = new Map(); // remembered while the page is open
+  async function render() { const q = ($("dq").value || "").toLowerCase().trim(), list = DIR.apis.filter((a) => !q || [a.name, a.by, a.category, a.description, ...a.endpoints.map((e) => e.path + " " + e.what)].join(" ").toLowerCase().includes(q));
+    $("dcount").textContent = `${list.length} API${list.length === 1 ? "" : "s"} · ${list.reduce((s, a) => s + a.endpoints.length, 0)} paid endpoints`;
+    $("dlist").innerHTML = list.length ? list.map((a) => `<div class="dapi rv in" data-id="${esc(a.id)}"><div class="dh"><div><b>${esc(a.name)}</b><span>${esc(a.category)} · by ${esc(a.by)}</span></div><div class="dact"><button type="button" class="dcopy" data-to="${esc(a.payTo)}">copy payee</button><a class="ghost" href="${esc(a.source)}" target="_blank" rel="noopener">source ↗</a></div></div>
+      <p class="dd">${esc(a.description)}</p>
+      <div class="dstat" id="ds-${esc(a.id)}"><span>payee <a href="${EXP}/address/${esc(a.payTo)}" target="_blank" rel="noopener">${sh(a.payTo)}</a></span><span class="dwait">reading payments on chain…</span></div>
+      <div class="tw"><table><tr><th>ENDPOINT</th><th>PRICE</th><th>WHAT YOU GET</th><th>LIVE 402</th></tr>${a.endpoints.map((e, i) => `<tr><td><code>${esc(e.path)}</code></td><td style="white-space:nowrap">${esc(e.price)} USDG</td><td>${esc(e.what)}</td><td id="dl-${esc(a.id)}-${i}" class="k">checking…</td></tr>`).join("")}</table></div>
+      <p class="ex">Your AI pays with <code>allot_pay_x402</code> once you add this payee to its approved list in the <a href="/app">app</a>.</p></div>`).join("") : '<p class="ex">No listed API matches. List yours below.</p>';
+    document.querySelectorAll(".dcopy").forEach((b) => (b.onclick = () => navigator.clipboard.writeText(b.dataset.to).then(() => { b.textContent = "copied ✓"; setTimeout(() => (b.textContent = "copy payee"), 1500); })));
+    for (const a of list) {
+      a.endpoints.forEach(async (e, i) => { const k = a.base + e.path; if (!LV.has(k)) LV.set(k, live(k, { payTo: a.payTo, price: e.price })); const r = await LV.get(k), c = $(`dl-${a.id}-${i}`); if (!c) return;
+        c.innerHTML = r.ok ? `<span class="dok">● 402 · ${esc(r.price)} USDG</span>` : r.ok === null ? `<span class="dmid" title="${esc(r.why)}">○ not checked here</span>` : `<span class="dno" title="${esc(r.why || r.issues.join(", "))}">● ${esc(r.why || r.issues.join(", "))}</span>`; });
+      if (!OC.has(a.payTo)) OC.set(a.payTo, onchain(a.payTo)); OC.get(a.payTo).then((s) => { const el = $(`ds-${a.id}`); if (!el) return;
+        el.innerHTML = `<span>payee <a href="${EXP}/address/${esc(a.payTo)}" target="_blank" rel="noopener">${sh(a.payTo)}</a></span><span><b>${s.x402}</b> x402 payments${s.capped ? "+" : ""}</span><span><b>${s.viaAllot}</b> from Allot vaults</span><span><b>${s.payers}</b> payer${s.payers === 1 ? "" : "s"}</span><span><b>${usdg(s.total)}</b> USDG received</span><span>last ${s.last ? `<a href="${EXP}/tx/${s.last.tx}" target="_blank" rel="noopener">${ago(s.last.time)} ↗</a>` : "–"}</span>`; })
+        .catch((e) => { const el = $(`ds-${a.id}`); if (el) el.querySelector(".dwait").textContent = "could not read payments: " + e.message; });
+    } }
+  async function start() { if (started) return; started = true;
+    try { DIR = await (await fetch("/directory.json", { cache: "no-cache" })).json(); } catch (e) { $("dlist").innerHTML = `<p class="ex">Could not load the directory: ${esc(e.message)}</p>`; return; }
+    render(); let t; $("dq").addEventListener("input", () => { clearTimeout(t); t = setTimeout(render, 250); }); }
+  // list an API: build a prefilled GitHub issue so nothing is stored by us
+  function submit() { const v = (i) => ($(i).value || "").trim(), base = v("sbase").replace(/\/+$/, ""), pay = v("spay"), paths = v("spaths").split("\n").map((s) => s.trim()).filter(Boolean);
+    if (!/^https:\/\//.test(base)) return ($("sout").textContent = "The base URL must start with https://");
+    if (!/^0x[0-9a-fA-F]{40}$/.test(pay)) return ($("sout").textContent = "The payee must be a 0x address (40 hex).");
+    if (!paths.length) return ($("sout").textContent = "Add at least one endpoint, one per line: /path price what it returns");
+    const body = "```json\n" + JSON.stringify({ name: v("sname"), by: v("sby"), category: v("scat") || "data", description: v("sdesc"), base, payTo: pay.toLowerCase(), source: v("ssrc"), endpoints: paths.map((l) => { const [path, price, ...w] = l.split(/\s+/); return { path, price, what: w.join(" ") }; }) }, null, 2) + "\n```\n\nBefore listing, Allot checks that each endpoint answers 402 with an exact USDG offer on eip155:4663 to this payee.";
+    window.open(`${ISSUE}?title=${encodeURIComponent("List API: " + (v("sname") || base))}&body=${encodeURIComponent(body)}`, "_blank", "noopener"); $("sout").textContent = "A GitHub issue opened in a new tab. Review it and press Submit."; }
+  addEventListener("allot:route", () => { if (ROUTE() === "directory") start(); });
+  if ($("sgo")) $("sgo").onclick = submit;
+  if (ROUTE() === "directory") start();
+})();
 </script>
 </body>
 </html>
