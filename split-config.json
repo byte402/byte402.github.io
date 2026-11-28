@@ -1,9 +1,29 @@
 {
- "network": "Robinhood Chain Testnet",
- "chainId": 46630,
- "rpc": "https://rpc.testnet.chain.robinhood.com",
- "explorer": "https://explorer.testnet.chain.robinhood.com",
- "token": "0xd6107ba338c8b3b754d2bc0d6873a11352359e75",
- "factory": "0x6ec8e0c8ea0397daae9331603b8f4d9da821b12e",
- "factoryBlock": 158755424
+ "default": "testnet",
+ "networks": {
+  "testnet": {
+   "network": "Robinhood Chain Testnet",
+   "chainId": 46630,
+   "rpc": "https://rpc.testnet.chain.robinhood.com",
+   "explorer": "https://explorer.testnet.chain.robinhood.com",
+   "token": "0xd6107ba338c8b3b754d2bc0d6873a11352359e75",
+   "factory": "0x6ec8e0c8ea0397daae9331603b8f4d9da821b12e",
+   "factoryBlock": 158755424,
+   "tokenLabel": "tUSDG",
+   "testToken": true,
+   "banner": "TESTNET \u00b7 ROBINHOOD CHAIN TESTNET (46630) \u00b7 TEST USDG HAS NO VALUE \u00b7 NOTHING HERE TOUCHES MAINNET"
+  },
+  "mainnet": {
+   "network": "Robinhood Chain",
+   "chainId": 4663,
+   "rpc": "https://rpc.mainnet.chain.robinhood.com",
+   "explorer": "https://robinhoodchain.blockscout.com",
+   "token": "0x5fc5360d0400a0fd4f2af552add042d716f1d168",
+   "tokenLabel": "USDG",
+   "testToken": false,
+   "factory": "",
+   "factoryBlock": 0,
+   "banner": "MAINNET BETA \u00b7 ROBINHOOD CHAIN (4663) \u00b7 REAL USDG \u00b7 SOURCE VERIFIED, NOT AUDITED \u00b7 START SMALL"
+  }
+ }
 }

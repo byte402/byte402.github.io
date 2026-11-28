@@ -2,10 +2,10 @@
 // the result -> the wallet owner signs. Test USDG has no value. Nothing here touches mainnet.
 (() => {
   const E = window.ethers, $ = (id) => document.getElementById(id);
-  let CFG = null, ABI = null, ACCT = null, OPEN = null;
+  let CFG = null, ABI = null, ACCT = null, OPEN = null, NET = "testnet";
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const short = (a) => a.slice(0, 6) + "…" + a.slice(-4);
-  const fmt = (raw) => (Number(raw) / 1e6).toLocaleString("en-US", { maximumFractionDigits: 6 });
+  const fmt = (raw) => (Number(raw) / 1e6).toLocaleString("en-US", { maximumFractionDigits: 6 }), TL = () => CFG.tokenLabel;
   const log = (id, t) => { $(id).textContent = t; };
   const exa = (a) => `<a href="${CFG.explorer}/address/${a}" target="_blank" rel="noopener">${short(a)} ↗</a>`;
   const ext = (h) => `<a href="${CFG.explorer}/tx/${h}" target="_blank" rel="noopener">${short(h)} ↗</a>`;
@@ -57,8 +57,11 @@
   // ---------- one-time setup: deploy Test USDG and the factory ----------
   function setupState() {
     const ready = E.isAddress(CFG.token) && E.isAddress(CFG.factory);
+    $("setupH").textContent = CFG.testToken ? "Set up the testnet" : "Open Split on mainnet";
+    $("dTok").hidden = !CFG.testToken; $("dFac").textContent = CFG.testToken ? "2 · Deploy Split factory" : "Deploy Split factory"; $("outTokW").hidden = !CFG.testToken;
+    $("setupTxt").textContent = CFG.testToken ? "Deploys a Test USDG token (no value, anyone can mint) and the Split factory to " + CFG.network + ". Each step is simulated first, and you sign in your own wallet." : "Deploys the Split factory to " + CFG.network + " mainnet. Same verified code as on testnet. Simulated first, and you sign in your own wallet.";
     $("setup").hidden = ready; $("main").hidden = !ready;
-    if (ready) { $("facts").innerHTML = `Network <b>${CFG.network}</b> (chain ${CFG.chainId}) · Factory ${exa(CFG.factory)} · Test USDG ${exa(CFG.token)} <span class="muted">(no value)</span>`; }
+    if (ready) { $("facts").innerHTML = `Network <b>${CFG.network}</b> (chain ${CFG.chainId}) · Factory ${exa(CFG.factory)} · Test USDG ${exa(CFG.token)} ${CFG.testToken ? '<span class="muted">(no value)</span>' : ""}`; }
   }
   $("dTok").onclick = () => write("setupLog", "Deploy Test USDG", { data: ABI.TestUSDG.bytecode }).then((r) => { $("outTok").textContent = r.rc.contractAddress; log("setupLog", "✓ Test USDG deployed at " + r.rc.contractAddress + " in " + r.hash + ". Now deploy the factory."); }).catch(fail("setupLog"));
   $("dFac").onclick = () => write("setupLog", "Deploy Split factory", { data: ABI.AllotSplitFactory.bytecode }).then((r) => { $("outFac").textContent = r.rc.contractAddress; $("outBlk").textContent = parseInt(r.rc.blockNumber, 16); log("setupLog", "✓ Factory deployed at " + r.rc.contractAddress + " in block " + parseInt(r.rc.blockNumber, 16) + ". Send both addresses to the Allot team to switch this page on."); }).catch(fail("setupLog"));
@@ -101,30 +104,37 @@
   }
   $("openBtn").onclick = () => { const v = $("openAddr").value.trim(); if (E.isAddress(v)) open(v); else log("splitLog", "✕ Paste a Split address (0x…)."); };
   async function open(addr) {
-    OPEN = E.getAddress(addr); history.replaceState(null, "", location.pathname + "?s=" + OPEN); $("split").hidden = false; $("sAddr").innerHTML = exa(OPEN); log("splitLog", "Reading the Split…");
+    OPEN = E.getAddress(addr); history.replaceState(null, "", location.pathname + "?" + (NET !== "testnet" ? "net=" + NET + "&" : "") + "s=" + OPEN); $("split").hidden = false; $("sAddr").innerHTML = exa(OPEN); log("splitLog", "Reading the Split…");
     try {
       const code = await rpc("eth_getCode", [OPEN, "latest"]); if (code === "0x") throw new Error("No contract at this address on " + CFG.network);
       const [payees] = await read(OPEN, "AllotSplit", "payees"), [tot] = await read(OPEN, "AllotSplit", "totalShares");
       const tk = CFG.token, [bal] = await read(tk, "TestUSDG", "balanceOf", [OPEN]), [rel] = await read(OPEN, "AllotSplit", "totalReleased", [tk]);
       const rows = await Promise.all(payees.map(async (p) => { const [[sh], [got], [due], [wb]] = await Promise.all([read(OPEN, "AllotSplit", "shares", [p]), read(OPEN, "AllotSplit", "released", [tk, p]), read(OPEN, "AllotSplit", "releasable", [tk, p]), read(tk, "TestUSDG", "balanceOf", [p])]); return { p, sh, got, due, wb }; }));
-      $("sRecv").textContent = fmt(bal + rel) + " tUSDG"; $("sHeld").textContent = fmt(bal) + " tUSDG"; $("sRel").textContent = fmt(rel) + " tUSDG"; $("sN").textContent = payees.length;
+      $("sRecv").textContent = fmt(bal + rel) + " " + TL(); $("sHeld").textContent = fmt(bal) + " " + TL(); $("sRel").textContent = fmt(rel) + " " + TL(); $("sN").textContent = payees.length;
       $("ptab").innerHTML = "<tr><th>PAYEE</th><th>SHARE</th><th>PAID OUT</th><th>READY TO RELEASE</th><th></th></tr>" + rows.map((r) => `<tr><td>${exa(r.p)}${ACCT && r.p.toLowerCase() === ACCT.toLowerCase() ? ' <span class="muted">you</span>' : ""}</td><td>${(Number(r.sh) * 100 / Number(tot)).toFixed(2)}%</td><td>${fmt(r.got)}</td><td>${fmt(r.due)}</td><td><button type="button" class="rel" data-p="${r.p}" ${r.due === 0n ? "disabled" : ""}>Release</button></td></tr>`).join("");
       $("ptab").querySelectorAll(".rel").forEach((b) => (b.onclick = () => write("splitLog", "Release to " + short(b.dataset.p), { to: OPEN, data: I("AllotSplit").encodeFunctionData("release", [tk, b.dataset.p]) }).then((r) => { log("splitLog", "✓ Released in " + r.hash); open(OPEN); }).catch(fail("splitLog"))));
       const evs = await rpc("eth_getLogs", [{ address: OPEN, fromBlock: "0x" + Number(CFG.factoryBlock).toString(16), toBlock: "latest" }]);
       const rl = evs.map((l) => { try { return { ...I("AllotSplit").parseLog(l), h: l.transactionHash }; } catch { return null; } }).filter((x) => x && x.name === "Released").slice(-12).reverse();
-      $("sAct").innerHTML = rl.length ? rl.map((x) => `<div>${fmt(x.args.amount)} tUSDG → ${short(x.args.payee)} · ${ext(x.h)}</div>`).join("") : '<span class="muted">No releases yet.</span>';
+      $("sAct").innerHTML = rl.length ? rl.map((x) => `<div>${fmt(x.args.amount)} ${TL()} → ${short(x.args.payee)} · ${ext(x.h)}</div>`).join("") : '<span class="muted">No releases yet.</span>';
       log("splitLog", "Read live from " + CFG.network + " · " + new Date().toUTCString().slice(17, 25) + " UTC");
     } catch (e) { fail("splitLog")(e); }
   }
   $("pay").onclick = () => { let v; try { v = E.parseUnits(($("payAmt").value || "0").trim(), 6); } catch { return log("splitLog", "✕ Enter an amount like 1.00"); } if (v <= 0n) return log("splitLog", "✕ Enter an amount above 0");
-    write("splitLog", "Mint test USDG into the Split", { to: CFG.token, data: I("TestUSDG").encodeFunctionData("mint", [OPEN, v]) }).then((r) => { log("splitLog", "✓ " + fmt(v) + " tUSDG arrived in the Split, like a payment would: " + r.hash); open(OPEN); }).catch(fail("splitLog")); };
+    const call = CFG.testToken ? { to: CFG.token, data: I("TestUSDG").encodeFunctionData("mint", [OPEN, v]) } : { to: CFG.token, data: I("TestUSDG").encodeFunctionData("transfer", [OPEN, v]) };
+    write("splitLog", CFG.testToken ? "Mint test USDG into the Split" : "Send " + fmt(v) + " USDG from your wallet into the Split", call).then((r) => { log("splitLog", "✓ " + fmt(v) + " " + TL() + " arrived in the Split, like a payment would: " + r.hash); open(OPEN); }).catch(fail("splitLog")); };
   $("relAll").onclick = () => write("splitLog", "Release to every payee", { to: OPEN, data: I("AllotSplit").encodeFunctionData("releaseAll", [CFG.token]) }).then((r) => { log("splitLog", "✓ Released to every payee in " + r.hash); open(OPEN); }).catch(fail("splitLog"));
   $("refresh").onclick = () => OPEN && open(OPEN);
   $("connect").onclick = () => connect().then((a) => { ACCT = showAcct(a); }).catch((e) => alert(e.message));
 
   (async () => {
-    try { [CFG, ABI] = await Promise.all([fetch("split-config.json?t=" + Date.now(), { cache: "no-store" }).then((r) => r.json()), fetch("split-build.json").then((r) => r.json())]); }
+    try { const [conf, abi] = await Promise.all([fetch("split-config.json?t=" + Date.now(), { cache: "no-store" }).then((r) => r.json()), fetch("split-build.json").then((r) => r.json())]); ABI = abi;
+      const q = new URLSearchParams(location.search).get("net"); NET = conf.networks[q] ? q : conf.default; CFG = conf.networks[NET]; }
     catch (e) { document.querySelector("main").insertAdjacentHTML("beforeend", '<p class="log">Could not load the page settings.</p>'); return; }
+    $("banner").textContent = CFG.banner; $("banner").classList.toggle("main", !CFG.testToken);
+    document.querySelectorAll("[data-net]").forEach((a) => a.classList.toggle("on", a.dataset.net === NET));
+    $("payLbl").textContent = CFG.testToken ? "SEND A TEST PAYMENT (tUSDG)" : "SEND USDG FROM YOUR WALLET (EXACT AMOUNT, NO APPROVAL)"; $("pay").textContent = CFG.testToken ? "Mint into the Split" : "Send into the Split";
+    $("payNote").textContent = CFG.testToken ? "On mainnet the money comes from x402 payments to this address. On testnet you mint Test USDG into it to try the same thing." : "Payments to this address are shared the same way. Start with a small amount: the contract is verified but not audited.";
+    if (!CFG.testToken) $("payAmt").value = "0.01";
     setupState(); addRow(); addRow(); const s = new URLSearchParams(location.search).get("s"); if (s && E.isAddress(s) && !$("main").hidden) open(s);
   })();
 })();
