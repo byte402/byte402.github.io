@@ -1,0 +1,7 @@
+{
+  "name": "allot-split-tests",
+  "private": true,
+  "type": "commonjs",
+  "description": "Tests for Allot Split: local EVM checks and live-chain simulation",
+  "dependencies": { "solc": "0.8.28", "ganache": "7.9.2", "viem": "2.21.0" }
+}
