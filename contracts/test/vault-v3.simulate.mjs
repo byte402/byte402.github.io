@@ -18,7 +18,7 @@ const v = (fn, a) => encodeFunctionData({ abi: V.abi, functionName: fn, args: a 
 const now = Number((await rpc("eth_getBlockByNumber", ["latest", false])).timestamp), vb = BigInt(now + 600), nn = (s) => keccak256(toHex(s + Math.random()));
 const settle = (to, amt, n) => tk("transferWithAuthorization", [VAULT, to, amt, 0n, vb, n, "0x"]);
 const digest = (to, amt, n) => v("transferDigest", [to, amt, 0n, vb, n]);
-const [n1, n2, n3, n4, n5] = ["a", "b", "c", "d", "e"].map(nn);
+const [n1, n2, n3, n4, n5, n6, n7] = ["a", "b", "c", "d", "e", "f", "g"].map(nn);
 const ov = { [USDG]: { stateDiff: { [balSlot(VAULT)]: pad(toHex(U(5))) } } }; for (const a of [DEPLOYER, USER, AGENT, RELAYER]) ov[a] = { balance: ETH };
 function setup() { const st = []; const add = (label, from, to, data, expect, abi = V.abi) => st.push({ label, call: { from, to, data, gas: "0x4c4b40" }, expect, abi });
   st.push({ label: "deploy factory v3", call: { from: DEPLOYER, data: encodeDeployData({ abi: F.abi, bytecode: F.bytecode, args: [USDG, DS] }), gas: "0x989680" }, expect: "setup", abi: F.abi });
@@ -43,12 +43,20 @@ const scenarios = [
     add("[2] owner removes payee Q", USER, VAULT, v("setPayeeRule", [AGENT, Q, false, 0n]), "ok");
     add("[2] settling #2 to removed Q is refused", RELAYER, USDG, settle(Q, U(0.02), n2), "revert:any", T);
     add("[2] owner approves Q again", USER, VAULT, v("setPayeeRule", [AGENT, Q, true, 0n]), "ok");
-    add("[2] settling #2 now works again (payee back, nothing else changed)", RELAYER, USDG, settle(Q, U(0.02), n2), "ok", T); },
+    add("[r2] settling #2 after re-adding Q stays refused (removal cancelled it for good)", RELAYER, USDG, settle(Q, U(0.02), n2), "revert:any", T);
+    add("[r1] same nonce as #2 with another value is refused", AGENT, VAULT, v("authorize", [Q, U(0.01), 0n, vb, n2, pad("0x0a")]), "revert:nonce already used"); },
   (add) => { add("[2] x402 #3 to Q", AGENT, VAULT, v("authorize", [Q, U(0.03), 0n, vb, n3, pad("0x07")]), "ok");
     add("[2] owner revokes the AI", USER, VAULT, v("revoke", [AGENT]), "ok");
     add("[2] settling #3 after revoke is refused", RELAYER, USDG, settle(Q, U(0.03), n3), "revert:any", T);
     add("[6] owner cancels #3 by digest only", USER, VAULT, v("releaseDigest", [d3]), "ok");
-    add("[6] #3 cannot be released twice", USER, VAULT, v("releaseDigest", [d3]), "revert:nothing to release"); },
+    add("[6] #3 cannot be released twice", USER, VAULT, v("releaseDigest", [d3]), "revert:nothing to release");
+    add("[r2] owner turns the AI back on", USER, VAULT, v("setAgent", [AGENT, U(0.05), U(1), 0n, true]), "ok");
+    add("[r2] x402 #6 to Q", AGENT, VAULT, v("authorize", [Q, U(0.01), 0n, vb, n6, pad("0x0b")]), "ok");
+    add("[r2] owner revokes, then turns the AI back on", USER, VAULT, v("revoke", [AGENT]), "ok");
+    add("[r2] AI active again", USER, VAULT, v("setAgent", [AGENT, U(0.05), U(1), 0n, true]), "ok");
+    add("[r2] settling #6 after revoke + re-activate stays refused", RELAYER, USDG, settle(Q, U(0.01), n6), "revert:any", T);
+    add("[r2] a new authorization after re-activating works", AGENT, VAULT, v("authorize", [Q, U(0.01), 0n, vb, n7, pad("0x0c")]), "ok");
+    add("[r2] and settles", RELAYER, USDG, settle(Q, U(0.01), n7), "ok", T); },
   (add) => { add("[fz] x402 #4 to Q", AGENT, VAULT, v("authorize", [Q, U(0.04), 0n, vb, n4, pad("0x08")]), "ok");
     add("[fz] owner freezes", USER, VAULT, v("setFrozen", [true]), "ok");
     add("[fz] owner unfreezes", USER, VAULT, v("setFrozen", [false]), "ok");
