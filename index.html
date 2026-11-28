@@ -812,7 +812,7 @@ addEventListener("popstate", show); show();
 const LIVE = (() => {
   const RPC = "https://rpc.mainnet.chain.robinhood.com", EXP = "https://robinhoodchain.blockscout.com", USDG = "0x5fc5360d0400a0fd4f2af552add042d716f1d168";
   const T = { created: "0x0b045af6aff86dd2cda5342fd0329a354dc66759ff1eda00d7ecf13a76c7fb3b", transfer: "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef", authUsed: "0x98de503528ee59b575ef0c0a2576a82497bfc029a5685b209e9ec333479b10a5", paid: "0xaa1c213df8b2ea1210243bbab345f0aa02826cd3b851cc92522eff84a1cf0f5e", withdrawn: "0x7084f5476618d8e60b11ef0d7d3f06914655adb8793e28ff7f018d4c76d505d5", agentSet: "0x847bbbd6959b7a64e1215d42f71ac0b56a53ad525e76f755e09f7708d3db37c8", authorized: "0xa2583fc4aed8837d363d1efef7f53f099d5d9935fd4266d54f92ea61bac47e6e" };
-  const KNOWN = { "0xe2933e837de82d2e05f22c8dbc5179e46ce39319": "Allot sample API" };
+  const KNOWN = { "0xe2933e837de82d2e05f22c8dbc5179e46ce39319": "Allot sample API", "0x0849964df3e573616a6fbb839dd33dbf17b45c2f": "Allot sample API · Split 80/20" };
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms)), hex = (n) => "0x" + n.toString(16);
   const addr = (t) => "0x" + t.slice(-40), short = (a) => a.slice(0, 6) + "…" + a.slice(-4);
   const usdg = (raw) => (Number(BigInt(raw)) / 1e6).toLocaleString("en-US", { maximumFractionDigits: 6 });

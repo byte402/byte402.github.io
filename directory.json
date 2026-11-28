@@ -1,45 +1,45 @@
 {
-  "version": 1,
-  "about": "x402 APIs that accept USDG on Robinhood Chain. Anyone can list one: open an issue at github.com/byte402/byte402.github.io. Listing is not an endorsement; check the live 402 and the payments before you approve a payee.",
-  "network": "eip155:4663",
-  "asset": "0x5fc5360d0400a0fd4f2af552add042d716f1d168",
-  "apis": [
+ "version": 1,
+ "about": "x402 APIs that accept USDG on Robinhood Chain. Anyone can list one: open an issue at github.com/byte402/byte402.github.io. Listing is not an endorsement; check the live 402 and the payments before you approve a payee.",
+ "network": "eip155:4663",
+ "asset": "0x5fc5360d0400a0fd4f2af552add042d716f1d168",
+ "apis": [
+  {
+   "id": "allot-sample",
+   "name": "Allot sample API",
+   "by": "Allot",
+   "category": "market data",
+   "description": "Live Robinhood Chain data read from the chain and KyberSwap: market prices, swap quotes, wallet balances and chain stats. Payments go to an Allot Split: 80% operations, 20% buys and burns ALLOT.",
+   "base": "https://allot-api.netlify.app",
+   "payTo": "0x0849964df3e573616a6fbb839dd33dbf17b45c2f",
+   "source": "https://github.com/byte402/allot-api",
+   "endpoints": [
     {
-      "id": "allot-sample",
-      "name": "Allot sample API",
-      "by": "Allot",
-      "category": "market data",
-      "description": "Live Robinhood Chain data read from the chain and KyberSwap: market prices, swap quotes, wallet balances and chain stats.",
-      "base": "https://allot-api.netlify.app",
-      "payTo": "0xe2933e837de82d2e05f22c8dbc5179e46ce39319",
-      "source": "https://github.com/byte402/allot-api",
-      "endpoints": [
-        {
-          "path": "/v1/chain",
-          "price": "0.005",
-          "what": "block, gas, block time, USDG supply"
-        },
-        {
-          "path": "/v1/price?symbol=NVDA",
-          "price": "0.01",
-          "what": "one market price"
-        },
-        {
-          "path": "/v1/quote?from=USDG&to=NVDA&amount=100",
-          "price": "0.01",
-          "what": "a swap quote with route and gas"
-        },
-        {
-          "path": "/v1/wallet?address=0x5fc5360d0400a0fd4f2af552add042d716f1d168",
-          "price": "0.01",
-          "what": "ETH, USDG and market token balances of any address"
-        },
-        {
-          "path": "/v1/prices",
-          "price": "0.02",
-          "what": "every market in one call"
-        }
-      ]
+     "path": "/v1/chain",
+     "price": "0.005",
+     "what": "block, gas, block time, USDG supply"
+    },
+    {
+     "path": "/v1/price?symbol=NVDA",
+     "price": "0.01",
+     "what": "one market price"
+    },
+    {
+     "path": "/v1/quote?from=USDG&to=NVDA&amount=100",
+     "price": "0.01",
+     "what": "a swap quote with route and gas"
+    },
+    {
+     "path": "/v1/wallet?address=0x5fc5360d0400a0fd4f2af552add042d716f1d168",
+     "price": "0.01",
+     "what": "ETH, USDG and market token balances of any address"
+    },
+    {
+     "path": "/v1/prices",
+     "price": "0.02",
+     "what": "every market in one call"
     }
-  ]
+   ]
+  }
+ ]
 }
