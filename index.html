@@ -641,7 +641,7 @@ npx -y github:byte402/allot-connector pay &quot;https://your-worker.workers.dev/
 
   <section id="burn" class="view">
     <div class="phead"><div class="eyebrow">BURN</div><h2 class="big">Revenue back to the token, <em>on the record</em>.</h2>
-    <p class="sub">From now on, 20% of the creator fees Allot earns go to buying ALLOT and burning it, every week. The first burn uses 10% of the fees withdrawn before this policy. Every burn below is read from Robinhood Chain: tokens sent to the dead address, with the buy that came before it.</p></div>
+    <p class="sub">From now on, 20% of the creator fees Allot earns go to buying ALLOT and burning it. It runs every day at 14:00 UTC on that day's fees, so the total is always 20%: busy days burn more, quiet days less, a day with no fees burns nothing. The first burn used 10% of the fees withdrawn before this policy plus 20% of that day's claim. Every burn below is read from Robinhood Chain: tokens sent to the dead address, with the buy that came before it.</p></div>
     <div class="lstats rv" id="bstats"><div><b>…</b><small>ALLOT BURNED</small></div><div><b>…</b><small>OF SUPPLY</small></div><div><b>…</b><small>BURNS</small></div><div><b>…</b><small>LAST BURN</small></div></div>
     <div class="lbar"><span><i class="pulse"></i><span id="bstate">Reading Robinhood Chain…</span></span><button id="brefresh" type="button">Refresh</button></div>
     <div class="tw rv"><table id="btable"><tr><th>TIME (UTC)</th><th>FROM</th><th>BURNED</th><th>BOUGHT WITH</th><th>BURN TX</th></tr></table></div>
