@@ -345,7 +345,7 @@ td a.rcp{color:var(--blue);white-space:nowrap}
 <canvas id="flow" aria-hidden="true"></canvas>
 <header><div class="wrap">
   <a class="logo" href="/" style="text-decoration:none;color:inherit"><span class="mark" aria-hidden="true"></span>Allot</a>
-  <nav aria-label="Main"><a href="/">Home</a><a href="/app">App</a><a href="/promises">Promises</a><a href="/how">How</a><a href="/connect">Connect</a><a href="/apis">APIs</a><a href="/directory">Directory</a><a href="/compute">Compute</a><a href="/build">Build</a><a href="/security">Security</a><a href="/ledger">Ledger</a><a href="/launch">Launch</a></nav>
+  <nav aria-label="Main"><a href="/">Home</a><a href="/app">App</a><a href="/promises">Promises</a><a href="/how">How</a><a href="/connect">Connect</a><a href="/apis">APIs</a><a href="/directory">Directory</a><a href="/compute">Compute</a><a href="/build">Build</a><a href="/security">Security</a><a href="/ledger">Ledger</a><a href="/burn">Burn</a><a href="/launch">Launch</a></nav>
   <span class="soc"><a href="https://x.com/Allot_rh" target="_blank" rel="noopener" aria-label="Allot on X"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M17.75 3h3.07l-6.7 7.66L22 21h-6.17l-4.83-6.32L5.47 21H2.4l7.17-8.2L2 3h6.33l4.37 5.77L17.75 3zm-1.08 16.17h1.7L7.4 4.74H5.58l11.09 14.43z"/></svg></a><a href="https://github.com/byte402" target="_blank" rel="noopener" aria-label="Allot on GitHub"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg></a></span>
   <a class="cta" href="/app">Open the app</a>
 </div></header>
@@ -639,6 +639,15 @@ npx -y github:byte402/allot-connector pay &quot;https://your-worker.workers.dev/
     <p class="ex">Works for any payment from an Allot Vault: x402, direct payments and owner withdrawals.</p>
   </section>
 
+  <section id="burn" class="view">
+    <div class="phead"><div class="eyebrow">BURN</div><h2 class="big">Revenue back to the token, <em>on the record</em>.</h2>
+    <p class="sub">From now on, 20% of the creator fees Allot earns go to buying ALLOT and burning it, every week. The first burn uses 10% of the fees withdrawn before this policy. Every burn below is read from Robinhood Chain: tokens sent to the dead address, with the buy that came before it.</p></div>
+    <div class="lstats rv" id="bstats"><div><b>…</b><small>ALLOT BURNED</small></div><div><b>…</b><small>OF SUPPLY</small></div><div><b>…</b><small>BURNS</small></div><div><b>…</b><small>LAST BURN</small></div></div>
+    <div class="lbar"><span><i class="pulse"></i><span id="bstate">Reading Robinhood Chain…</span></span><button id="brefresh" type="button">Refresh</button></div>
+    <div class="tw rv"><table id="btable"><tr><th>TIME (UTC)</th><th>FROM</th><th>BURNED</th><th>BOUGHT WITH</th><th>BURN TX</th></tr></table></div>
+    <p class="ex">Burned means sent to 0x000000000000000000000000000000000000dEaD, an address no one has the key to. Team wallet: <a href="https://robinhoodchain.blockscout.com/address/0xE6c67f592165D6A6343BB1AaE54dFB15e4E4e840" target="_blank" rel="noopener">0xE6c6…e840</a> (the wallet that launched ALLOT). Burns from any wallet are listed.</p>
+  </section>
+
   <section id="launch" class="view">
     <div class="phead"><div class="eyebrow">LAUNCH</div><h2 class="big">The product is live. <em>Now $ALLOT.</em></h2>
     <p class="sub">Vaults, the app, the connector and a paid x402 API were live on Robinhood Chain mainnet before the token. $ALLOT launches on Pons. Allot charges no fee today, and every burn is posted with its transaction.</p></div>
@@ -669,8 +678,8 @@ npx -y github:byte402/allot-connector pay &quot;https://your-worker.workers.dev/
 </main>
 <footer><div class="wrap">Allot · built on x402, USDG and Robinhood Chain</div></footer>
 <script>
-const VIEWS = ["home", "promises", "how", "connect", "apis", "directory", "compute", "build", "security", "ledger", "launch"];
-const LABEL = { home: "Home", promises: "Promises", how: "How it works", connect: "Connect", apis: "APIs", directory: "Directory", compute: "Compute", build: "Build", security: "Security", ledger: "Ledger", launch: "Launch" };
+const VIEWS = ["home", "promises", "how", "connect", "apis", "directory", "compute", "build", "security", "ledger", "burn", "launch"];
+const LABEL = { home: "Home", promises: "Promises", how: "How it works", connect: "Connect", apis: "APIs", directory: "Directory", compute: "Compute", build: "Build", security: "Security", ledger: "Ledger", burn: "Burn", launch: "Launch" };
 document.querySelectorAll(".view").forEach((v) => { const i = VIEWS.indexOf(v.id), nx = VIEWS[i + 1], pv = VIEWS[i - 1]; if (v.id === "home" || i < 0) return; const d = document.createElement("div"); d.className = "next"; d.innerHTML = (pv ? `<a href="${pv === "home" ? "/" : "/" + pv}">← ${LABEL[pv]}</a>` : "") + (nx ? `<a href="/${nx}">${LABEL[nx]} →</a>` : ""); v.appendChild(d); });
 // clean paths: allot.dev/, allot.dev/promises, allot.dev/ledger ... (404.html sends deep links back here as ?p=)
 function ROUTE() { if (/^\/receipt(\/|$)/.test(location.pathname)) return "receipt"; const seg = location.pathname.replace(/\/+$/, "").split("/").pop().replace(/\.html$/, ""); return VIEWS.includes(seg) ? seg : "home"; }
@@ -1073,6 +1082,42 @@ const RECEIPT = (() => {
   addEventListener("allot:route", show); show();
 })();
 
+
+// ---------- Burn page: ALLOT sent to the dead address, read from the chain ----------
+(() => {
+  const $ = (id) => document.getElementById(id); if (!$("btable")) return;
+  const TOKEN = "0x76f659210398ffbbe0053d2c4f5fa6c45c077670", DEAD = "0x000000000000000000000000000000000000dead", CURVE = "0xcd65f03561faf6fbfb64fbbb2251c2ad2c8ab6a1", TEAM = "0xe6c67f592165d6a6343bb1aae54dfb15e4e4e840", FROM = 122092896;
+  const TR = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef", pad = (a) => "0x" + a.slice(2).padStart(64, "0"), hex = (n) => "0x" + n.toString(16);
+  const fmtT = (v) => (Number(v / 10n ** 15n) / 1000).toLocaleString("en-US", { maximumFractionDigits: 0 });
+  let busy = false;
+  async function load() {
+    if (busy) return; busy = true; $("bstate").textContent = "Reading Robinhood Chain…";
+    try {
+      const burns = await LIVE.rpc("eth_getLogs", [{ address: TOKEN, topics: [TR, null, pad(DEAD)], fromBlock: hex(FROM), toBlock: "latest" }]);
+      const sup = BigInt(await LIVE.rpc("eth_call", [{ to: TOKEN, data: "0x18160ddd" }, "latest"]));
+      const froms = [...new Set(burns.map((l) => l.topics[1]))];
+      const buys = (await Promise.all(froms.map((f) => LIVE.rpc("eth_getLogs", [{ address: TOKEN, topics: [TR, pad(CURVE), f], fromBlock: hex(FROM), toBlock: "latest" }])))).flat();
+      const rows = await Promise.all(burns.map(async (l) => { const from = "0x" + l.topics[1].slice(26), amount = BigInt(l.data), b = Number(l.blockNumber);
+        const buy = buys.filter((x) => x.topics[2] === l.topics[1] && Number(x.blockNumber) <= b).pop();
+        let eth = null; if (buy) { const t = await LIVE.rpc("eth_getTransactionByHash", [buy.transactionHash]); eth = BigInt(t.value || "0x0"); }
+        const t = Number((await LIVE.rpc("eth_getBlockByNumber", [l.blockNumber, false])).timestamp);
+        return { t, from, amount, tx: l.transactionHash, buy, eth }; }));
+      rows.sort((a, b) => b.t - a.t);
+      const total = rows.reduce((s, r) => s + r.amount, 0n), st = $("bstats").querySelectorAll("b");
+      st[0].textContent = fmtT(total); st[1].textContent = (Number(total * 10000n / sup) / 100).toFixed(2) + "%"; st[2].textContent = rows.length; st[3].textContent = rows.length ? LIVE.ago(rows[0].t) : "–";
+      const tb = $("btable"); tb.querySelectorAll("tr:not(:first-child)").forEach((x) => x.remove());
+      for (const r of rows) { const tr = document.createElement("tr");
+        const by = r.buy ? `<a href="${LIVE.EXP}/tx/${r.buy.transactionHash}" target="_blank" rel="noopener">${r.eth && r.eth > 0n ? (Number(r.eth) / 1e18).toLocaleString("en-US", { maximumFractionDigits: 5 }) + " ETH" : "buy"} ↗</a>` : "—";
+        tr.innerHTML = `<td class="k">${new Date(r.t * 1000).toISOString().replace("T", " ").slice(0, 16)}</td><td><a href="${LIVE.EXP}/address/${r.from}" target="_blank" rel="noopener">${LIVE.short(r.from)}</a>${r.from === TEAM ? ' <span class="k">team</span>' : ""}</td><td>${fmtT(r.amount)} ALLOT</td><td>${by}</td><td><a href="${LIVE.EXP}/tx/${r.tx}" target="_blank" rel="noopener">${LIVE.short(r.tx)} ↗</a></td>`; tb.appendChild(tr); }
+      if (!rows.length) { const tr = document.createElement("tr"); tr.innerHTML = '<td colspan="5" class="k">No burns yet.</td>'; tb.appendChild(tr); }
+      $("bstate").textContent = `Live from Robinhood Chain mainnet · updated ${new Date().toUTCString().slice(17, 25)} UTC`;
+    } catch (e) { $("bstate").textContent = "Could not read Robinhood Chain right now (" + e.message + "). Try Refresh."; }
+    busy = false;
+  }
+  $("brefresh").onclick = load;
+  let started = false; const go = () => { if (ROUTE() === "burn" && !started) { started = true; load(); } };
+  addEventListener("allot:route", go); go();
+})();
 // ---------- Demo: a real x402 call from the visitor's browser ----------
 (() => {
   const $ = (id) => document.getElementById(id); if (!$("runDemo")) return;
