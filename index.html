@@ -323,6 +323,21 @@ html,body{overflow-x:clip}
 .cw{margin:6px 0;font:500 13px var(--mono);padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--paper)}.cw.no{color:#ff8a8a;border-color:rgba(255,107,107,.45)}.cw.mid{color:#e8d48a}.cw.ok{color:#4ade80}
 #cpays{margin-top:18px}#cpays td{white-space:nowrap}#cpays a{color:var(--blue);text-decoration:none;font-family:var(--mono);font-size:13px}.cg{color:var(--blue);font:600 12px var(--mono)}
 @media (max-width:860px){.cgrid{grid-template-columns:minmax(0,1fr)}}
+/* receipt: a paper slip rebuilt from chain logs */
+.rform{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}.rform input{flex:1 1 420px;min-width:0;font:500 14px var(--mono);color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.rform button,.racts button{font:700 13px var(--mono);background:var(--blue);color:#0a0a0a;border:0;border-radius:10px;padding:11px 16px;cursor:pointer}.racts button.g{background:transparent;color:var(--ink);border:1px solid var(--line)}
+#rcard:not(:empty){max-width:720px;margin-top:22px;background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:24px;position:relative;box-shadow:0 30px 60px -40px rgba(0,0,0,.8)}
+#rcard:not(:empty)::after{content:"";position:absolute;left:18px;right:18px;bottom:-1px;height:10px;background:radial-gradient(circle at 6px 10px,var(--bg) 5px,transparent 5.5px) 0 0/12px 10px repeat-x}
+.rhead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font:600 11.5px var(--mono);letter-spacing:.1em;color:var(--dim);padding-bottom:14px;border-bottom:1px dashed var(--line)}.rok{color:var(--ok)}.rno{color:var(--no)}
+.ramt{font:400 64px/1 "Instrument Serif",serif;margin:20px 0 10px;letter-spacing:-.01em}.ramt small{font:500 15px var(--mono);color:var(--mute);margin-left:8px}
+.rr{display:grid;grid-template-columns:170px minmax(0,1fr);gap:14px;padding:11px 0;border-bottom:1px dashed var(--line);font-size:14px}.rr span{font:500 12px var(--mono);color:var(--dim);padding-top:2px}.rr b{font-weight:500;overflow-wrap:anywhere}.rr a{color:var(--ink)}
+.rr code{font:500 13px var(--mono)}.rsm{display:block;margin-top:4px;font:500 11.5px var(--mono);font-style:normal;color:var(--dim)}
+.rchk{margin-top:18px}.rsub{font:600 11px var(--mono);letter-spacing:.12em;color:var(--dim);margin-bottom:10px}.rchk .ck span a{color:var(--mute)}
+.rnote{margin:14px 0 0;font:500 12px var(--mono);color:var(--dim)}.racts{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.rurlw{max-width:720px;margin-top:18px}.rurlw form{display:flex;gap:10px;flex-wrap:wrap}.rurlw input{flex:1 1 360px;min-width:0;font:500 13px var(--mono);color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px}.rurlw button{font:600 12px var(--mono);color:var(--blue);background:transparent;border:1px solid var(--line);border-radius:9px;padding:9px 12px;cursor:pointer}#rurlr{margin-top:8px;font:500 12.5px var(--mono);color:var(--mute)}
+td a.rcp{color:var(--blue);white-space:nowrap}
+@media (max-width:640px){.rr{grid-template-columns:1fr;gap:4px}.ramt{font-size:48px}}
+@media print{header,nav,footer,.next,.rform,.racts,.lbar,.rurlw,.phead .sub,.ticker{display:none!important}body{background:#fff!important;color:#000}#rcard{box-shadow:none!important;border-color:#999!important;background:#fff!important}#rcard *{color:#000!important}section{border:0!important}}
 </style>
 </head>
 <body>
@@ -607,9 +622,20 @@ npx -y github:byte402/allot-connector pay &quot;https://your-worker.workers.dev/
     <div class="lstats rv" id="lstats"><div><b>…</b><small>VAULTS</small></div><div><b>…</b><small>AIS ACTIVE</small></div><div><b>…</b><small>x402 PAYMENTS</small></div><div><b>…</b><small>USDG PAID BY AIS</small></div></div>
     <div class="lbar"><span><i class="pulse"></i><span id="lstate">Reading Robinhood Chain…</span></span><button id="lrefresh" type="button">Refresh</button></div>
     <div class="tw rv"><table id="ltable">
-      <tr><th>TIME (UTC)</th><th>WHAT</th><th>AI</th><th>FROM VAULT</th><th>TO</th><th>AMOUNT</th><th>TRANSACTION</th></tr>
+      <tr><th>TIME (UTC)</th><th>WHAT</th><th>AI</th><th>FROM VAULT</th><th>TO</th><th>AMOUNT</th><th>TRANSACTION</th><th>RECEIPT</th></tr>
     </table></div>
     <p class="ex">Requests a vault refuses never reach the chain, so they are not listed here: nothing was signed or sent.</p>
+  </section>
+
+  <section id="receipt" class="view">
+    <div class="phead"><div class="eyebrow">RECEIPT</div><h2 class="big">One payment, <em>proven from the chain</em>.</h2>
+    <p class="sub">Paste any transaction hash. Every line is read from Robinhood Chain logs in your browser, with the transaction that proves it. Allot stores nothing and signs nothing here.</p></div>
+    <form class="rform" id="rform"><input id="rtx" placeholder="0x… transaction hash" autocomplete="off" spellcheck="false" aria-label="Transaction hash"><button type="submit">Show receipt</button></form>
+    <div class="lbar"><span><i class="pulse"></i><span id="rstate">Paste a transaction hash, or open one from the Ledger.</span></span></div>
+    <div id="rcard"></div>
+    <div class="racts" id="racts" hidden><button type="button" id="rcopy">Copy link</button><button type="button" class="g" id="rjson">Download JSON</button><button type="button" class="g" id="rprint">Print / save PDF</button></div>
+    <div class="rurlw" id="rurlw" hidden><div class="rsub">CHECK WHAT WAS PAID FOR</div><form id="rurlf"><input id="rurl" placeholder="https://… the API URL" autocomplete="off" spellcheck="false" aria-label="API URL"><button type="submit">Check</button></form><div id="rurlr"></div></div>
+    <p class="ex">Works for any payment from an Allot Vault: x402, direct payments and owner withdrawals.</p>
   </section>
 
   <section id="launch" class="view">
@@ -644,9 +670,9 @@ npx -y github:byte402/allot-connector pay &quot;https://your-worker.workers.dev/
 <script>
 const VIEWS = ["home", "promises", "how", "connect", "apis", "directory", "compute", "build", "security", "ledger", "launch"];
 const LABEL = { home: "Home", promises: "Promises", how: "How it works", connect: "Connect", apis: "APIs", directory: "Directory", compute: "Compute", build: "Build", security: "Security", ledger: "Ledger", launch: "Launch" };
-document.querySelectorAll(".view").forEach((v) => { const i = VIEWS.indexOf(v.id), nx = VIEWS[i + 1], pv = VIEWS[i - 1]; if (v.id === "home") return; const d = document.createElement("div"); d.className = "next"; d.innerHTML = (pv ? `<a href="${pv === "home" ? "/" : "/" + pv}">← ${LABEL[pv]}</a>` : "") + (nx ? `<a href="/${nx}">${LABEL[nx]} →</a>` : ""); v.appendChild(d); });
+document.querySelectorAll(".view").forEach((v) => { const i = VIEWS.indexOf(v.id), nx = VIEWS[i + 1], pv = VIEWS[i - 1]; if (v.id === "home" || i < 0) return; const d = document.createElement("div"); d.className = "next"; d.innerHTML = (pv ? `<a href="${pv === "home" ? "/" : "/" + pv}">← ${LABEL[pv]}</a>` : "") + (nx ? `<a href="/${nx}">${LABEL[nx]} →</a>` : ""); v.appendChild(d); });
 // clean paths: allot.dev/, allot.dev/promises, allot.dev/ledger ... (404.html sends deep links back here as ?p=)
-function ROUTE() { const seg = location.pathname.replace(/\/+$/, "").split("/").pop().replace(/\.html$/, ""); return VIEWS.includes(seg) ? seg : "home"; }
+function ROUTE() { if (/^\/receipt(\/|$)/.test(location.pathname)) return "receipt"; const seg = location.pathname.replace(/\/+$/, "").split("/").pop().replace(/\.html$/, ""); return VIEWS.includes(seg) ? seg : "home"; }
 (() => { const q = new URLSearchParams(location.search).get("p"), h = location.hash.slice(1);
   if (q) history.replaceState(null, "", q);
   else if (VIEWS.includes(h)) history.replaceState(null, "", h === "home" ? "/" : "/" + h); })();
@@ -657,7 +683,7 @@ function show() { const id = ROUTE();
 function go(path) { if (path !== location.pathname) history.pushState(null, "", path); show(); }
 document.addEventListener("click", (e) => { const a = e.target.closest("a[href]"); if (!a || e.metaKey || e.ctrlKey || e.shiftKey || a.target === "_blank") return;
   const href = a.getAttribute("href"); const seg = href === "/" ? "home" : href.startsWith("/") ? href.slice(1) : null;
-  if (seg && VIEWS.includes(seg)) { e.preventDefault(); go(href); } });
+  if ((seg && VIEWS.includes(seg)) || /^\/receipt(\/|$)/.test(href)) { e.preventDefault(); go(href); } });
 addEventListener("popstate", show); show();
 
 // background: threads. Payment requests fall from the top edge as fine lines; the bundle under your cursor
@@ -833,8 +859,8 @@ const LIVE = (() => {
       st[0].textContent = d.vaults.length; st[1].textContent = d.aisActive; st[2].textContent = d.x402; st[3].textContent = LIVE.usdg(d.paid);
       const tb = $("ltable"); tb.querySelectorAll("tr:not(:first-child)").forEach((r) => r.remove());
       for (const r of d.rows) { const tr = document.createElement("tr"), when = new Date(r.t * 1000).toISOString().replace("T", " ").slice(0, 16);
-        tr.innerHTML = `<td class="k">${when}</td><td class="${r.what === "owner withdrawal" ? "wd" : "ok"}">${r.what}</td><td class="k">${r.ai ? LIVE.short(r.ai) : "—"}</td><td><a href="${LIVE.EXP}/address/${r.vault}" target="_blank" rel="noopener">${LIVE.short(r.vault)}</a></td><td class="k">${LIVE.label(r)}</td><td>${LIVE.usdg(r.amount)} USDG</td><td><a href="${LIVE.EXP}/tx/${r.tx}" target="_blank" rel="noopener">${LIVE.short(r.tx)} ↗</a></td>`; tb.appendChild(tr); }
-      if (!d.rows.length) { const tr = document.createElement("tr"); tr.innerHTML = '<td colspan="7" class="k">No payments yet.</td>'; tb.appendChild(tr); }
+        tr.innerHTML = `<td class="k">${when}</td><td class="${r.what === "owner withdrawal" ? "wd" : "ok"}">${r.what}</td><td class="k">${r.ai ? LIVE.short(r.ai) : "—"}</td><td><a href="${LIVE.EXP}/address/${r.vault}" target="_blank" rel="noopener">${LIVE.short(r.vault)}</a></td><td class="k">${LIVE.label(r)}</td><td>${LIVE.usdg(r.amount)} USDG</td><td><a href="${LIVE.EXP}/tx/${r.tx}" target="_blank" rel="noopener">${LIVE.short(r.tx)} ↗</a></td><td><a class="rcp" href="/receipt/${r.tx}">Receipt →</a></td>`; tb.appendChild(tr); }
+      if (!d.rows.length) { const tr = document.createElement("tr"); tr.innerHTML = '<td colspan="8" class="k">No payments yet.</td>'; tb.appendChild(tr); }
       $("lstate").textContent = `Live from Robinhood Chain mainnet · updated ${new Date().toLocaleTimeString()}`;
     } catch (e) { $("lstate").textContent = "Could not read Robinhood Chain right now (" + e.message + "). Try Refresh."; }
     busy = false;
@@ -878,6 +904,163 @@ const LIVE = (() => {
     } catch (e) { $("lc-when").textContent = "chain busy, retrying"; $("ticker").textContent = "Robinhood Chain RPC is busy, retrying…"; }
   }
   load(); setInterval(() => { if ((document.querySelector(".view.on") || {}).id === "home" && !document.hidden) LIVE.get(true).then(load).catch(() => {}); }, 30000);
+})();
+
+// keccak256 of a UTF-8 string, 0x hex out. Small, no dependencies (32-bit lanes, standard Keccak-f[1600]).
+const KECCAK = (() => {
+  const RC = [1,0,32898,0,32906,2147483648,2147516416,2147483648,32907,0,2147483649,0,2147516545,2147483648,32777,2147483648,138,0,136,0,2147516425,0,2147483658,0,2147516555,0,139,2147483648,32905,2147483648,32771,2147483648,32770,2147483648,128,2147483648,32778,0,2147483658,2147483648,2147516545,2147483648,32896,2147483648,2147483649,0,2147516424,2147483648];
+  const ROT = [0,1,62,28,27,36,44,6,55,20,3,10,43,25,39,41,45,15,21,8,18,2,61,56,14];
+  const PI = [0,10,20,5,15,16,1,11,21,6,7,17,2,12,22,23,8,18,3,13,14,24,9,19,4];
+  function f(s) {
+    const C = new Uint32Array(10), B = new Uint32Array(50);
+    for (let r = 0; r < 24; r++) {
+      for (let x = 0; x < 5; x++) { C[2 * x] = s[2 * x] ^ s[2 * x + 10] ^ s[2 * x + 20] ^ s[2 * x + 30] ^ s[2 * x + 40]; C[2 * x + 1] = s[2 * x + 1] ^ s[2 * x + 11] ^ s[2 * x + 21] ^ s[2 * x + 31] ^ s[2 * x + 41]; }
+      for (let x = 0; x < 5; x++) { const a = (x + 4) % 5, b = (x + 1) % 5, lo = C[2 * b], hi = C[2 * b + 1];
+        const dl = C[2 * a] ^ ((lo << 1) | (hi >>> 31)), dh = C[2 * a + 1] ^ ((hi << 1) | (lo >>> 31));
+        for (let y = 0; y < 25; y += 5) { s[2 * (y + x)] ^= dl; s[2 * (y + x) + 1] ^= dh; } }
+      for (let i = 0; i < 25; i++) { const lo = s[2 * i], hi = s[2 * i + 1], n = ROT[i], j = PI[i]; let l, h;
+        if (n === 0) { l = lo; h = hi; } else if (n < 32) { l = (lo << n) | (hi >>> (32 - n)); h = (hi << n) | (lo >>> (32 - n)); } else { const m = n - 32; l = m ? (hi << m) | (lo >>> (32 - m)) : hi; h = m ? (lo << m) | (hi >>> (32 - m)) : lo; }
+        B[2 * j] = l; B[2 * j + 1] = h; }
+      for (let y = 0; y < 25; y += 5) for (let x = 0; x < 5; x++) { const i = y + x, i1 = y + (x + 1) % 5, i2 = y + (x + 2) % 5;
+        s[2 * i] = B[2 * i] ^ (~B[2 * i1] & B[2 * i2]); s[2 * i + 1] = B[2 * i + 1] ^ (~B[2 * i1 + 1] & B[2 * i2 + 1]); }
+      s[0] ^= RC[2 * r]; s[1] ^= RC[2 * r + 1];
+    }
+  }
+  return (str) => {
+    const msg = new TextEncoder().encode(str), rate = 136, s = new Uint32Array(50), len = msg.length, blocks = Math.floor(len / rate) + 1, buf = new Uint8Array(blocks * rate);
+    buf.set(msg); buf[len] ^= 0x01; buf[buf.length - 1] ^= 0x80;
+    for (let b = 0; b < blocks; b++) { for (let i = 0; i < rate / 4; i++) { const o = b * rate + i * 4; s[i] ^= buf[o] | (buf[o + 1] << 8) | (buf[o + 2] << 16) | (buf[o + 3] << 24); } f(s); }
+    let out = "0x"; for (let i = 0; i < 8; i++) for (let k = 0; k < 4; k++) out += ((s[i] >>> (8 * k)) & 255).toString(16).padStart(2, "0");
+    return out;
+  };
+})();
+
+// ---------- Receipts: one payment, rebuilt from Robinhood Chain logs only ----------
+// buildReceipt(tx, { rpc, factory, factoryBlock }) -> a receipt object. Every field comes from a log or a call
+// at a block, with the transaction that proves it. Nothing is stored by Allot.
+const RECEIPT = (() => {
+  const USDG = "0x5fc5360d0400a0fd4f2af552add042d716f1d168";
+  const T = { created: "0x0b045af6aff86dd2cda5342fd0329a354dc66759ff1eda00d7ecf13a76c7fb3b", transfer: "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef", authUsed: "0x98de503528ee59b575ef0c0a2576a82497bfc029a5685b209e9ec333479b10a5", paid: "0xaa1c213df8b2ea1210243bbab345f0aa02826cd3b851cc92522eff84a1cf0f5e", withdrawn: "0x7084f5476618d8e60b11ef0d7d3f06914655adb8793e28ff7f018d4c76d505d5", agentSet: "0x847bbbd6959b7a64e1215d42f71ac0b56a53ad525e76f755e09f7708d3db37c8", authorized: "0xa2583fc4aed8837d363d1efef7f53f099d5d9935fd4266d54f92ea61bac47e6e", payeeSet: "0xd8d1c1804cbbd03caaf50ecc88f67d58b4bec59da41e30a3da7f18546dd8d376" };
+  const SEL_DIGEST = "0x2d93b108"; // transferDigest(address,uint256,uint256,uint256,bytes32)
+  const hex = (n) => "0x" + n.toString(16), lower = (s) => String(s || "").toLowerCase();
+  const addr = (t) => "0x" + lower(t).slice(-40), pad = (a) => "0x" + lower(a).replace(/^0x/, "").padStart(64, "0");
+  const word = (data, i) => "0x" + data.slice(2 + 64 * i, 2 + 64 * (i + 1)), big = (w) => BigInt(w);
+  const lastBefore = (logs, block, idx) => logs.filter((l) => Number(l.blockNumber) < block || (Number(l.blockNumber) === block && (idx == null || Number(l.logIndex) < idx))).pop();
+
+  async function build(tx, { rpc, factory, factoryBlock }) {
+    tx = lower(tx).trim();
+    if (!/^0x[0-9a-f]{64}$/.test(tx)) throw new Error("that is not a transaction hash (0x and 64 hex characters)");
+    const from = hex(factoryBlock);
+    const [rc, t, created] = await Promise.all([rpc("eth_getTransactionReceipt", [tx]), rpc("eth_getTransactionByHash", [tx]), rpc("eth_getLogs", [{ address: factory, topics: [T.created], fromBlock: from, toBlock: "latest" }])]);
+    if (!rc || !t) throw new Error("this transaction was not found on Robinhood Chain mainnet");
+    const vaults = {}; for (const l of created) vaults[addr(word(l.data, 0))] = { owner: addr(l.topics[1]), tx: l.transactionHash, block: Number(l.blockNumber) };
+    const block = Number(rc.blockNumber), ts = Number((await rpc("eth_getBlockByNumber", [rc.blockNumber, false])).timestamp);
+    const base = { tx, block, time: ts, status: rc.status === "0x1" ? "success" : "failed", sender: lower(rc.from), factory: lower(factory) };
+    if (rc.status !== "0x1") return { ...base, kind: "failed", note: "this transaction failed on chain, so no USDG moved" };
+    const out = rc.logs.find((l) => lower(l.address) === USDG && l.topics[0] === T.transfer && vaults[addr(l.topics[1])]);
+    if (!out) return { ...base, kind: "none", note: "no USDG left an Allot Vault in this transaction" };
+    const vault = addr(out.topics[1]), to = addr(out.topics[2]), amount = big(out.data), r = { ...base, vault, vaultCreated: vaults[vault], to, amount: amount.toString(), transferLog: Number(out.logIndex) };
+    const used = rc.logs.find((l) => lower(l.address) === USDG && l.topics[0] === T.authUsed && addr(l.topics[1]) === vault);
+    const paid = rc.logs.find((l) => lower(l.address) === vault && l.topics[0] === T.paid);
+    const wd = rc.logs.find((l) => lower(l.address) === vault && l.topics[0] === T.withdrawn);
+    let agent = null, ruleBlock = block, ruleIdx = null;
+    if (used) {
+      const nonce = lower(used.topics[2]); r.kind = "x402"; r.nonce = nonce; r.usedLog = Number(used.logIndex);
+      // the settlement call carries from, to, value, validAfter, validBefore, nonce in a row: find them by the nonce
+      const input = lower(t.input), at = input.indexOf(nonce.slice(2), 10);
+      let digest = null;
+      if (at > 0 && (at - 10) % 64 === 0 && at - 5 * 64 >= 10) {
+        const w = (k) => "0x" + input.slice(at - k * 64, at - (k - 1) * 64);
+        const [f, tt, v, va, vb] = [w(5), w(4), w(3), w(2), w(1)];
+        if (addr(f) === vault && addr(tt) === to && big(v) === amount) {
+          r.validAfter = big(va).toString(); r.validBefore = big(vb).toString();
+          digest = lower(await rpc("eth_call", [{ to: vault, data: SEL_DIGEST + pad(to).slice(2) + pad(hex(amount)).slice(2) + pad(va).slice(2) + pad(vb).slice(2) + nonce.slice(2) }, "latest"])); // pure maths on immutables: the same at any block
+        }
+      }
+      const auths = await rpc("eth_getLogs", [{ address: vault, topics: [T.authorized], fromBlock: from, toBlock: rc.blockNumber }]);
+      let a = digest ? auths.find((l) => lower(word(l.data, 1)) === digest) : null;
+      r.match = a ? "digest" : "payee and amount";
+      if (!a) a = auths.filter((l) => addr(l.topics[2]) === to && big(word(l.data, 0)) === amount).pop();
+      if (a) { agent = addr(a.topics[1]); r.digest = lower(word(a.data, 1)); r.ref = lower(word(a.data, 2)); r.authTx = a.transactionHash; r.authBlock = Number(a.blockNumber);
+        r.authTime = Number((await rpc("eth_getBlockByNumber", [a.blockNumber, false])).timestamp); ruleBlock = r.authBlock; ruleIdx = Number(a.logIndex); }
+    } else if (paid) { r.kind = "direct"; agent = addr(paid.topics[1]); r.ref = lower(word(paid.data, 1)); ruleIdx = Number(paid.logIndex); }
+    else if (wd) { r.kind = "withdrawal"; return r; }
+    else { r.kind = "transfer"; return r; }
+    if (agent) {
+      r.agent = agent;
+      const [sets, payees] = await Promise.all([
+        rpc("eth_getLogs", [{ address: vault, topics: [T.agentSet, pad(agent)], fromBlock: from, toBlock: hex(ruleBlock) }]),
+        rpc("eth_getLogs", [{ address: vault, topics: [T.payeeSet, pad(agent), pad(to)], fromBlock: from, toBlock: hex(ruleBlock) }])]);
+      const s = lastBefore(sets, ruleBlock, ruleIdx), p = lastBefore(payees, ruleBlock, ruleIdx);
+      if (s) r.rule = { perPayment: big(word(s.data, 0)).toString(), perDay: big(word(s.data, 1)).toString(), expiry: Number(big(word(s.data, 2))), active: big(word(s.data, 3)) === 1n, tx: s.transactionHash, block: Number(s.blockNumber) };
+      if (p) r.payee = { allowed: big(word(p.data, 0)) === 1n, tx: p.transactionHash, block: Number(p.blockNumber) };
+    }
+    return r;
+  }
+  return { build, USDG };
+})();
+
+// ---------- Receipt page: allot.dev/receipt/0x… ----------
+(() => {
+  const $ = (id) => document.getElementById(id); if (!$("rcard")) return;
+  const EXP = LIVE.EXP, usdg = LIVE.usdg, short = LIVE.short;
+  const SYMS = ["ETH", "BTC", "NVDA", "TSLA", "AAPL", "AMZN", "GOOGL", "META", "MSFT", "SPY", "QQQ", "GLD", "COIN", "MSTR"];
+  const BASES = ["https://allot-api.netlify.app", "https://allot-api.polished-dream-0948.workers.dev"];
+  const PATHS = ["/v1/prices", "/v1/chain", ...SYMS.map((s) => "/v1/price?symbol=" + s)];
+  const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  const utc = (t) => new Date(t * 1000).toISOString().replace("T", " ").slice(0, 19) + " UTC";
+  const ax = (a) => `<a href="${EXP}/address/${a}" target="_blank" rel="noopener">${short(a)}</a>`;
+  const tx = (h, t) => `<a href="${EXP}/tx/${h}" target="_blank" rel="noopener">${t || short(h)} ↗</a>`;
+  const KIND = { x402: "x402 payment", direct: "direct payment", withdrawal: "owner withdrawal", transfer: "vault transfer", none: "not an Allot payment", failed: "failed transaction" };
+  let last = null, busy = false;
+  const hashFromPath = () => (location.pathname.match(/\/receipt\/(0x[0-9a-fA-F]{64})/) || [])[1] || new URLSearchParams(location.search).get("tx") || "";
+  function guessUrl(ref) { if (!ref) return null; for (const b of BASES) for (const p of PATHS) if (KECCAK(b + p) === ref) return b + p; return null; }
+  function row(k, v) { return `<div class="rr"><span>${k}</span><b>${v}</b></div>`; }
+  function render(r) {
+    const known = LIVE.KNOWN[r.to], amt = r.amount ? usdg(r.amount) : "0";
+    let h = `<div class="rhead"><span>ALLOT RECEIPT · ${esc(KIND[r.kind] || r.kind).toUpperCase()}</span><span class="${r.status === "success" && r.vault ? "rok" : "rno"}">${r.status === "success" && r.vault ? "SETTLED ✓" : r.status === "success" ? "NO VAULT PAYMENT" : "FAILED"}</span></div>`;
+    if (!r.vault) { $("rcard").innerHTML = h + `<p class="rnote">${esc(r.note || "Nothing to show.")}</p>` + row("Transaction", tx(r.tx)) + row("Block", r.block.toLocaleString("en-US") + " · " + utc(r.time)); $("racts").hidden = true; return; }
+    h += `<div class="ramt">${amt}<small>USDG</small></div>`;
+    h += r.kind === "withdrawal" ? row("To the owner", "vault owner · " + ax(r.to)) : row("Paid to", (known ? esc(known) + " · " : "") + ax(r.to));
+    if (r.agent) h += row("Paid by AI", ax(r.agent));
+    h += row("From vault", ax(r.vault) + ` · created by the Allot factory in ${tx(r.vaultCreated.tx)}`);
+    if (r.ref && r.ref !== "0x" + "0".repeat(64)) { const u = guessUrl(r.ref);
+      h += row("Paid for", u ? `<code>GET ${esc(u)}</code><em class="rsm">keccak256 of this URL equals the ref the vault recorded</em>` : `<code>ref ${short(r.ref)}</code><em class="rsm">keccak256 of the URL the AI paid for. Check one below.</em>`); }
+    h += row(r.kind === "x402" ? "Settled" : "Sent", utc(r.time) + " · block " + r.block.toLocaleString("en-US") + " · " + tx(r.tx));
+    if (r.authTx) h += row("Authorized by the vault", utc(r.authTime) + " · block " + r.authBlock.toLocaleString("en-US") + " · " + tx(r.authTx));
+    if (r.agent) {
+      const c = [];
+      const rule = r.rule, ok = (b) => (b ? "✓" : "✕");
+      if (rule) {
+        c.push([ok(rule.active), "AI key active" + (rule.expiry ? ", valid until " + utc(rule.expiry) : ", no expiry"), tx(rule.tx, "rules set")]);
+        c.push([ok(BigInt(r.amount) <= BigInt(rule.perPayment)), `${amt} USDG is under the cap of ${usdg(rule.perPayment)} per payment`, ""]);
+        c.push(["✓", `Inside the daily limit of ${usdg(rule.perDay)} USDG, checked by the contract when it ${r.kind === "x402" ? "authorized" : "paid"}`, ""]);
+      }
+      if (r.payee) c.push([ok(r.payee.allowed), "Payee on this AI's approved list", tx(r.payee.tx, "approved")]);
+      if (r.kind === "x402") c.push([r.match === "digest" ? "✓" : "~", r.match === "digest" ? `The vault approved this exact transfer (digest ${short(r.digest)}) and USDG used its nonce once` : "Matched to the authorization by payee and amount", ""]);
+      h += `<div class="rchk"><div class="rsub">WHAT THE VAULT CHECKED ON CHAIN</div>${c.map(([s, t, l]) => `<div class="ck${s === "✕" ? " bad" : ""}"><span>${t}${l ? " · " + l : ""}</span><b>${s}</b></div>`).join("")}</div>`;
+      h += `<p class="rnote">The contract reverts a payment that breaks any rule, so a payment on chain passed all of them. Rules are shown as they were set before this payment.</p>`;
+    }
+    $("rcard").innerHTML = h; $("racts").hidden = false;
+    $("rurlw").hidden = !(r.ref && !guessUrl(r.ref));
+  }
+  async function load(hash) {
+    if (busy) return; busy = true; $("rstate").textContent = "Reading Robinhood Chain…"; $("rcard").innerHTML = ""; $("racts").hidden = true; $("rurlw").hidden = true;
+    try {
+      const cfg = await (await fetch("/config.json?t=" + Date.now(), { cache: "no-store" })).json();
+      last = await RECEIPT.build(hash, { rpc: LIVE.rpc, factory: cfg.factory, factoryBlock: cfg.factoryBlock });
+      last.builtAt = new Date().toISOString(); render(last);
+      $("rstate").textContent = "Rebuilt in your browser from Robinhood Chain mainnet logs · " + new Date().toUTCString().slice(17, 25) + " UTC";
+    } catch (e) { $("rstate").textContent = "Could not build this receipt: " + e.message; }
+    busy = false;
+  }
+  $("rform").onsubmit = (e) => { e.preventDefault(); const h = $("rtx").value.trim(); if (!/^0x[0-9a-fA-F]{64}$/.test(h)) { $("rstate").textContent = "Paste a transaction hash: 0x and 64 hex characters."; return; } go("/receipt/" + h.toLowerCase()); };
+  $("rcopy").onclick = async (e) => { try { await navigator.clipboard.writeText(location.origin + "/receipt/" + last.tx); e.target.textContent = "Copied"; setTimeout(() => (e.target.textContent = "Copy link"), 1500); } catch {} };
+  $("rjson").onclick = () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify({ source: "Robinhood Chain mainnet (chain id 4663) logs, rebuilt by allot.dev/receipt", ...last }, null, 2)], { type: "application/json" })); a.download = "allot-receipt-" + last.tx.slice(0, 10) + ".json"; a.click(); };
+  $("rprint").onclick = () => window.print();
+  $("rurlf").onsubmit = (e) => { e.preventDefault(); const u = $("rurl").value.trim(); if (!u || !last) return; $("rurlr").textContent = KECCAK(u) === last.ref ? "✓ Match: the AI paid for exactly this URL." : "✕ No match: keccak256 of this URL is " + short(KECCAK(u)) + ", the vault recorded " + short(last.ref) + "."; };
+  const show = () => { if (ROUTE() !== "receipt") return; const h = hashFromPath(); $("rtx").value = h; if (h) load(h); else { $("rstate").textContent = "Paste a transaction hash, or open one from the Ledger."; $("rcard").innerHTML = ""; $("racts").hidden = true; } };
+  addEventListener("allot:route", show); show();
 })();
 
 // ---------- Demo: a real x402 call from the visitor's browser ----------
