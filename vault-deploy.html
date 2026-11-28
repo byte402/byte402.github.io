@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Allot · Deploy Vault v2 factory</title>
+<title>Allot · Deploy Vault v3 factory</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="allot.css?v=mono2">
@@ -13,7 +13,7 @@
 <header><div class="wrap"><a class="logo" href="./"><span class="mark"></span>Allot</a><nav><a href="./">Home</a><a href="/app">App</a></nav><span class="acct" id="acct" hidden></span></div></header>
 <main class="wrap">
   <div class="tn" id="net">…</div>
-  <h1>Deploy the <em>Vault v2</em> factory.</h1>
+  <h1>Deploy the <em>Vault v3</em> factory.</h1>
   <p class="sub">One time, by the Allot team. The factory only deploys vaults and lists them; it keeps no control over any vault. Simulated first, signed in your own wallet.</p>
   <div class="card">
     <div class="kv"><div><small>NETWORK</small><b id="kNet">–</b></div><div><small>TOKEN</small><b id="kTok">–</b></div><div><small>TOKEN DOMAIN SEPARATOR</small><b id="kDs">–</b></div></div>
@@ -33,13 +33,13 @@
   let ds = "0x" + "0".repeat(64);
   try { ds = (await A.read(A.USDG, "token", "DOMAIN_SEPARATOR"))[0]; } catch { if (A.NET !== "testnet") { $("kDs").textContent = "could not read it, stop"; $("deploy").disabled = true; return; } }
   $("kDs").textContent = ds + (A.NET === "testnet" && /^0x0+$/.test(ds) ? " (none on Test USDG)" : "");
-  const fac = new E.ContractFactory(abi.factory, abi.factoryV2Bytecode), data = (await fac.getDeployTransaction(A.USDG, ds)).data;
+  const fac = new E.ContractFactory(abi.factory, abi.factoryV3Bytecode), data = (await fac.getDeployTransaction(A.USDG, ds)).data;
   $("deploy").onclick = async () => { $("log").innerHTML = ""; try {
     const me = await A.connect(); $("acct").hidden = false; $("acct").textContent = A.short(me);
     say("· simulating on " + A.NAME + "…"); const [s] = await A.simulate(me, [{ data, gas: "0x1c9c380" }]); if (!s.ok) throw new Error("simulation says it would fail: " + s.why);
     say("✓ simulated · " + s.gas.toLocaleString("en-US") + " gas. Confirm in your wallet, check it says " + A.NAME + ".");
     const { hash, rc } = await A.send(me, { data }, s.gas);
-    say(`✓ Vault v2 factory deployed at <b>${rc.contractAddress}</b> in block <b>${parseInt(rc.blockNumber, 16)}</b>\n  tx <a href="${A.EXP}/tx/${hash}" target="_blank" rel="noopener">${hash}</a>\nSend the address and block to the Allot team.`);
+    say(`✓ Vault v3 factory deployed at <b>${rc.contractAddress}</b> in block <b>${parseInt(rc.blockNumber, 16)}</b>\n  tx <a href="${A.EXP}/tx/${hash}" target="_blank" rel="noopener">${hash}</a>\nSend the address and block to the Allot team.`);
   } catch (e) { say("✗ " + (e.shortMessage || e.message || e)); } };
 })();
 </script>

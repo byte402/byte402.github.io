@@ -826,7 +826,8 @@ const LIVE = (() => {
   async function fetchAll() {
     const cfg = await (await fetch("config.json?t=" + Date.now(), { cache: "no-store" })).json(), from = hex(cfg.factoryBlock);
     const created = [...(await rpc("eth_getLogs", [{ address: cfg.factory, topics: [T.created], fromBlock: from, toBlock: "latest" }])),
-      ...(cfg.factoryV2 ? await rpc("eth_getLogs", [{ address: cfg.factoryV2, topics: [T.created], fromBlock: hex(cfg.factoryV2Block), toBlock: "latest" }]) : [])]; // v1 and v2 vaults
+      ...(cfg.factoryV2 ? await rpc("eth_getLogs", [{ address: cfg.factoryV2, topics: [T.created], fromBlock: hex(cfg.factoryV2Block), toBlock: "latest" }]) : []),
+      ...(cfg.factoryV3 ? await rpc("eth_getLogs", [{ address: cfg.factoryV3, topics: [T.created], fromBlock: hex(cfg.factoryV3Block), toBlock: "latest" }]) : [])]; // v1, v2 and v3 vaults
     const vaults = created.map((l) => "0x" + l.data.slice(26, 66)), vt = vaults.map((v) => "0x" + v.slice(2).padStart(64, "0"));
     const rows = [], agents = {};
     if (vaults.length) {
@@ -958,13 +959,14 @@ const RECEIPT = (() => {
   const word = (data, i) => "0x" + data.slice(2 + 64 * i, 2 + 64 * (i + 1)), big = (w) => BigInt(w);
   const lastBefore = (logs, block, idx) => logs.filter((l) => Number(l.blockNumber) < block || (Number(l.blockNumber) === block && (idx == null || Number(l.logIndex) < idx))).pop();
 
-  async function build(tx, { rpc, factory, factoryBlock, factoryV2, factoryV2Block }) {
+  async function build(tx, { rpc, factory, factoryBlock, factoryV2, factoryV2Block, factoryV3, factoryV3Block }) {
     tx = lower(tx).trim();
     if (!/^0x[0-9a-f]{64}$/.test(tx)) throw new Error("that is not a transaction hash (0x and 64 hex characters)");
     const from = hex(factoryBlock);
-    const [rc, t, c1, c2] = await Promise.all([rpc("eth_getTransactionReceipt", [tx]), rpc("eth_getTransactionByHash", [tx]), rpc("eth_getLogs", [{ address: factory, topics: [T.created], fromBlock: from, toBlock: "latest" }]),
-      factoryV2 ? rpc("eth_getLogs", [{ address: factoryV2, topics: [T.created], fromBlock: hex(factoryV2Block), toBlock: "latest" }]) : []]);
-    const created = [...c1.map((l) => ({ ...l, v: 1 })), ...c2.map((l) => ({ ...l, v: 2 }))];
+    const [rc, t, c1, c2, c3] = await Promise.all([rpc("eth_getTransactionReceipt", [tx]), rpc("eth_getTransactionByHash", [tx]), rpc("eth_getLogs", [{ address: factory, topics: [T.created], fromBlock: from, toBlock: "latest" }]),
+      factoryV2 ? rpc("eth_getLogs", [{ address: factoryV2, topics: [T.created], fromBlock: hex(factoryV2Block), toBlock: "latest" }]) : [],
+      factoryV3 ? rpc("eth_getLogs", [{ address: factoryV3, topics: [T.created], fromBlock: hex(factoryV3Block), toBlock: "latest" }]) : []]);
+    const created = [...c1.map((l) => ({ ...l, v: 1 })), ...c2.map((l) => ({ ...l, v: 2 })), ...c3.map((l) => ({ ...l, v: 3 }))];
     if (!rc || !t) throw new Error("this transaction was not found on Robinhood Chain mainnet");
     const vaults = {}; for (const l of created) vaults[addr(word(l.data, 0))] = { owner: addr(l.topics[1]), tx: l.transactionHash, block: Number(l.blockNumber), version: l.v, factory: lower(l.address) };
     const block = Number(rc.blockNumber), ts = Number((await rpc("eth_getBlockByNumber", [rc.blockNumber, false])).timestamp);
@@ -1008,7 +1010,7 @@ const RECEIPT = (() => {
       if (s) r.rule = { perPayment: big(word(s.data, 0)).toString(), perDay: big(word(s.data, 1)).toString(), expiry: Number(big(word(s.data, 2))), active: big(word(s.data, 3)) === 1n, tx: s.transactionHash, block: Number(s.blockNumber) };
       if (p) r.payee = { allowed: big(word(p.data, 0)) === 1n, tx: p.transactionHash, block: Number(p.blockNumber) };
       r.vaultVersion = r.vaultCreated.version;
-      if (r.vaultVersion === 2) { // v2: the payee's own daily budget, as set before this payment
+      if (r.vaultVersion >= 2) { // v2: the payee's own daily budget, as set before this payment
         const lims = await rpc("eth_getLogs", [{ address: vault, topics: [T_LIMIT, pad(agent), pad(to)], fromBlock: hex(r.vaultCreated.block), toBlock: hex(ruleBlock) }]);
         const L = lastBefore(lims, ruleBlock, ruleIdx); if (L) r.payeeLimit = { perDay: big(word(L.data, 0)).toString(), tx: L.transactionHash, block: Number(L.blockNumber) };
       }
@@ -1055,7 +1057,7 @@ const RECEIPT = (() => {
         c.push(["✓", `Inside the daily limit of ${usdg(rule.perDay)} USDG, checked by the contract when it ${r.kind === "x402" ? "authorized" : "paid"}`, ""]);
       }
       if (r.payee) c.push([ok(r.payee.allowed), "Payee on this AI's approved list", tx(r.payee.tx, "approved")]);
-      if (r.payeeLimit && r.payeeLimit.perDay !== "0") c.push(["✓", `Inside this payee's own daily budget of ${usdg(r.payeeLimit.perDay)} USDG (vault v2)`, tx(r.payeeLimit.tx, "budget set")]);
+      if (r.payeeLimit && r.payeeLimit.perDay !== "0") c.push(["✓", `Inside this payee's own daily budget of ${usdg(r.payeeLimit.perDay)} USDG (vault v${r.vaultVersion})`, tx(r.payeeLimit.tx, "budget set")]);
       if (r.kind === "x402") c.push([r.match === "digest" ? "✓" : "~", r.match === "digest" ? `The vault approved this exact transfer (digest ${short(r.digest)}) and USDG used its nonce once` : "Matched to the authorization by payee and amount", ""]);
       h += `<div class="rchk"><div class="rsub">WHAT THE VAULT CHECKED ON CHAIN</div>${c.map(([s, t, l]) => `<div class="ck${s === "✕" ? " bad" : ""}"><span>${t}${l ? " · " + l : ""}</span><b>${s}</b></div>`).join("")}</div>`;
       h += `<p class="rnote">The contract reverts a payment that breaks any rule, so a payment on chain passed all of them. Rules are shown as they were set before this payment.</p>`;
@@ -1067,7 +1069,7 @@ const RECEIPT = (() => {
     if (busy) return; busy = true; $("rstate").textContent = "Reading Robinhood Chain…"; $("rcard").innerHTML = ""; $("racts").hidden = true; $("rurlw").hidden = true;
     try {
       const cfg = await (await fetch("/config.json?t=" + Date.now(), { cache: "no-store" })).json();
-      last = await RECEIPT.build(hash, { rpc: LIVE.rpc, factory: cfg.factory, factoryBlock: cfg.factoryBlock, factoryV2: cfg.factoryV2, factoryV2Block: cfg.factoryV2Block });
+      last = await RECEIPT.build(hash, { rpc: LIVE.rpc, factory: cfg.factory, factoryBlock: cfg.factoryBlock, factoryV2: cfg.factoryV2, factoryV2Block: cfg.factoryV2Block, factoryV3: cfg.factoryV3, factoryV3Block: cfg.factoryV3Block });
       last.builtAt = new Date().toISOString(); render(last);
       $("rstate").textContent = "Rebuilt in your browser from Robinhood Chain mainnet logs · " + new Date().toUTCString().slice(17, 25) + " UTC";
     } catch (e) { $("rstate").textContent = "Could not build this receipt: " + e.message; }
@@ -1482,7 +1484,8 @@ document.querySelectorAll(".bcode [data-copy]").forEach((b) => b.onclick = async
   async function logs(filter, from, to) { const W = []; for (let a = from; a <= to; a += 9000000) W.push([a, Math.min(to, a + 8999999)]); const out = [];
     for (let i = 0; i < W.length; i += 4) (await Promise.all(W.slice(i, i + 4).map(([a, e]) => range(filter, a, e)))).forEach((r) => out.push(...r)); return out; }
   let vaults = null;
-  async function allotVaults(head) { if (vaults) return vaults; const L = [...(await logs({ address: FACTORY }, FACTORY_BLOCK, head)), ...(head >= FACTORY_V2_BLOCK ? await logs({ address: FACTORY_V2 }, FACTORY_V2_BLOCK, head) : [])]; vaults = new Set(L.map((l) => ("0x" + l.data.slice(26, 66)).toLowerCase())); return vaults; }
+  async function allotVaults(head) { if (vaults) return vaults; let c3 = {}; try { c3 = await (await fetch("/config.json", { cache: "no-store" })).json(); } catch {}
+    const L = [...(await logs({ address: FACTORY }, FACTORY_BLOCK, head)), ...(head >= FACTORY_V2_BLOCK ? await logs({ address: FACTORY_V2 }, FACTORY_V2_BLOCK, head) : []), ...(c3.factoryV3 && head >= c3.factoryV3Block ? await logs({ address: c3.factoryV3 }, c3.factoryV3Block, head) : [])]; vaults = new Set(L.map((l) => ("0x" + l.data.slice(26, 66)).toLowerCase())); return vaults; }
   // payments a payee received on chain: USDG transfers to it, which of them used an EIP-3009 authorization (x402 style), and which came from an Allot vault
   async function onchain(payTo) { const head = parseInt(await rpc("eth_blockNumber", []), 16), V = await allotVaults(head);
     const L = (await logs({ address: USDG, topics: [T_TR, null, pad(payTo)] }, 0, head)).slice(-150), txs = [...new Set(L.map((l) => l.transactionHash))];
@@ -1552,7 +1555,8 @@ document.querySelectorAll(".bcode [data-copy]").forEach((b) => b.onclick = async
   async function read(vault) { vault = vault.toLowerCase(); const call = (to, data) => ["eth_call", [{ to, data }, "latest"]];
     const [code] = await batch([["eth_getCode", [vault, "latest"]]]); if (!code || code === "0x") throw new Error("No contract at this address on Robinhood Chain.");
     const [own, frz, bal, blk] = await batch([call(vault, S.owner), call(vault, S.frozen), call(USDG, S.balanceOf + pad(vault).slice(2)), ["eth_getBlockByNumber", ["latest", false]]]);
-    const created = [...(await getLogs({ address: FACTORY })), ...(await getLogs({ address: FACTORY_V2 }))], isAllot = created.some((l) => ("0x" + l.data.slice(26, 66)).toLowerCase() === vault); if (!isAllot) throw new Error("This address is not a vault made by the Allot Factory.");
+    let c3 = {}; try { c3 = await (await fetch("/config.json", { cache: "no-store" })).json(); } catch {}
+    const created = [...(await getLogs({ address: FACTORY })), ...(await getLogs({ address: FACTORY_V2 })), ...(c3.factoryV3 ? await getLogs({ address: c3.factoryV3 }) : [])], isAllot = created.some((l) => ("0x" + l.data.slice(26, 66)).toLowerCase() === vault); if (!isAllot) throw new Error("This address is not a vault made by the Allot Factory.");
     const [sets, payees, auths, outs] = await Promise.all([getLogs({ address: vault, topics: [T.agentSet] }), getLogs({ address: vault, topics: [T.payeeSet] }), getLogs({ address: vault, topics: [T.authorized] }), getLogs({ address: USDG, topics: [T.transfer, pad(vault)] })]);
     const now = parseInt(blk.timestamp, 16), today = Math.floor(now / 86400), A = {};
     for (const l of sets) A[addr(l.topics[1])] = { agent: addr(l.topics[1]), perPayment: W(l.data, 0), perDay: W(l.data, 1), expiry: Number(W(l.data, 2)), active: W(l.data, 3) === 1n };
@@ -1599,7 +1603,8 @@ document.querySelectorAll(".bcode [data-copy]").forEach((b) => b.onclick = async
     $("cgo").textContent = "Reading…"; $("cgo").disabled = true; try { $("cv").value = v; render(await read(v)); history.replaceState(null, "", "/compute?vault=" + v.toLowerCase()); } catch (e) { $("cout").hidden = true; $("cerr").textContent = e.message || String(e); } finally { $("cgo").textContent = "Read ▸"; $("cgo").disabled = false; } }
   async function mine() { $("cerr").textContent = ""; if (!window.ethereum) { $("cerr").textContent = "No wallet found in this browser. Paste your vault address instead."; return; }
     try { const [me] = await window.ethereum.request({ method: "eth_requestAccounts" }); const dec = (r) => { const n = Number(W(r, 1)); return [...Array(n)].map((_, i) => addr("0x" + r.slice(2 + 64 * (2 + i), 66 + 64 * (2 + i)))); };
-      const list = [...dec(await rpc("eth_call", [{ to: FACTORY_V2, data: S.vaultsOf + pad(me).slice(2) }, "latest"])), ...dec(await rpc("eth_call", [{ to: FACTORY, data: S.vaultsOf + pad(me).slice(2) }, "latest"]))];
+      let c3 = {}; try { c3 = await (await fetch("/config.json", { cache: "no-store" })).json(); } catch {}
+      const list = [...(c3.factoryV3 ? dec(await rpc("eth_call", [{ to: c3.factoryV3, data: S.vaultsOf + pad(me).slice(2) }, "latest"])) : []), ...dec(await rpc("eth_call", [{ to: FACTORY_V2, data: S.vaultsOf + pad(me).slice(2) }, "latest"])), ...dec(await rpc("eth_call", [{ to: FACTORY, data: S.vaultsOf + pad(me).slice(2) }, "latest"]))];
       if (!list.length) { $("cerr").textContent = "This wallet owns no Allot vault. Create one in the app."; return; } $("cmine").innerHTML = list.length > 1 ? list.map((v) => `<button type="button" data-v="${v}">${sh(v)}</button>`).join(" ") : ""; document.querySelectorAll("#cmine button").forEach((b) => (b.onclick = () => go(b.dataset.v))); go(list[list.length - 1]);
     } catch (e) { $("cerr").textContent = e.message || String(e); } }
   let started = false; function start() { if (started) return; started = true; const q = new URLSearchParams(location.search).get("vault"); if (q) go(q); }

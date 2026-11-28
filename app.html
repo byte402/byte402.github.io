@@ -84,9 +84,9 @@ main::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;ba
   </div>
 
   <div class="card" id="upCard" hidden>
-    <h2>Vault v2 is available <small>PER-PAYEE DAILY BUDGETS</small></h2>
-    <p class="muted">Your vault is v1 and keeps working as it is. v2 adds a daily budget for each payee. To use it, create a v2 vault, move your USDG over (withdraw here, deposit there) and add your AIs again.</p>
-    <div class="row"><button class="go" id="createV2">Create a v2 vault</button></div>
+    <h2><span id="upTitle">Vault v3 is available</span> <small>SAFER PENDING PAYMENTS</small></h2>
+    <p class="muted" id="upText">Your vault keeps working as it is. v3 adds per-payee daily budgets and makes pending payments safer: revoking an AI, a key expiring, removing a payee or freezing cancels them at once. To use it, create a v3 vault, move your USDG over (withdraw here, deposit there) and add your AIs again.</p>
+    <div class="row"><button class="go" id="createV2">Create a v3 vault</button></div>
     <div class="log" id="upLog"></div>
   </div>
 
@@ -131,7 +131,8 @@ main::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 <script>
 const $ = (i) => document.getElementById(i), A = ALLOT, E = A.E;
 let me = null, cfg = null, abi = null, vault = null, agents = [], ver = 1;
-const FACTORY = () => cfg.factoryV2 || cfg.factory, FBLOCK = () => (ver === 2 ? cfg.factoryV2Block : cfg.factoryBlock);
+const LATEST = () => (cfg.factoryV3 ? 3 : cfg.factoryV2 ? 2 : 1), FACTORY = () => cfg.factoryV3 || cfg.factoryV2 || cfg.factory;
+const FBLOCK = () => (ver === 3 ? cfg.factoryV3Block : ver === 2 ? cfg.factoryV2Block : cfg.factoryBlock);
 const say = (el, cls, t) => { $(el).innerHTML += `<span class="${cls}">${t}</span>\n`; };
 const fail = (el, e) => say(el, "no", "✗ " + (e.reason || e.message || e));
 const vi = () => new E.Interface(abi.vault), fi = () => new E.Interface(abi.factory), ti = () => A.iface("token");
@@ -153,19 +154,22 @@ async function run(el, calls, what) {
 async function boot() {
   ({ abi, cfg } = await A.load());
   if (A.NET === "testnet") { $("tnet").hidden = false; $("netLbl").textContent = "ROBINHOOD CHAIN TESTNET · TEST USDG, NO VALUE · SIMULATED BEFORE YOU SIGN"; $("footNet").textContent = "Robinhood Chain Testnet"; }
-  if (FACTORY()) { const f = FACTORY(); $("factLink").href = A.EXP + "/address/" + f; $("factLink").textContent = A.short(f) + (cfg.factoryV2 ? " (v2)" : "") + " ↗"; }
-  $("createVer").textContent = cfg.factoryV2 ? "New vaults are v2: every rule of v1, plus an optional daily budget for each payee." : "";
+  if (FACTORY()) { const f = FACTORY(); $("factLink").href = A.EXP + "/address/" + f; $("factLink").textContent = A.short(f) + (LATEST() > 1 ? " (v" + LATEST() + ")" : "") + " ↗"; }
+  $("createVer").textContent = LATEST() === 3 ? "New vaults are v3: per-payee daily budgets, and pending payments stop at once when you revoke, freeze or remove a payee." : LATEST() === 2 ? "New vaults are v2: every rule of v1, plus an optional daily budget for each payee." : "";
   if (!FACTORY()) { $("notReady").hidden = false; $("pre").hidden = true; $("connect").disabled = true; return; }
 }
 $("connect2").onclick = () => $("connect").click();
 $("connect").onclick = async () => { try { me = await A.connect(); $("connect").hidden = true; $("pre").hidden = true; $("acct").hidden = false; $("acct").textContent = A.short(me); await refresh(); } catch (e) { fail("createLog", e); } };
 
 async function refresh() {
-  const v2 = cfg.factoryV2 ? (await A.read(cfg.factoryV2, "factory", "vaultsOf", [me]))[0] : [], v1 = cfg.factory ? (await A.read(cfg.factory, "factory", "vaultsOf", [me]))[0] : [];
-  if (!v2.length && !v1.length) { $("createCard").hidden = false; $("vaultUI").hidden = true; $("upCard").hidden = true; return; }
-  vault = v2.length ? v2[v2.length - 1] : v1[0]; ver = v2.length ? 2 : 1;
-  $("createCard").hidden = true; $("vaultUI").hidden = false; $("vAddr").textContent = vault; $("vVer").textContent = "v" + ver; $("upCard").hidden = !(ver === 1 && cfg.factoryV2);
-  $("payeesLbl").textContent = ver === 2 ? "APPROVED PAYEES · ONE PER LINE · OPTIONAL DAILY BUDGET AFTER THE ADDRESS (e.g. 0x… 0.20)" : "APPROVED PAYEES · ONE ADDRESS PER LINE (per-payee budgets need a v2 vault)";
+  const list = async (f) => (f ? (await A.read(f, "factory", "vaultsOf", [me]))[0] : []);
+  const v3 = await list(cfg.factoryV3), v2 = await list(cfg.factoryV2), v1 = await list(cfg.factory);
+  if (!v3.length && !v2.length && !v1.length) { $("createCard").hidden = false; $("vaultUI").hidden = true; $("upCard").hidden = true; return; }
+  vault = v3.length ? v3[v3.length - 1] : v2.length ? v2[v2.length - 1] : v1[0]; ver = v3.length ? 3 : v2.length ? 2 : 1;
+  $("createCard").hidden = true; $("vaultUI").hidden = false; $("vAddr").textContent = vault; $("vVer").textContent = "v" + ver; $("upCard").hidden = !(ver < LATEST());
+  $("upTitle").textContent = "Vault v" + LATEST() + " is available"; $("createV2").textContent = "Create a v" + LATEST() + " vault";
+  if (LATEST() === 2) $("upText").textContent = "Your vault is v1 and keeps working as it is. v2 adds a daily budget for each payee. To use it, create a v2 vault, move your USDG over (withdraw here, deposit there) and add your AIs again.";
+  $("payeesLbl").textContent = ver >= 2 ? "APPROVED PAYEES · ONE PER LINE · OPTIONAL DAILY BUDGET AFTER THE ADDRESS (e.g. 0x… 0.20)" : "APPROVED PAYEES · ONE ADDRESS PER LINE (per-payee budgets need a v2 or v3 vault)";
   $("vBal").textContent = A.fmt((await A.read(A.USDG, "token", "balanceOf", [vault]))[0]);
   const frozen = (await A.read(vault, "vault", "frozen"))[0]; $("vState").textContent = frozen ? "FROZEN" : "ACTIVE"; $("freeze").textContent = frozen ? "Unfreeze" : "Freeze";
   // agents from AgentSet events
@@ -176,14 +180,14 @@ async function refresh() {
   agents = [...seen.entries()].filter(([, a]) => a.active); $("vAgents").textContent = agents.length;
   const rows = await Promise.all(agents.map(async ([k, a]) => { const left = (await A.read(vault, "vault", "remainingToday", [k]))[0];
     const ps = [...(pay.get(k) || new Map()).entries()].filter(([, p]) => p.allowed);
-    const pl = (await Promise.all(ps.map(async ([p, r]) => { if (ver !== 2 || r.limit === 0n) return `<span class="pl">${A.short(p)}</span>`; const l = (await A.read(vault, "vault", "remainingTodayFor", [k, p]))[0]; return `<span class="pl">${A.short(p)} · ${A.fmt(r.limit)}/day · ${A.fmt(l)} left</span>`; }))).join("");
+    const pl = (await Promise.all(ps.map(async ([p, r]) => { if (ver < 2 || r.limit === 0n) return `<span class="pl">${A.short(p)}</span>`; const l = (await A.read(vault, "vault", "remainingTodayFor", [k, p]))[0]; return `<span class="pl">${A.short(p)} · ${A.fmt(r.limit)}/day · ${A.fmt(l)} left</span>`; }))).join("");
     return `<tr><td>${A.short(k)}</td><td>${A.fmt(a.perPayment)}</td><td>${A.fmt(a.perDay)}</td><td>${A.fmt(left)}</td><td>${pl || '<span class="muted">none</span>'}</td><td><button class="danger" data-k="${k}">Revoke</button></td></tr>`; }));
   $("agents").innerHTML = `<tr><th>AI KEY</th><th>PER PAYMENT</th><th>PER DAY</th><th>LEFT TODAY</th><th>PAYEES</th><th></th></tr>` + (rows.join("") || `<tr><td colspan="6" class="muted">No active AI. Add one above.</td></tr>`);
   $("agents").querySelectorAll("button[data-k]").forEach((b) => b.onclick = async () => { $("vaultLog").innerHTML = ""; try { if (await run("vaultLog", [{ to: vault, data: vi().encodeFunctionData("revoke", [b.dataset.k]) }], `Revoke AI ${A.short(b.dataset.k)}. It can't pay again.`)) await refresh(); } catch (e) { fail("vaultLog", e); } });
 }
 
-$("create").onclick = async () => { $("createLog").innerHTML = ""; try { if (await run("createLog", [{ to: FACTORY(), data: fi().encodeFunctionData("create") }], "Create your Allot vault" + (cfg.factoryV2 ? " (v2)" : "") + ". Only your wallet will control it.")) await refresh(); } catch (e) { fail("createLog", e); } };
-$("createV2").onclick = async () => { $("upLog").innerHTML = ""; try { if (await run("upLog", [{ to: cfg.factoryV2, data: fi().encodeFunctionData("create") }], "Create a v2 vault. Your v1 vault stays as it is until you withdraw from it.")) await refresh(); } catch (e) { fail("upLog", e); } };
+$("create").onclick = async () => { $("createLog").innerHTML = ""; try { if (await run("createLog", [{ to: FACTORY(), data: fi().encodeFunctionData("create") }], "Create your Allot vault" + (LATEST() > 1 ? " (v" + LATEST() + ")" : "") + ". Only your wallet will control it.")) await refresh(); } catch (e) { fail("createLog", e); } };
+$("createV2").onclick = async () => { $("upLog").innerHTML = ""; try { if (await run("upLog", [{ to: FACTORY(), data: fi().encodeFunctionData("create") }], "Create a v" + LATEST() + " vault. Your current vault stays as it is until you withdraw from it.")) await refresh(); } catch (e) { fail("upLog", e); } };
 $("deposit").onclick = async () => { $("vaultLog").innerHTML = ""; try { const amt = A.units($("depAmt").value); if (amt <= 0n) throw new Error("enter an amount");
   if (await run("vaultLog", [{ to: A.USDG, data: ti().encodeFunctionData("transfer", [vault, amt]) }], `Send ${A.fmt(amt)} ${A.TOKEN} from your wallet to your vault. A plain transfer, no approval.`)) await refresh(); } catch (e) { fail("vaultLog", e); } };
 $("withdraw").onclick = async () => { $("vaultLog").innerHTML = ""; try { const bal = (await A.read(A.USDG, "token", "balanceOf", [vault]))[0]; if (bal === 0n) throw new Error("the vault is empty");
@@ -195,10 +199,10 @@ $("addAgent").onclick = async () => { $("agentLog").innerHTML = ""; $("secret").
   const per = A.units($("perPay").value), day = A.units($("perDay").value), d = Number($("days").value) || 0;
   if (per <= 0n || day < per) throw new Error("the daily x402 limit must be at least the per payment cap");
   const payees = $("payees").value.split(/\n+/).map((l) => l.trim()).filter(Boolean).flatMap((l) => l.split(/[,;]+/).map((x) => x.trim()).filter(Boolean)).map((l) => { const [p, b] = l.split(/\s+/); if (!E.isAddress(p)) throw new Error("not an address: " + p);
-    const limit = b ? A.units(b) : 0n; if (b && limit <= 0n) throw new Error("daily budget must be above 0 for " + p); if (limit && ver !== 2) throw new Error("per-payee daily budgets need a v2 vault"); if (limit && limit < per) say("agentLog", "wait", "· note: " + A.short(p) + "'s daily budget is below the per payment cap, so single payments to it stop at " + A.fmt(limit)); return { p: E.getAddress(p), limit }; });
+    const limit = b ? A.units(b) : 0n; if (b && limit <= 0n) throw new Error("daily budget must be above 0 for " + p); if (limit && ver < 2) throw new Error("per-payee daily budgets need a v2 vault"); if (limit && limit < per) say("agentLog", "wait", "· note: " + A.short(p) + "'s daily budget is below the per payment cap, so single payments to it stop at " + A.fmt(limit)); return { p: E.getAddress(p), limit }; });
   if (!payees.length) throw new Error("add at least one approved payee");
   const key = E.Wallet.createRandom(), ai = key.address, expiry = d ? BigInt(Math.floor(Date.now() / 1000) + d * 86400) : 0n;
-  const calls = [{ to: vault, data: vi().encodeFunctionData("setAgent", [ai, per, day, expiry, true]) }, ...payees.map(({ p, limit }) => ({ to: vault, data: ver === 2 ? vi().encodeFunctionData("setPayeeRule", [ai, p, true, limit]) : vi().encodeFunctionData("setPayee", [ai, p, true]) }))];
+  const calls = [{ to: vault, data: vi().encodeFunctionData("setAgent", [ai, per, day, expiry, true]) }, ...payees.map(({ p, limit }) => ({ to: vault, data: ver >= 2 ? vi().encodeFunctionData("setPayeeRule", [ai, p, true, limit]) : vi().encodeFunctionData("setPayee", [ai, p, true]) }))];
   if (!(await run("agentLog", calls, `Add AI ${A.short(ai)}: max ${A.fmt(per)} per payment, ${A.fmt(day)} per day, ${payees.length} payee${payees.length > 1 ? "s" : ""}${payees.some((x) => x.limit) ? " (" + payees.filter((x) => x.limit).map((x) => A.short(x.p) + " " + A.fmt(x.limit) + "/day").join(", ") + ")" : ""}${d ? `, key expires in ${d} days` : ""}.`))) return;
   $("secret").hidden = false; $("secretKey").textContent = key.privateKey;
   $("copyKey").onclick = async () => { try { await navigator.clipboard.writeText(key.privateKey); $("copyKey").textContent = "Copied"; } catch { getSelection().selectAllChildren($("secretKey")); } };
