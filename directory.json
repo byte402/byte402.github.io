@@ -10,7 +10,7 @@
       "by": "Allot",
       "category": "market data",
       "description": "Live Robinhood Chain data read from the chain and KyberSwap: market prices, swap quotes, wallet balances and chain stats.",
-      "base": "https://allot-api.polished-dream-0948.workers.dev",
+      "base": "https://allot-api.netlify.app",
       "payTo": "0xe2933e837de82d2e05f22c8dbc5179e46ce39319",
       "source": "https://github.com/byte402/allot-api",
       "endpoints": [

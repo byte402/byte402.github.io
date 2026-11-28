@@ -426,7 +426,7 @@ html,body{overflow-x:clip}
         <li><b>05</b><span>The data comes back</span><small>one transaction, one answer</small></li>
       </ol>
       <div class="lastpaid" id="lastpaid"></div>
-      <div class="paycmd"><span>Pay it for real from your own vault (you confirm the amount):</span><code id="paycmd">npx -y github:byte402/allot-connector pay https://allot-api.polished-dream-0948.workers.dev/v1/price?symbol=NVDA --confirm 0.01</code><button id="copyCmd" type="button">Copy</button></div>
+      <div class="paycmd"><span>Pay it for real from your own vault (you confirm the amount):</span><code id="paycmd">npx -y github:byte402/allot-connector pay https://allot-api.netlify.app/v1/price?symbol=NVDA --confirm 0.01</code><button id="copyCmd" type="button">Copy</button></div>
     </div>
   </section>
   </div>
@@ -635,7 +635,7 @@ npx -y github:byte402/allot-connector pay &quot;https://your-worker.workers.dev/
       <a class="pf tilt" href="https://robinhoodchain.blockscout.com/address/0xc2623e62d5fae1eeebc2990a9d51f9e69a8a9092" target="_blank" rel="noopener"><b>Allot Factory</b><span>0xc262…9092 on Robinhood Chain ↗</span></a>
       <a class="pf tilt" href="/app"><b>The app</b><span>create a vault, add an AI, revoke ↗</span></a>
       <a class="pf tilt" href="https://github.com/byte402/allot-connector" target="_blank" rel="noopener"><b>The connector</b><span>open source MCP server ↗</span></a>
-      <a class="pf tilt" href="https://allot-api.polished-dream-0948.workers.dev/health" target="_blank" rel="noopener"><b>Sample x402 API</b><span id="apiState">checking…</span></a>
+      <a class="pf tilt" href="https://allot-api.netlify.app/health" target="_blank" rel="noopener"><b>Sample x402 API</b><span id="apiState">checking…</span></a>
       <a class="pf tilt" href="/ledger"><b>Public ledger</b><span id="ledState">real payments, live ↗</span></a>
     </div>
   </section>
@@ -883,7 +883,7 @@ const LIVE = (() => {
 // ---------- Demo: a real x402 call from the visitor's browser ----------
 (() => {
   const $ = (id) => document.getElementById(id); if (!$("runDemo")) return;
-  const API = "https://allot-api.polished-dream-0948.workers.dev", SYMS = ["NVDA", "TSLA", "AAPL", "ETH", "BTC", "SPY", "MSTR", "COIN"];
+  const API = "https://allot-api.netlify.app", SYMS = ["NVDA", "TSLA", "AAPL", "ETH", "BTC", "SPY", "MSTR", "COIN"];
   let sym = "NVDA";
   const cmd = () => `npx -y github:byte402/allot-connector pay ${API}/v1/price?symbol=${sym} --confirm 0.01`;
   SYMS.forEach((s) => { const b = document.createElement("button"); b.type = "button"; b.textContent = s; b.className = s === sym ? "on" : ""; b.onclick = () => { sym = s; $("chips").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); $("paycmd").textContent = cmd(); }; $("chips").appendChild(b); });
@@ -1029,10 +1029,10 @@ const LIVE = (() => {
 <span class="k">npx</span> -y github:byte402/allot-connector status
 
 <span class="c"># see the price, nothing is sent</span>
-<span class="k">npx</span> -y github:byte402/allot-connector pay https://allot-api.polished-dream-0948.workers.dev/v1/price?symbol=NVDA
+<span class="k">npx</span> -y github:byte402/allot-connector pay https://allot-api.netlify.app/v1/price?symbol=NVDA
 
 <span class="c"># your yes: pay at most 0.01 USDG</span>
-<span class="k">npx</span> -y github:byte402/allot-connector pay https://allot-api.polished-dream-0948.workers.dev/v1/price?symbol=NVDA <span class="s">--confirm 0.01</span>`] };
+<span class="k">npx</span> -y github:byte402/allot-connector pay https://allot-api.netlify.app/v1/price?symbol=NVDA <span class="s">--confirm 0.01</span>`] };
     let cur = "Claude Desktop";
     const pick = (k) => { cur = k; $("cfile").textContent = TABS[k][0]; $("ccode").innerHTML = TABS[k][1]; $("ctabs").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.textContent === k)); };
     Object.keys(TABS).forEach((k) => { const b = document.createElement("button"); b.type = "button"; b.textContent = k; b.onclick = () => pick(k); $("ctabs").appendChild(b); });
@@ -1042,7 +1042,7 @@ const LIVE = (() => {
 
   // launch: live checks of what is already running
   if ($("apiState")) {
-    const check = () => { fetch("https://allot-api.polished-dream-0948.workers.dev/health", { cache: "no-store" }).then((r) => r.json()).then((h) => ($("apiState").textContent = h.ok ? "online · answering 402 ↗" : "price source busy ↗")).catch(() => ($("apiState").textContent = "health check ↗"));
+    const check = () => { fetch("https://allot-api.netlify.app/health", { cache: "no-store" }).then((r) => r.json()).then((h) => ($("apiState").textContent = h.ok ? "online · answering 402 ↗" : "price source busy ↗")).catch(() => ($("apiState").textContent = "health check ↗"));
       if (typeof LIVE !== "undefined") LIVE.get().then((d) => ($("ledState").textContent = `${d.x402} real x402 payments ↗`)).catch(() => {}); };
     let done = false; const go = () => { if (ROUTE() === "launch" && !done) { done = true; check(); } }; addEventListener("allot:route", go); go();
   }
@@ -1130,7 +1130,7 @@ const LIVE = (() => {
 
 // APIs page: endpoints and prices read live from the API itself; "See the 402" shows the real unpaid answer
 (() => {
-  const API = "https://allot-api.polished-dream-0948.workers.dev", $ = (id) => document.getElementById(id);
+  const API = "https://allot-api.netlify.app", $ = (id) => document.getElementById(id);
   const META = {
     "/v1/price?symbol=NVDA": ["One market price", "symbol, priceUsdg, quotedWith, at", false],
     "/v1/prices": ["Every market price in one call", "prices{ETH, BTC, NVDA, TSLA, … 14 markets}, unit, missing, at", true],
@@ -1171,7 +1171,7 @@ document.querySelectorAll(".bcode [data-copy]").forEach((b) => b.onclick = async
 (() => {
   const RPC = "https://rpc.mainnet.chain.robinhood.com", EXP = "https://robinhoodchain.blockscout.com";
   const AUTH = "0xfd7136e3553be2e76371a7003ef4c2a28eafef429206b4df193d953d8a2a1ab1", SETTLE = "0x917f0100b99e753db76955c8c0d023d4be6792df5357c4154c5f54db04e6b396";
-  const V = "0xf64cf6131941b9b239ab61866429eb46132012ca", API = "https://allot-api.polished-dream-0948.workers.dev/v1/prices";
+  const V = "0xf64cf6131941b9b239ab61866429eb46132012ca", API = "https://allot-api.netlify.app/v1/prices";
   const T = { agentSet: "0x847bbbd6", payeeSet: "0xd8d1c180", authorized: "0xa2583fc4", used: "0x98de5035", transfer: "0xddf252ad" };
   // the answer the API returned to that payment, recorded once (the only value here not read from the chain)
   const ANSWER = { ETH: 1678.9363, BTC: 59636.231, NVDA: 155.85809, TSLA: 379.09897, AAPL: 349.76038, AMZN: 254.01977, GOOGL: 279.33845, META: 587.55155, MSFT: 492.17212, SPY: 716.76033, QQQ: 639.51862, GLD: 332.20553, COIN: 105.5632, MSTR: 80.677574 };
