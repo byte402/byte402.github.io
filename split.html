@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Allot Split · Testnet</title>
+<meta name="description" content="Allot Split on Robinhood Chain Testnet: one address that shares every payment between fixed payees by fixed shares.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="allot.css?v=mono2">
+<style>
+<style>
+/* monochrome editorial: Instrument Serif titles, Geist text, Geist Mono labels, threads instead of a planet */
+body{background-image:none!important}
+h1,h2{font-family:"Instrument Serif",Georgia,serif!important;font-weight:400!important;letter-spacing:-.02em!important}
+h1 em,h2 em{color:var(--mute)!important;font-style:italic!important}
+.logo{font:400 30px "Instrument Serif",Georgia,serif!important;letter-spacing:-.01em!important}
+.eyebrow,.k{color:var(--mute)!important;font-weight:500!important;letter-spacing:.22em!important}
+.cta,.tbar button,.chips button.on,.tabs button.on{border-radius:4px!important}
+.pr,.tc,.tool,.pf,.ls,.lstats div,.req,.term,.tester,.tr,.tw,.pipe,.cnote,.paycmd,.ticker,.flowsteps li,.chips button,.tabs button,.ghost,.next a,.lbar button{border-radius:4px!important}
+.soc{margin-left:auto;display:flex;gap:6px;align-items:center}.soc a{display:grid;place-items:center;width:36px;height:36px;color:var(--mute);border:1px solid rgba(242,240,235,.18);border-radius:4px;transition:color .2s,border-color .2s}.soc a:hover{color:#fff;border-color:rgba(242,240,235,.5)}
+#flow{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+header,main,footer{position:relative;z-index:1}
+header{z-index:5!important}
+main::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(10,10,10,.9) 0%,rgba(10,10,10,.78) 45%,rgba(10,10,10,.35) 75%,rgba(10,10,10,.15) 100%)}
+@media (max-width:900px){main::before{background:rgba(10,10,10,.78)}}
+.card{background:#0e0e0e!important;border-radius:4px!important}
+.pre{margin-top:26px}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:6px}
+.step{background:#0e0e0e;border:1px solid var(--line);border-radius:4px;padding:18px 18px 20px;position:relative;overflow:hidden}
+.step::before{content:"";position:absolute;left:0;top:0;height:1px;width:100%;background:linear-gradient(90deg,transparent,rgba(242,240,235,.7),transparent);transform:translateX(-100%);animation:sweep 4.5s linear infinite}
+.step:nth-child(2)::before{animation-delay:1.5s}.step:nth-child(3)::before{animation-delay:3s}
+@keyframes sweep{to{transform:translateX(100%)}}
+.step i{font:500 11px var(--mono);letter-spacing:.2em;color:var(--dim);font-style:normal}
+.step h3{font:400 28px/1.05 "Instrument Serif",Georgia,serif;margin:10px 0 8px;letter-spacing:-.01em}
+.step p{margin:0;color:var(--mute);font-size:14px}
+.pcta{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:18px}
+.pcta .go{padding:12px 20px;font-size:14px}
+.pcta span{font:500 12px var(--mono);color:var(--dim);letter-spacing:.06em}
+.rules{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:10px}
+.rule{border:1px solid var(--line);border-radius:4px;padding:12px 14px;background:#0b0b0b}
+.rule small{display:block;font:500 10.5px var(--mono);letter-spacing:.16em;color:var(--dim)}
+.rule b{display:block;margin-top:6px;font:500 14px var(--mono);color:var(--ink)}
+.facts{margin-top:10px;font:500 12.5px/1.9 var(--mono);color:var(--mute)}.facts a{color:var(--ink)}
+@media (max-width:820px){.steps{grid-template-columns:1fr}.rules{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (prefers-reduced-motion:reduce){.step::before{animation:none}}
+
+.tn{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:22px;padding:10px 14px;border:1px dashed #ffb36b;border-radius:4px;font:600 12px var(--mono);letter-spacing:.08em;color:#ffb36b}
+.prow{display:grid;grid-template-columns:minmax(0,1fr) 110px 40px;gap:8px;margin-top:8px}.prow input{min-width:0}.rm{padding:0!important}
+#sum{font:600 12px var(--mono)}#sum.ok{color:var(--ink)}#sum.no{color:#ffb36b}
+.chip{font:500 12.5px var(--mono)!important;margin:4px 6px 0 0}
+#ptab{width:100%;border-collapse:collapse;margin-top:14px;min-width:560px}#ptab th,#ptab td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:13.5px}#ptab th{font:600 10.5px var(--mono);letter-spacing:.12em;color:var(--dim)}#ptab a,#sAct a,.facts a,#sAddr a{color:var(--ink)}
+.tw2{overflow-x:auto}#sAct{margin-top:10px;font:500 12.5px/1.9 var(--mono);color:var(--mute)}
+.out{font:500 12.5px/1.9 var(--mono);color:var(--mute);margin-top:10px}.out b{color:var(--ink);font-weight:500}
+@media (max-width:560px){.prow{grid-template-columns:minmax(0,1fr) 80px 36px}}
+</style>
+<script>if(location.pathname.endsWith(".html"))history.replaceState(null,"",location.pathname.slice(0,-5)+location.search+location.hash)</script>
+</head>
+<body>
+<header><div class="wrap"><a class="logo" href="./"><span class="mark"></span>Allot</a>
+  <nav><a href="./">Home</a><a href="/app">App</a><a href="/split" class="on">Split</a></nav>
+<span class="soc"><a href="https://x.com/Allot_rh" target="_blank" rel="noopener" aria-label="Allot on X"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M17.75 3h3.07l-6.7 7.66L22 21h-6.17l-4.83-6.32L5.47 21H2.4l7.17-8.2L2 3h6.33l4.37 5.77L17.75 3zm-1.08 16.17h1.7L7.4 4.74H5.58l11.09 14.43z"/></svg></a><a href="https://github.com/byte402" target="_blank" rel="noopener" aria-label="Allot on GitHub"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg></a></span><button class="go" id="connect" style="margin-left:8px">Connect wallet</button><span class="acct" id="acct" hidden></span></div></header>
+<main class="wrap">
+  <div class="tn">TESTNET · ROBINHOOD CHAIN TESTNET (46630) · TEST USDG HAS NO VALUE · NOTHING HERE TOUCHES MAINNET</div>
+  <h1>One payment in, <em>shared out</em>.</h1>
+  <p class="sub">An Allot Split is one address that shares every payment between fixed payees by fixed shares. Use it as your x402 API's payTo. No owner, no admin, no upgrade: once created, nobody can change the payees or take more than their share.</p>
+
+  <div class="card" id="setup" hidden>
+    <h2>Set up the testnet <small>ONE TIME</small></h2>
+    <p class="muted">Deploys a Test USDG token (no value, anyone can mint) and the Split factory to Robinhood Chain Testnet. Each step is simulated first, and you sign in your own wallet.</p>
+    <div class="row"><button class="go" id="dTok">1 · Deploy Test USDG</button><button class="go" id="dFac">2 · Deploy Split factory</button></div>
+    <div class="out">Test USDG <b id="outTok">–</b><br>Split factory <b id="outFac">–</b> · block <b id="outBlk">–</b></div>
+    <div class="log" id="setupLog"></div>
+  </div>
+
+  <div id="main" hidden>
+    <div class="facts" id="facts" style="margin-top:14px"></div>
+    <div class="card">
+      <h2>Create a Split <small>2 TO 10 PAYEES · SHARES ADD UP TO 100%</small></h2>
+      <p class="muted">The shares are fixed forever. Anyone can later release each payee's part to that payee, never to anyone else.</p>
+      <div id="rows"></div>
+      <div class="row"><button type="button" id="addRow">+ Add payee</button><button type="button" id="mineFill">Use my wallet as the first payee</button><span id="sum"></span></div>
+      <div class="row"><button class="go" id="create">Create Split</button></div>
+      <div class="log" id="createLog"></div>
+    </div>
+    <div class="card">
+      <h2>Open a Split</h2>
+      <div class="row"><div class="f"><label for="openAddr">SPLIT ADDRESS</label><input id="openAddr" placeholder="0x…" spellcheck="false"></div><button id="openBtn">Open</button></div>
+      <div class="facts">Your Splits: <span id="mine"><span class="muted">connect your wallet to list them</span></span></div>
+    </div>
+    <div class="card" id="split" hidden>
+      <h2>Split <small id="sAddr"></small></h2>
+      <div class="kv"><div><small>RECEIVED IN TOTAL</small><b id="sRecv">–</b></div><div><small>HELD NOW</small><b id="sHeld">–</b></div><div><small>PAID OUT</small><b id="sRel">–</b></div><div><small>PAYEES</small><b id="sN">–</b></div></div>
+      <div class="tw2"><table id="ptab"></table></div>
+      <div class="row"><div class="f"><label for="payAmt">SEND A TEST PAYMENT (tUSDG)</label><input id="payAmt" inputmode="decimal" value="1.00"></div><button class="go" id="pay">Mint into the Split</button><button class="go" id="relAll">Release to every payee</button><button id="refresh">Refresh</button></div>
+      <p class="muted">On mainnet the money comes from x402 payments to this address. On testnet you mint Test USDG into it to try the same thing.</p>
+      <div class="log" id="splitLog"></div>
+      <div class="facts" style="margin-top:12px">RECENT RELEASES</div><div id="sAct"></div>
+    </div>
+  </div>
+</main>
+<footer><div class="wrap">Allot Split · testnet preview · every write simulated first, signed only in your wallet</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+<script src="split-app.js?v=1"></script>
+</body>
+</html>

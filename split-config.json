@@ -1,0 +1,9 @@
+{
+ "network": "Robinhood Chain Testnet",
+ "chainId": 46630,
+ "rpc": "https://rpc.testnet.chain.robinhood.com",
+ "explorer": "https://explorer.testnet.chain.robinhood.com",
+ "token": "",
+ "factory": "",
+ "factoryBlock": 0
+}
