@@ -3,7 +3,7 @@
  "chainId": 46630,
  "rpc": "https://rpc.testnet.chain.robinhood.com",
  "explorer": "https://explorer.testnet.chain.robinhood.com",
- "token": "",
- "factory": "",
- "factoryBlock": 0
+ "token": "0xd6107ba338c8b3b754d2bc0d6873a11352359e75",
+ "factory": "0x6ec8e0c8ea0397daae9331603b8f4d9da821b12e",
+ "factoryBlock": 158755424
 }
