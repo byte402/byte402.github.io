@@ -21,8 +21,8 @@
    "token": "0x5fc5360d0400a0fd4f2af552add042d716f1d168",
    "tokenLabel": "USDG",
    "testToken": false,
-   "factory": "",
-   "factoryBlock": 0,
+   "factory": "0xebcb983974d378822b34278865b0c176d320918d",
+   "factoryBlock": 124902541,
    "banner": "MAINNET BETA \u00b7 ROBINHOOD CHAIN (4663) \u00b7 REAL USDG \u00b7 SOURCE VERIFIED, NOT AUDITED \u00b7 START SMALL"
   }
  }
