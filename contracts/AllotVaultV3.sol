@@ -9,6 +9,8 @@ pragma solidity 0.8.28;
 /// actually charged, an x402 authorization stops being valid as soon as its agent is revoked, expires or loses
 /// that payee, and the same transfer cannot be authorized twice. It also records each authorization's nonce,
 /// caps how long an authorization can stay valid, and makes a freeze cancel every authorization made before it.
+/// Revoking an agent or removing a payee also cancels that agent's pending authorizations for good, and a nonce can be
+/// authorized only once. The `ref` in events is supplied by the agent and is not proof of anything on its own.
 /// The contract itself enforces every rule, so a leaked or hijacked agent key can never spend more.
 /// Two ways to pay:
 ///   1. pay(): the agent sends a transaction and the vault transfers directly.
@@ -29,6 +31,8 @@ contract AllotVault {
     uint8 public constant VERSION = 3;
     uint256 public constant MAX_VALIDITY = 1 hours; // longest an x402 authorization may stay valid
     uint32 public freezeEpoch;                        // goes up on every freeze: older authorizations stop working
+    mapping(address => uint32) public agentEpoch;     // goes up when the agent is revoked or loses a payee
+    mapping(bytes32 => bool) public nonceUsed;        // each EIP-3009 nonce can be authorized once
 
     struct Agent {
         uint128 perPayment;  // max for a single payment
@@ -61,6 +65,7 @@ contract AllotVault {
         address to;
         bytes32 nonce;
         uint32 epoch;        // freezeEpoch when it was authorized
+        uint32 aEpoch;       // agentEpoch when it was authorized
     }
     mapping(bytes32 => Pending) public pending;                       // who reserved the budget for each digest
 
@@ -102,11 +107,13 @@ contract AllotVault {
         a.perPayment = perPayment;
         a.perDay = perDay;
         a.expiry = expiry;
+        if (a.active && !active) agentEpoch[agent]++;
         a.active = active;
         emit AgentSet(agent, perPayment, perDay, expiry, active);
     }
 
     function setPayee(address agent, address payee, bool allowed) external onlyOwner {
+        if (payeeAllowed[agent][payee] && !allowed) agentEpoch[agent]++;
         payeeAllowed[agent][payee] = allowed;
         emit PayeeSet(agent, payee, allowed);
     }
@@ -114,6 +121,7 @@ contract AllotVault {
     /// @notice Approve or remove a payee for an agent and set its own daily budget in one call.
     /// perDay = 0 means no extra limit: only the agent's cap per payment and daily budget apply.
     function setPayeeRule(address agent, address payee, bool allowed, uint128 perDay) external onlyOwner {
+        if (payeeAllowed[agent][payee] && !allowed) agentEpoch[agent]++;
         payeeAllowed[agent][payee] = allowed;
         payeeBudget[agent][payee].perDay = perDay;
         emit PayeeSet(agent, payee, allowed);
@@ -122,6 +130,7 @@ contract AllotVault {
 
     function revoke(address agent) external onlyOwner {
         agents[agent].active = false;
+        agentEpoch[agent]++;
         emit AgentSet(agent, agents[agent].perPayment, agents[agent].perDay, agents[agent].expiry, false);
     }
 
@@ -153,10 +162,12 @@ contract AllotVault {
     {
         digest = transferDigest(to, value, validAfter, validBefore, nonce);
         if (approvedDigest[digest]) revert NotAllowed("already authorized");
+        if (nonceUsed[nonce]) revert NotAllowed("nonce already used");
         if (validBefore > block.timestamp + MAX_VALIDITY) revert NotAllowed("valid for too long");
         bool charged = _spend(msg.sender, to, value);
         approvedDigest[digest] = true;
-        pending[digest] = Pending(msg.sender, uint128(value), _today(), charged, to, nonce, freezeEpoch);
+        nonceUsed[nonce] = true;
+        pending[digest] = Pending(msg.sender, uint128(value), _today(), charged, to, nonce, freezeEpoch, agentEpoch[msg.sender]);
         emit Authorized(msg.sender, to, value, digest, ref);
         emit AuthorizationNonce(digest, validAfter, validBefore, nonce);
     }
@@ -211,6 +222,7 @@ contract AllotVault {
         // revoking the agent, its key expiring or removing the payee cancels its unsettled authorizations at once
         if (!a.active || (a.expiry != 0 && block.timestamp > a.expiry) || !payeeAllowed[p.agent][p.to]) return 0xffffffff;
         if (p.epoch != freezeEpoch) return 0xffffffff; // made before the last freeze: unfreezing does not revive it
+        if (p.aEpoch != agentEpoch[p.agent]) return 0xffffffff; // agent revoked or a payee removed since: re-adding does not revive it
         return ERC1271_MAGIC;
     }
 

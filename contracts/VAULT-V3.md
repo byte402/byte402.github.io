@@ -10,6 +10,10 @@ Everything in Vault v2 (per-payee daily budgets), plus fixes from outside review
 | The same transfer cannot be authorized twice | v2 charged the budget twice but released once |
 | `validBefore` is capped at 1 hour (`MAX_VALIDITY`) | bounds how long an authorization can wait |
 | `AuthorizationNonce(digest, validAfter, validBefore, nonce)` event and `releaseDigest(digest)` | the owner can cancel a pending authorization with only its digest |
+| Revoking an agent or removing one of its payees cancels all its pending authorizations for good; re-activating does not revive them | second review: in the first v3 testnet build, re-adding brought them back until `validBefore` |
+| Each EIP-3009 nonce can be authorized only once, whatever the value | second review: two authorizations with the same nonce both charged the budget while only one could settle |
+
+Note: `ref` in `Authorized` and `Paid` is supplied by the agent (Allot's connector uses keccak256 of the URL). Treat it as a label, not as proof.
 
 `VERSION()` returns 3. All v1 and v2 functions and events are unchanged. Not audited: start with small amounts.
 
@@ -20,7 +24,7 @@ On Robinhood Chain mainnet state with the real USDG, via `eth_simulateV1`. Nothi
 ```
 cd contracts/test && npm install
 node compile-vault3.cjs
-node vault-v3.simulate.mjs   # every fix above: 27 checks
+node vault-v3.simulate.mjs   # every fix above: 35 checks
 ```
 
 The v1 and v2 suites also pass against v3 (19/19, and 29/30 where the only difference is `VERSION` returning 3).

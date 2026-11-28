@@ -30,6 +30,7 @@ Mainnet is a beta: the source is verified, the contract is not audited. Start wi
 - `compile.cjs`: compiles with solc 0.8.28, optimizer 200 runs, evmVersion cancun (the deployed settings). `EVM=shanghai OUT=build-shanghai.json node compile.cjs` builds the variant used by the local EVM.
 - `split.test.mjs`: 71 checks on a local EVM (ganache, shanghai build): creation through the factory, exact 70/20/10 shares, no double pay, rounding dust, a payee that cannot receive, every bad constructor input, and 25 rounds of random shares and payments with exact final amounts.
 - `nonstandard.test.mjs`: a fee-on-transfer token and a negative-rebase token against Split, local EVM.
+- `reentrancy.test.mjs`: a malicious token that re-enters `release()` and `releaseAll()` on every transfer; nobody is paid more than their share, local EVM.
 - `split.simulate.mjs`: the cancun build on the live chain with `eth_simulateV1`, nothing is sent: `node split.simulate.mjs https://rpc.testnet.chain.robinhood.com`.
 
 ```
