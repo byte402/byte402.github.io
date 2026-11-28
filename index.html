@@ -612,7 +612,7 @@ npx -y github:byte402/allot-connector pay &quot;https://your-worker.workers.dev/
         <li>We confirm, fix or explain, and credit you in the changelog if you want.</li>
         <li>Questions and ideas that are not vulnerabilities are welcome as GitHub issues.</li>
       </ol></div>
-      <div class="sbox"><h3>Check it yourself</h3><p><a href="https://repo.sourcify.dev/4663/0xc2623e62d5fae1eeebc2990a9d51f9e69a8a9092" target="_blank" rel="noopener">AllotFactory on Sourcify ↗</a><br><a href="https://repo.sourcify.dev/4663/0xF64cF6131941B9B239ab61866429eB46132012Ca" target="_blank" rel="noopener">AllotVault on Sourcify ↗</a><br><a href="https://github.com/byte402/allot-contracts" target="_blank" rel="noopener">Contracts and tests on GitHub ↗</a><br><a href="https://github.com/byte402/allot-connector" target="_blank" rel="noopener">Connector source ↗</a></p></div>
+      <div class="sbox"><h3>Check it yourself</h3><p><a href="https://repo.sourcify.dev/4663/0xc2623e62d5fae1eeebc2990a9d51f9e69a8a9092" target="_blank" rel="noopener">AllotFactory on Sourcify ↗</a><br><a href="https://repo.sourcify.dev/4663/0xF64cF6131941B9B239ab61866429eB46132012Ca" target="_blank" rel="noopener">AllotVault on Sourcify ↗</a><br><a href="https://repo.sourcify.dev/4663/0xF918e6a812EAAB28A03b3ec06D1E5BA7D8a09F8f" target="_blank" rel="noopener">Allot Factory v2 on Sourcify ↗</a><br><a href="https://github.com/byte402/allot-contracts" target="_blank" rel="noopener">Contracts and tests on GitHub ↗</a><br><a href="https://github.com/byte402/allot-connector" target="_blank" rel="noopener">Connector source ↗</a></p></div>
     </div>
     <div class="cnote rv"><b>In the app,</b> every write is simulated on Robinhood Chain mainnet before you sign, and you sign it in your own wallet. Allot never sees your AI's key: it is made in your browser and shown once.</div>
   </section>
@@ -816,7 +816,8 @@ const LIVE = (() => {
   let cache = null, inflight = null;
   async function fetchAll() {
     const cfg = await (await fetch("config.json?t=" + Date.now(), { cache: "no-store" })).json(), from = hex(cfg.factoryBlock);
-    const created = await rpc("eth_getLogs", [{ address: cfg.factory, topics: [T.created], fromBlock: from, toBlock: "latest" }]);
+    const created = [...(await rpc("eth_getLogs", [{ address: cfg.factory, topics: [T.created], fromBlock: from, toBlock: "latest" }])),
+      ...(cfg.factoryV2 ? await rpc("eth_getLogs", [{ address: cfg.factoryV2, topics: [T.created], fromBlock: hex(cfg.factoryV2Block), toBlock: "latest" }]) : [])]; // v1 and v2 vaults
     const vaults = created.map((l) => "0x" + l.data.slice(26, 66)), vt = vaults.map((v) => "0x" + v.slice(2).padStart(64, "0"));
     const rows = [], agents = {};
     if (vaults.length) {
@@ -942,19 +943,21 @@ const KECCAK = (() => {
 const RECEIPT = (() => {
   const USDG = "0x5fc5360d0400a0fd4f2af552add042d716f1d168";
   const T = { created: "0x0b045af6aff86dd2cda5342fd0329a354dc66759ff1eda00d7ecf13a76c7fb3b", transfer: "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef", authUsed: "0x98de503528ee59b575ef0c0a2576a82497bfc029a5685b209e9ec333479b10a5", paid: "0xaa1c213df8b2ea1210243bbab345f0aa02826cd3b851cc92522eff84a1cf0f5e", withdrawn: "0x7084f5476618d8e60b11ef0d7d3f06914655adb8793e28ff7f018d4c76d505d5", agentSet: "0x847bbbd6959b7a64e1215d42f71ac0b56a53ad525e76f755e09f7708d3db37c8", authorized: "0xa2583fc4aed8837d363d1efef7f53f099d5d9935fd4266d54f92ea61bac47e6e", payeeSet: "0xd8d1c1804cbbd03caaf50ecc88f67d58b4bec59da41e30a3da7f18546dd8d376" };
-  const SEL_DIGEST = "0x2d93b108"; // transferDigest(address,uint256,uint256,uint256,bytes32)
+  const SEL_DIGEST = "0x2d93b108", T_LIMIT = "0x80ef912c70986ead129b76892723e39425fe35a430e79a669e18ed62ca4fc5e9"; // PayeeLimitSet(address,address,uint128), v2 vaults // transferDigest(address,uint256,uint256,uint256,bytes32)
   const hex = (n) => "0x" + n.toString(16), lower = (s) => String(s || "").toLowerCase();
   const addr = (t) => "0x" + lower(t).slice(-40), pad = (a) => "0x" + lower(a).replace(/^0x/, "").padStart(64, "0");
   const word = (data, i) => "0x" + data.slice(2 + 64 * i, 2 + 64 * (i + 1)), big = (w) => BigInt(w);
   const lastBefore = (logs, block, idx) => logs.filter((l) => Number(l.blockNumber) < block || (Number(l.blockNumber) === block && (idx == null || Number(l.logIndex) < idx))).pop();
 
-  async function build(tx, { rpc, factory, factoryBlock }) {
+  async function build(tx, { rpc, factory, factoryBlock, factoryV2, factoryV2Block }) {
     tx = lower(tx).trim();
     if (!/^0x[0-9a-f]{64}$/.test(tx)) throw new Error("that is not a transaction hash (0x and 64 hex characters)");
     const from = hex(factoryBlock);
-    const [rc, t, created] = await Promise.all([rpc("eth_getTransactionReceipt", [tx]), rpc("eth_getTransactionByHash", [tx]), rpc("eth_getLogs", [{ address: factory, topics: [T.created], fromBlock: from, toBlock: "latest" }])]);
+    const [rc, t, c1, c2] = await Promise.all([rpc("eth_getTransactionReceipt", [tx]), rpc("eth_getTransactionByHash", [tx]), rpc("eth_getLogs", [{ address: factory, topics: [T.created], fromBlock: from, toBlock: "latest" }]),
+      factoryV2 ? rpc("eth_getLogs", [{ address: factoryV2, topics: [T.created], fromBlock: hex(factoryV2Block), toBlock: "latest" }]) : []]);
+    const created = [...c1.map((l) => ({ ...l, v: 1 })), ...c2.map((l) => ({ ...l, v: 2 }))];
     if (!rc || !t) throw new Error("this transaction was not found on Robinhood Chain mainnet");
-    const vaults = {}; for (const l of created) vaults[addr(word(l.data, 0))] = { owner: addr(l.topics[1]), tx: l.transactionHash, block: Number(l.blockNumber) };
+    const vaults = {}; for (const l of created) vaults[addr(word(l.data, 0))] = { owner: addr(l.topics[1]), tx: l.transactionHash, block: Number(l.blockNumber), version: l.v, factory: lower(l.address) };
     const block = Number(rc.blockNumber), ts = Number((await rpc("eth_getBlockByNumber", [rc.blockNumber, false])).timestamp);
     const base = { tx, block, time: ts, status: rc.status === "0x1" ? "success" : "failed", sender: lower(rc.from), factory: lower(factory) };
     if (rc.status !== "0x1") return { ...base, kind: "failed", note: "this transaction failed on chain, so no USDG moved" };
@@ -995,6 +998,11 @@ const RECEIPT = (() => {
       const s = lastBefore(sets, ruleBlock, ruleIdx), p = lastBefore(payees, ruleBlock, ruleIdx);
       if (s) r.rule = { perPayment: big(word(s.data, 0)).toString(), perDay: big(word(s.data, 1)).toString(), expiry: Number(big(word(s.data, 2))), active: big(word(s.data, 3)) === 1n, tx: s.transactionHash, block: Number(s.blockNumber) };
       if (p) r.payee = { allowed: big(word(p.data, 0)) === 1n, tx: p.transactionHash, block: Number(p.blockNumber) };
+      r.vaultVersion = r.vaultCreated.version;
+      if (r.vaultVersion === 2) { // v2: the payee's own daily budget, as set before this payment
+        const lims = await rpc("eth_getLogs", [{ address: vault, topics: [T_LIMIT, pad(agent), pad(to)], fromBlock: hex(r.vaultCreated.block), toBlock: hex(ruleBlock) }]);
+        const L = lastBefore(lims, ruleBlock, ruleIdx); if (L) r.payeeLimit = { perDay: big(word(L.data, 0)).toString(), tx: L.transactionHash, block: Number(L.blockNumber) };
+      }
     }
     return r;
   }
@@ -1024,7 +1032,7 @@ const RECEIPT = (() => {
     h += `<div class="ramt">${amt}<small>USDG</small></div>`;
     h += r.kind === "withdrawal" ? row("To the owner", "vault owner · " + ax(r.to)) : row("Paid to", (known ? esc(known) + " · " : "") + ax(r.to));
     if (r.agent) h += row("Paid by AI", ax(r.agent));
-    h += row("From vault", ax(r.vault) + ` · created by the Allot factory in ${tx(r.vaultCreated.tx)}`);
+    h += row("From vault", ax(r.vault) + ` · v${r.vaultCreated.version || 1}, created by the Allot factory in ${tx(r.vaultCreated.tx)}`);
     if (r.ref && r.ref !== "0x" + "0".repeat(64)) { const u = guessUrl(r.ref);
       h += row("Paid for", u ? `<code>GET ${esc(u)}</code><em class="rsm">keccak256 of this URL equals the ref the vault recorded</em>` : `<code>ref ${short(r.ref)}</code><em class="rsm">keccak256 of the URL the AI paid for. Check one below.</em>`); }
     h += row(r.kind === "x402" ? "Settled" : "Sent", utc(r.time) + " · block " + r.block.toLocaleString("en-US") + " · " + tx(r.tx));
@@ -1038,6 +1046,7 @@ const RECEIPT = (() => {
         c.push(["✓", `Inside the daily limit of ${usdg(rule.perDay)} USDG, checked by the contract when it ${r.kind === "x402" ? "authorized" : "paid"}`, ""]);
       }
       if (r.payee) c.push([ok(r.payee.allowed), "Payee on this AI's approved list", tx(r.payee.tx, "approved")]);
+      if (r.payeeLimit && r.payeeLimit.perDay !== "0") c.push(["✓", `Inside this payee's own daily budget of ${usdg(r.payeeLimit.perDay)} USDG (vault v2)`, tx(r.payeeLimit.tx, "budget set")]);
       if (r.kind === "x402") c.push([r.match === "digest" ? "✓" : "~", r.match === "digest" ? `The vault approved this exact transfer (digest ${short(r.digest)}) and USDG used its nonce once` : "Matched to the authorization by payee and amount", ""]);
       h += `<div class="rchk"><div class="rsub">WHAT THE VAULT CHECKED ON CHAIN</div>${c.map(([s, t, l]) => `<div class="ck${s === "✕" ? " bad" : ""}"><span>${t}${l ? " · " + l : ""}</span><b>${s}</b></div>`).join("")}</div>`;
       h += `<p class="rnote">The contract reverts a payment that breaks any rule, so a payment on chain passed all of them. Rules are shown as they were set before this payment.</p>`;
@@ -1049,7 +1058,7 @@ const RECEIPT = (() => {
     if (busy) return; busy = true; $("rstate").textContent = "Reading Robinhood Chain…"; $("rcard").innerHTML = ""; $("racts").hidden = true; $("rurlw").hidden = true;
     try {
       const cfg = await (await fetch("/config.json?t=" + Date.now(), { cache: "no-store" })).json();
-      last = await RECEIPT.build(hash, { rpc: LIVE.rpc, factory: cfg.factory, factoryBlock: cfg.factoryBlock });
+      last = await RECEIPT.build(hash, { rpc: LIVE.rpc, factory: cfg.factory, factoryBlock: cfg.factoryBlock, factoryV2: cfg.factoryV2, factoryV2Block: cfg.factoryV2Block });
       last.builtAt = new Date().toISOString(); render(last);
       $("rstate").textContent = "Rebuilt in your browser from Robinhood Chain mainnet logs · " + new Date().toUTCString().slice(17, 25) + " UTC";
     } catch (e) { $("rstate").textContent = "Could not build this receipt: " + e.message; }
@@ -1415,7 +1424,7 @@ document.querySelectorAll(".bcode [data-copy]").forEach((b) => b.onclick = async
 (() => {
   const RPC = "https://rpc.mainnet.chain.robinhood.com", EXP = "https://robinhoodchain.blockscout.com", USDG = "0x5fc5360d0400a0fd4f2af552add042d716f1d168";
   const T_TR = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef", T_AU = "0x98de503528ee59b575ef0c0a2576a82497bfc029a5685b209e9ec333479b10a5";
-  const FACTORY = "0xc2623e62d5fae1eeebc2990a9d51f9e69a8a9092", FACTORY_BLOCK = 121807504, ISSUE = "https://github.com/byte402/byte402.github.io/issues/new";
+  const FACTORY = "0xc2623e62d5fae1eeebc2990a9d51f9e69a8a9092", FACTORY_BLOCK = 121807504, FACTORY_V2 = "0xf918e6a812eaab28a03b3ec06d1e5ba7d8a09f8f", FACTORY_V2_BLOCK = 124924300, ISSUE = "https://github.com/byte402/byte402.github.io/issues/new";
   const $ = (i) => document.getElementById(i), esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"), sh = (a) => a.slice(0, 6) + "…" + a.slice(-4);
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms)), hx = (n) => "0x" + n.toString(16), pad = (a) => "0x" + a.toLowerCase().slice(2).padStart(64, "0");
   const usdg = (v) => { const s = (Number(v) / 1e6).toFixed(6).replace(/0+$/, "").replace(/\.$/, ""); return s === "" ? "0" : s; };
@@ -1428,7 +1437,7 @@ document.querySelectorAll(".bcode [data-copy]").forEach((b) => b.onclick = async
   async function logs(filter, from, to) { const W = []; for (let a = from; a <= to; a += 9000000) W.push([a, Math.min(to, a + 8999999)]); const out = [];
     for (let i = 0; i < W.length; i += 4) (await Promise.all(W.slice(i, i + 4).map(([a, e]) => range(filter, a, e)))).forEach((r) => out.push(...r)); return out; }
   let vaults = null;
-  async function allotVaults(head) { if (vaults) return vaults; const L = await logs({ address: FACTORY }, FACTORY_BLOCK, head); vaults = new Set(L.map((l) => ("0x" + l.data.slice(26, 66)).toLowerCase())); return vaults; }
+  async function allotVaults(head) { if (vaults) return vaults; const L = [...(await logs({ address: FACTORY }, FACTORY_BLOCK, head)), ...(head >= FACTORY_V2_BLOCK ? await logs({ address: FACTORY_V2 }, FACTORY_V2_BLOCK, head) : [])]; vaults = new Set(L.map((l) => ("0x" + l.data.slice(26, 66)).toLowerCase())); return vaults; }
   // payments a payee received on chain: USDG transfers to it, which of them used an EIP-3009 authorization (x402 style), and which came from an Allot vault
   async function onchain(payTo) { const head = parseInt(await rpc("eth_blockNumber", []), 16), V = await allotVaults(head);
     const L = (await logs({ address: USDG, topics: [T_TR, null, pad(payTo)] }, 0, head)).slice(-150), txs = [...new Set(L.map((l) => l.transactionHash))];
@@ -1483,7 +1492,7 @@ document.querySelectorAll(".bcode [data-copy]").forEach((b) => b.onclick = async
 // ---------- Compute: what each AI in a vault spends, on GPU compute and everything else, read from the chain ----------
 (() => {
   const RPC = "https://rpc.mainnet.chain.robinhood.com", EXP = "https://robinhoodchain.blockscout.com", USDG = "0x5fc5360d0400a0fd4f2af552add042d716f1d168";
-  const FACTORY = "0xc2623e62d5fae1eeebc2990a9d51f9e69a8a9092", FROM = 121807504;
+  const FACTORY = "0xc2623e62d5fae1eeebc2990a9d51f9e69a8a9092", FROM = 121807504, FACTORY_V2 = "0xf918e6a812eaab28a03b3ec06d1e5ba7d8a09f8f"; // v1 and v2 factories
   const T = { transfer: "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef", authUsed: "0x98de503528ee59b575ef0c0a2576a82497bfc029a5685b209e9ec333479b10a5", paid: "0xaa1c213df8b2ea1210243bbab345f0aa02826cd3b851cc92522eff84a1cf0f5e", withdrawn: "0x7084f5476618d8e60b11ef0d7d3f06914655adb8793e28ff7f018d4c76d505d5", agentSet: "0x847bbbd6959b7a64e1215d42f71ac0b56a53ad525e76f755e09f7708d3db37c8", payeeSet: "0xd8d1c1804cbbd03caaf50ecc88f67d58b4bec59da41e30a3da7f18546dd8d376", authorized: "0xa2583fc4aed8837d363d1efef7f53f099d5d9935fd4266d54f92ea61bac47e6e" };
   const S = { agents: "0xfd66091e", remaining: "0xec52e060", vaultsOf: "0x6cc811f8", frozen: "0x054f7d9c", owner: "0x8da5cb5b", balanceOf: "0x70a08231" };
   const $ = (i) => document.getElementById(i), esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;"), sh = (a) => a.slice(0, 6) + "…" + a.slice(-4);
@@ -1498,7 +1507,7 @@ document.querySelectorAll(".bcode [data-copy]").forEach((b) => b.onclick = async
   async function read(vault) { vault = vault.toLowerCase(); const call = (to, data) => ["eth_call", [{ to, data }, "latest"]];
     const [code] = await batch([["eth_getCode", [vault, "latest"]]]); if (!code || code === "0x") throw new Error("No contract at this address on Robinhood Chain.");
     const [own, frz, bal, blk] = await batch([call(vault, S.owner), call(vault, S.frozen), call(USDG, S.balanceOf + pad(vault).slice(2)), ["eth_getBlockByNumber", ["latest", false]]]);
-    const created = await getLogs({ address: FACTORY }), isAllot = created.some((l) => ("0x" + l.data.slice(26, 66)).toLowerCase() === vault); if (!isAllot) throw new Error("This address is not a vault made by the Allot Factory.");
+    const created = [...(await getLogs({ address: FACTORY })), ...(await getLogs({ address: FACTORY_V2 }))], isAllot = created.some((l) => ("0x" + l.data.slice(26, 66)).toLowerCase() === vault); if (!isAllot) throw new Error("This address is not a vault made by the Allot Factory.");
     const [sets, payees, auths, outs] = await Promise.all([getLogs({ address: vault, topics: [T.agentSet] }), getLogs({ address: vault, topics: [T.payeeSet] }), getLogs({ address: vault, topics: [T.authorized] }), getLogs({ address: USDG, topics: [T.transfer, pad(vault)] })]);
     const now = parseInt(blk.timestamp, 16), today = Math.floor(now / 86400), A = {};
     for (const l of sets) A[addr(l.topics[1])] = { agent: addr(l.topics[1]), perPayment: W(l.data, 0), perDay: W(l.data, 1), expiry: Number(W(l.data, 2)), active: W(l.data, 3) === 1n };
@@ -1544,7 +1553,8 @@ document.querySelectorAll(".bcode [data-copy]").forEach((b) => b.onclick = async
   async function go(v) { v = (v || $("cv").value).trim(); $("cerr").textContent = ""; if (!/^0x[0-9a-fA-F]{40}$/.test(v)) { $("cerr").textContent = "Paste a vault address (0x + 40 hex)."; return; }
     $("cgo").textContent = "Reading…"; $("cgo").disabled = true; try { $("cv").value = v; render(await read(v)); history.replaceState(null, "", "/compute?vault=" + v.toLowerCase()); } catch (e) { $("cout").hidden = true; $("cerr").textContent = e.message || String(e); } finally { $("cgo").textContent = "Read ▸"; $("cgo").disabled = false; } }
   async function mine() { $("cerr").textContent = ""; if (!window.ethereum) { $("cerr").textContent = "No wallet found in this browser. Paste your vault address instead."; return; }
-    try { const [me] = await window.ethereum.request({ method: "eth_requestAccounts" }); const r = await rpc("eth_call", [{ to: FACTORY, data: S.vaultsOf + pad(me).slice(2) }, "latest"]); const n = Number(W(r, 1)), list = [...Array(n)].map((_, i) => addr("0x" + r.slice(2 + 64 * (2 + i), 66 + 64 * (2 + i))));
+    try { const [me] = await window.ethereum.request({ method: "eth_requestAccounts" }); const dec = (r) => { const n = Number(W(r, 1)); return [...Array(n)].map((_, i) => addr("0x" + r.slice(2 + 64 * (2 + i), 66 + 64 * (2 + i)))); };
+      const list = [...dec(await rpc("eth_call", [{ to: FACTORY_V2, data: S.vaultsOf + pad(me).slice(2) }, "latest"])), ...dec(await rpc("eth_call", [{ to: FACTORY, data: S.vaultsOf + pad(me).slice(2) }, "latest"]))];
       if (!list.length) { $("cerr").textContent = "This wallet owns no Allot vault. Create one in the app."; return; } $("cmine").innerHTML = list.length > 1 ? list.map((v) => `<button type="button" data-v="${v}">${sh(v)}</button>`).join(" ") : ""; document.querySelectorAll("#cmine button").forEach((b) => (b.onclick = () => go(b.dataset.v))); go(list[list.length - 1]);
     } catch (e) { $("cerr").textContent = e.message || String(e); } }
   let started = false; function start() { if (started) return; started = true; const q = new URLSearchParams(location.search).get("vault"); if (q) go(q); }
