@@ -18,7 +18,9 @@ Mainnet is a beta: the source is verified, the contract is not audited. Start wi
 ## Known behaviour, by design
 
 1. **A payee that can never receive keeps its share in the contract forever.** There is no admin who could redirect it, which is the point. The other payees are paid normally (`releaseAll` skips the failing one).
-2. **Only plain ERC-20 tokens.** With a fee-on-transfer or rebasing token, a drop in the contract's balance can make `releasable()` revert for that token. Split is meant for USDG and plain ERC-20s.
+2. **Only plain ERC-20 tokens.** Split is meant for USDG and plain ERC-20s. Pinned by `test/nonstandard.test.mjs`:
+   - fee-on-transfer: accounting stays consistent, each payee simply receives its share minus the token's fee;
+   - negative rebase: if the balance shrinks after some payees were paid, `releasable()` reverts for a payee already paid more than its new share, and the others cannot release until enough arrives again. Nothing is lost to a third party, but payouts stall.
 3. Tokens are accounted per token address. Sending a token by mistake does not affect USDG accounting.
 
 ## Tests
@@ -27,6 +29,7 @@ Mainnet is a beta: the source is verified, the contract is not audited. Start wi
 
 - `compile.cjs`: compiles with solc 0.8.28, optimizer 200 runs, evmVersion cancun (the deployed settings). `EVM=shanghai OUT=build-shanghai.json node compile.cjs` builds the variant used by the local EVM.
 - `split.test.mjs`: 71 checks on a local EVM (ganache, shanghai build): creation through the factory, exact 70/20/10 shares, no double pay, rounding dust, a payee that cannot receive, every bad constructor input, and 25 rounds of random shares and payments with exact final amounts.
+- `nonstandard.test.mjs`: a fee-on-transfer token and a negative-rebase token against Split, local EVM.
 - `split.simulate.mjs`: the cancun build on the live chain with `eth_simulateV1`, nothing is sent: `node split.simulate.mjs https://rpc.testnet.chain.robinhood.com`.
 
 ```
