@@ -41,7 +41,8 @@
   }
   // simulate, then the wallet signs; resolves with the receipt
   async function write(logId, label, call) {
-    if (!ACCT) ACCT = await connect().then(showAcct); else if (parseInt(await wallet().request({ method: "eth_chainId" }), 16) !== CFG.chainId) ACCT = await connect();
+    if (!ACCT) ACCT = await connect().then(showAcct);
+    else { const [cur] = await wallet().request({ method: "eth_accounts" }); if (cur && cur.toLowerCase() !== ACCT.toLowerCase()) ACCT = showAcct(E.getAddress(cur)); if (parseInt(await wallet().request({ method: "eth_chainId" }), 16) !== CFG.chainId) ACCT = await connect(); }
     log(logId, label + ": simulating on " + CFG.network + "…");
     const s = await simulate(ACCT, call); if (!s.ok) throw new Error("Simulation says it would fail: " + s.why + ". Nothing was sent.");
     log(logId, label + ": simulation OK (" + s.gas.toLocaleString("en-US") + " gas). Confirm in your wallet. Check that it says " + CFG.network + ".");
@@ -51,7 +52,7 @@
     for (let i = 0; i < 80; i++) { await sleep(1500); const rc = await rpc("eth_getTransactionReceipt", [hash]); if (rc) { if (rc.status !== "0x1") throw new Error("The transaction failed on chain: " + hash); return { hash, rc, sim: s }; } }
     throw new Error("Still waiting for the block. Check the explorer: " + hash);
   }
-  function showAcct(a) { $("acct").hidden = false; $("acct").textContent = short(a); $("connect").hidden = true; listMine(a); return a; }
+  function showAcct(a) { $("acct").hidden = false; $("acct").title = a; $("acct").textContent = short(a); $("connect").hidden = true; listMine(a); return a; }
   const fail = (id) => (e) => log(id, "✕ " + (e.shortMessage || e.message || String(e)).replace(/^Error: /, ""));
 
   // ---------- one-time setup: deploy Test USDG and the factory ----------
@@ -125,6 +126,7 @@
   $("relAll").onclick = () => write("splitLog", "Release to every payee", { to: OPEN, data: I("AllotSplit").encodeFunctionData("releaseAll", [CFG.token]) }).then((r) => { log("splitLog", "✓ Released to every payee in " + r.hash); open(OPEN); }).catch(fail("splitLog"));
   $("refresh").onclick = () => OPEN && open(OPEN);
   $("connect").onclick = () => connect().then((a) => { ACCT = showAcct(a); }).catch((e) => alert(e.message));
+  try { wallet()?.on?.("accountsChanged", (a) => { if (a && a[0]) { ACCT = showAcct(E.getAddress(a[0])); if (OPEN) open(OPEN); } }); } catch {}
 
   (async () => {
     try { const [conf, abi] = await Promise.all([fetch("split-config.json?t=" + Date.now(), { cache: "no-store" }).then((r) => r.json()), fetch("split-build.json").then((r) => r.json())]); ABI = abi;
