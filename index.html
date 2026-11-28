@@ -793,10 +793,12 @@ const LIVE = (() => {
     const vaults = created.map((l) => "0x" + l.data.slice(26, 66)), vt = vaults.map((v) => "0x" + v.slice(2).padStart(64, "0"));
     const rows = [], agents = {};
     if (vaults.length) {
+      // the public RPC only allows one value per position for long ranges, so ask once per vault and merge
+      const each = (mk) => Promise.all(vaults.map((v, i) => rpc("eth_getLogs", [mk(v, vt[i])]))).then((r) => r.flat().sort((x, y) => Number(x.blockNumber) - Number(y.blockNumber) || Number(x.logIndex) - Number(y.logIndex)));
       const [outs, sets, auths] = await Promise.all([
-        rpc("eth_getLogs", [{ address: USDG, topics: [T.transfer, vt], fromBlock: from, toBlock: "latest" }]),
-        rpc("eth_getLogs", [{ address: vaults, topics: [T.agentSet], fromBlock: from, toBlock: "latest" }]),
-        rpc("eth_getLogs", [{ address: vaults, topics: [T.authorized], fromBlock: from, toBlock: "latest" }])]);
+        each((v, t) => ({ address: USDG, topics: [T.transfer, t], fromBlock: from, toBlock: "latest" })),
+        each((v) => ({ address: v, topics: [T.agentSet], fromBlock: from, toBlock: "latest" })),
+        each((v) => ({ address: v, topics: [T.authorized], fromBlock: from, toBlock: "latest" }))]);
       for (const l of sets) agents[l.address.toLowerCase() + addr(l.topics[1])] = { active: word(l.data, 3) === 1n, perPayment: word(l.data, 0), perDay: word(l.data, 1) }; // last AgentSet wins
       const recent = outs.slice(-50).reverse(), blocks = {}, receipts = {};
       await Promise.all([...new Set(recent.map((l) => l.blockNumber))].map(async (b) => { blocks[b] = Number((await rpc("eth_getBlockByNumber", [b, false])).timestamp); }));
