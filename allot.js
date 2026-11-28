@@ -1,8 +1,14 @@
 // Allot shared helpers: Robinhood Chain RPC, wallet connection, simulate-then-send.
 // Every write is: build the transaction → eth_simulateV1 on mainnet → show the result → the wallet owner signs.
 const ALLOT = (() => {
-  const RPC = "https://rpc.mainnet.chain.robinhood.com", CHAIN = "0x1237", EXP = "https://robinhoodchain.blockscout.com";
-  const USDG = "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168"; // USDG on Robinhood Chain; its DOMAIN_SEPARATOR is always read live
+  // ?net=testnet runs the same app on Robinhood Chain Testnet with Test USDG (no value). Mainnet is the default.
+  const NETS = {
+    mainnet: { RPC: "https://rpc.mainnet.chain.robinhood.com", CHAIN: "0x1237", EXP: "https://robinhoodchain.blockscout.com", USDG: "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168", NAME: "Robinhood Chain mainnet", CHAIN_NAME: "Robinhood Chain", CFG: "config.json", TOKEN: "USDG" },
+    testnet: { RPC: "https://rpc.testnet.chain.robinhood.com", CHAIN: "0xb626", EXP: "https://explorer.testnet.chain.robinhood.com", USDG: "0xd6107bA338c8b3b754D2bC0D6873A11352359E75", NAME: "Robinhood Chain Testnet", CHAIN_NAME: "Robinhood Chain Testnet", CFG: "config-testnet.json", TOKEN: "Test USDG" },
+  };
+  const NET = new URLSearchParams(location.search).get("net") === "testnet" ? "testnet" : "mainnet", N = NETS[NET];
+  const RPC = N.RPC, CHAIN = N.CHAIN, EXP = N.EXP;
+  const USDG = N.USDG; // USDG on Robinhood Chain (Test USDG on testnet); its DOMAIN_SEPARATOR is always read live
   const E = window.ethers;
   let abi = null, cfg = null;
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -15,7 +21,7 @@ const ALLOT = (() => {
   }
   async function load() {
     if (!abi) abi = await (await fetch("allot-abi.json")).json();
-    if (!cfg) cfg = await (await fetch("config.json?t=" + Date.now(), { cache: "no-store" })).json();
+    if (!cfg) cfg = await (await fetch(N.CFG + "?t=" + Date.now(), { cache: "no-store" })).json();
     return { abi, cfg };
   }
   const iface = (kind) => new E.Interface(kind === "factory" ? abi.factory : kind === "vault" ? abi.vault : ["function balanceOf(address) view returns (uint256)", "function transfer(address,uint256) returns (bool)", "function DOMAIN_SEPARATOR() view returns (bytes32)"]);
@@ -25,7 +31,8 @@ const ALLOT = (() => {
     const w = wallet(); if (!w) throw new Error("No wallet found. Open this page in a browser with OKX Wallet or MetaMask.");
     const [a] = await w.request({ method: "eth_requestAccounts" });
     try { await w.request({ method: "wallet_switchEthereumChain", params: [{ chainId: CHAIN }] }); }
-    catch (e) { if (e.code === 4902) await w.request({ method: "wallet_addEthereumChain", params: [{ chainId: CHAIN, chainName: "Robinhood Chain", rpcUrls: [RPC], nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 }, blockExplorerUrls: [EXP] }] }); else throw e; }
+    catch (e) { if (e.code === 4902) await w.request({ method: "wallet_addEthereumChain", params: [{ chainId: CHAIN, chainName: N.CHAIN_NAME, rpcUrls: [RPC], nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 }, blockExplorerUrls: [EXP] }] }); else throw e; }
+    if (parseInt(await w.request({ method: "eth_chainId" }), 16) !== parseInt(CHAIN, 16)) throw new Error("Your wallet is not on " + N.CHAIN_NAME + ". Switch network and try again.");
     return E.getAddress(a);
   }
   function decodeErr(data) {
@@ -34,7 +41,7 @@ const ALLOT = (() => {
     try { return E.AbiCoder.defaultAbiCoder().decode(["string"], "0x" + data.slice(10))[0]; } catch {}
     return "the transaction would fail";
   }
-  // simulate a list of calls in order on mainnet state; returns per-call {ok, gas, why, ret}
+  // simulate a list of calls in order on the chain state; returns per-call {ok, gas, why, ret}
   async function simulate(from, calls) {
     const res = await rpc("eth_simulateV1", [{ blockStateCalls: [{ calls: calls.map((c) => ({ from, to: c.to, data: c.data, value: c.value || "0x0", gas: c.gas || "0x2dc6c0" })) }], validation: false }, "latest"]);
     return res[0].calls.map((r) => ({ ok: r.status === "0x1", gas: parseInt(r.gasUsed, 16), why: r.status === "0x1" ? "" : decodeErr(r.error?.data || r.returnData), ret: r.returnData, logs: r.logs }));
@@ -47,5 +54,5 @@ const ALLOT = (() => {
   const fmt = (raw, d = 6) => (Number(raw) / 10 ** d).toLocaleString("en-US", { maximumFractionDigits: 4 });
   const units = (x, d = 6) => E.parseUnits(String(x || "0").trim() || "0", d);
   const short = (a) => a.slice(0, 6) + "…" + a.slice(-4);
-  return { RPC, CHAIN, EXP, USDG, rpc, load, iface, read, connect, simulate, send, fmt, units, short, wallet, E };
+  return { NET, NAME: N.NAME, TOKEN: N.TOKEN, RPC, CHAIN, EXP, USDG, rpc, load, iface, read, connect, simulate, send, fmt, units, short, wallet, E };
 })();
